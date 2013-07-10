@@ -83,10 +83,12 @@ since 25-04-06:
     Use_Large_Icons =1 ; 0 = small icons, 1 = large icons in listview
 
   ; Fonts
-    Font_Size =12
-    Font_Size_Tab =8
-    Font_Type_Tab =Courier New
-    Font_Type =Arial
+    Font_Size=10
+    Font_Color=d9cec3
+    Font_Style=
+    Font_Size_Tab =9
+    Font_Type_Tab =Consolas
+    Font_Type =Segoe UI
 
   ; Position
     Gui_x =Center
@@ -96,7 +98,7 @@ since 25-04-06:
     Height_Max_Modifier =0.92 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
 
   ; Width
-    Listview_Width := A_ScreenWidth * 0.55
+    Listview_Width := A_ScreenWidth * 0.4
     SB_Width := Listview_Width / 4 ; StatusBar section sizes
     Exe_Width_Max := Listview_Width / 5 ; Exe column max width
 
@@ -122,19 +124,19 @@ since 25-04-06:
     Small_to_Large_Ratio =1.6 ; height of small rows compared to large rows
 
   ; Colours in RGB hex
-    Tab_Colour =C4C5FB
-    Listview_Colour =E1E2FD ; does not need converting as only used for background
-    StatusBar_Background_Colour =C4C5FB
+    Tab_Colour =d9cec3
+    Listview_Colour =1c1b1a ; does not need converting as only used for background
+    StatusBar_Background_Colour =998899
     
   ; convert colours to correct format for listview color functions:
     Listview_Colour_Min_Text :=       RGBtoBGR("0x000000") ; highlight minimised windows
-    Listview_Colour_Min_Back :=       RGBtoBGR("0xC2C6FC")
+    Listview_Colour_Min_Back :=       RGBtoBGR("0xffa724")
     Listview_Colour_OnTop_Text :=     RGBtoBGR("0x000000") ; highlight alwaysontop windows
-    Listview_Colour_OnTop_Back :=     RGBtoBGR("0x8079FB")
-    Listview_Colour_Dialog_Text :=    RGBtoBGR("0x000000")
+    Listview_Colour_OnTop_Back :=     RGBtoBGR("0xff2c4b")
+    Listview_Colour_Dialog_Text :=    RGBtoBGR("0xd9cec3")
     Listview_Colour_Dialog_Back :=    RGBtoBGR("0xFB5959")
-    Listview_Colour_Selected_Text :=  RGBtoBGR("0xFFFFFF")
-    Listview_Colour_Selected_Back :=  RGBtoBGR("0x000071")
+    Listview_Colour_Selected_Text :=  RGBtoBGR("0xffffff")
+    Listview_Colour_Selected_Back :=  RGBtoBGR("0x0a9dff")
     Listview_Colour_Not_Responding_Text := RGBtoBGR("0xFFFFFF")
     Listview_Colour_Not_Responding_Back := RGBtoBGR("0xFF0000")
 
@@ -392,7 +394,7 @@ Display_List:
     Gui, 1: Add, Tab2, vGui1_Tab HWNDhw_Gui1_Tab Background w%Gui1_Tab__width% -0x200, %Group_List% ; -0x200 = ! TCS_MULTILINE
     Gui, 1: Tab, %Group_Active%,, Exact ; Future controls are owned by this tab
     Gui, 1: Add, StatusBar, Background%StatusBar_Background_Colour% ; add before changing font
-    Gui, 1: Font, s%Font_Size%, %Font_Type%
+    Gui, 1: Font, s%Font_Size% c%Font_Color% %Font_Style%, %Font_Type%
     Gui, 1: Add, ListView, x-1 y+-4 w%Listview_Width% AltSubmit -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     LV_ModifyCol(2, "Integer") ; sort hidden column 2 as numbers
     SB_SetParts(SB_Width, SB_Width, SB_Width)
