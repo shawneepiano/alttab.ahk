@@ -375,6 +375,7 @@ Check_Alt_Hotkey2_Up:
     Gosub, ListView_Destroy
 Return
 
+LAlt & RAlt::Reload
 
 ;========================================================================================================
 
@@ -429,6 +430,7 @@ Return
 
 
 Display_List__Find_windows_and_icons:
+  WinGet, Cur_Exe_Name, ProcessName, A
   WinGet, Window_List, List ; Gather a list of running programs
 
   Window_Found_Count =0
@@ -479,6 +481,14 @@ Display_List__Find_windows_and_icons:
           or ((Custom_Group_Include_wid_temp !=1) and (Exclude_Not_In_List =1)))
         Continue
       }
+
+      If (Group_Active = "EXE")
+         {
+
+      Same_Exe_Include_wid_temp = ; initialise/reset
+      If (Cur_Exe_Name != Exe_Name) ; match current exe name
+        Continue
+     }
 
     Dialog =0 ; init/reset
     If (Parent and ! Style_parent)
@@ -1538,17 +1548,17 @@ Group_Hotkey: ; from loading ini file - determine hotkey behaviour based on curr
       ; check if currently active window is in the newly loaded group, else switch to 1st
       Gosub, Single_Key_Show_Alt_Tab ; show list to generate updated variables to check
       Viewed_Window_List .="|" Active_ID
-      Loop, %Window_Found_Count% ; abort switching and start to cycle through windows in list next
-        {
-        If (! InStr(Viewed_Window_List, Window%A_Index%) or Window_Found_Count <=1)
-          {
-          Gosub, ListView_Destroy
-          WinActivate, % "ahk_id" Window%A_Index%
-          If A_Index =%Window_Found_Count%
-            Viewed_Window_List = ; viewed all windows so reset list
-          Break
-          }
-        }
+      ; Loop, %Window_Found_Count% ; abort switching and start to cycle through windows in list next
+        ; {
+        ; If (!InStr(Viewed_Window_List, Window%A_Index%) or Window_Found_Count <=1)
+          ; {
+          ; Gosub, ListView_Destroy
+          ; WinActivate, % "ahk_id" Window%A_Index%
+          ; If A_Index =%Window_Found_Count%
+          ;   Viewed_Window_List = ; viewed all windows so reset list
+          ; Break
+          ; }
+        ; }
       Break
       }
     }
@@ -1878,7 +1888,7 @@ IniFile_Data(Read_or_Write)
   IniFile("Sort_Direction_Symbol",    "Sort_Order", "[+]") ; initial sort direction
 
 ; Groups + Group_Hotkey - remember lists of windows
-  IniFile("Group_List",               "Groups", "Settings|ALL")
+  IniFile("Group_List",               "Groups", "Settings|ALL|EXE")
   If ! (Global_Include_Edit or Global_Exclude_Edit)
   IniFile("Global_Include",           "Groups", "")
   IniFile("Global_Include",           "Groups", "")
