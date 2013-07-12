@@ -254,7 +254,8 @@ Alt_Tab_Common_Function(Key) ; Key = "Alt_Tab" or "Alt_Shift_Tab"
     Gosub, Alt_Tab_Common__Highlight_Active_Window
     If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
       {
-      Gui, 1: Show, AutoSize x%Gui_x% y%Gui_y%, Alt-Tab Replacement
+      Gui_vx := Gui_CenterX()
+      Gui, 1: Show, AutoSize x%Gui_vx% y%Gui_y%, Alt-Tab Replacement
       Hotkeys_Toggle_Temp_Hotkeys("On") ; (state = "On" or "Off") ; ensure hotkeys are on
       }
     }
@@ -420,7 +421,8 @@ Display_List:
   Gosub, Gui_Resize_and_Position
   If Display_List_Shown =1 ; resize gui for updating listview
     {
-    Gui, 1: Show, AutoSize x%Gui_x% y%Gui_y%, Alt-Tab Replacement
+      Gui_vx := Gui_CenterX()
+    Gui, 1: Show, AutoSize x%Gui_vx% y%Gui_y%, Alt-Tab Replacement
     If Selected_Row >%Window_Found_Count% ; less windows now - select last one instead of default 1st row
       Selected_Row =%Window_Found_Count%
     LV_Modify(Selected_Row, "Focus Select Vis") ; select 1st entry since nothing selected
@@ -2184,3 +2186,22 @@ Return
 99GuiEscape:
   Gui, 99: Destroy
 Return
+
+
+
+Gui_CenterX()
+{
+  Global Listview_Width
+    Coordmode, Mouse, Screen
+    MouseGetPos,x,y
+    SysGet, m, MonitorCount
+    ; Iterate through all monitors.
+    Loop, %m%
+    {   ; Check if the window is on this monitor.
+      SysGet, Mon, Monitor, %A_Index%
+        if (x >= MonLeft && x <= MonRight && y >= MonTop && y <= MonBottom)
+        {
+          return (0.5*(MonRight-MonLeft)+MonLeft-Listview_Width/2)
+        }
+    }
+}
