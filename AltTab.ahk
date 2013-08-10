@@ -51,24 +51,28 @@ LATEST_VERSION_CHANGES = ; Gui, 98
 :taskpaper:
 
 TO DO (maybe):
-- settings window
-- save other settings between restarts
 - include a filter for docked windows to be displayed in alt-tab or not (ie a tab for docked windows) - perhaps alter title? e.g. DOCKED***
 - stick items to top or bottom of list
 - use listview insert command to place windows at specific locations in list?
-- get best rpactices with compiz and other compositing programs for other ways of dealing with alt tab
+- get best practices with compiz and other compositing programs for other ways of dealing with alt tab
 - develop more keyboard shortcuts like those used with VistaSwitcher
-- get color schemes to work on startup 
 - sort the window list with shortcuts
-- stop ringing the bell when using keyboard to select the window
 - remove docking functionality
 - incorporate window images based on AeroThumbnails library
+- get rid of a lot of the fluff and unused code
+- get on forums and post to people to try to get more cooperation
+- make it work with Win8 apps
+- fix close app from reopening the all window list if closing app from Group
+- sometimes windows don't come to the front (outlook)
 
 LATEST VERSION CHANGES:
 since 08-08-13:
-- remove a magority of UI
+- remove a majority of UI
 - add EXE only mode to cycle between current application windows
--
+- added coloring for max
+- get color schemes to work on startup 
+- bring focused window to the font when cycling
+
 since 25-04-06:
   +: Groups of windows are shown in tabs - they can be re-arranged by drag-and-drop.
   +: Settings tab.
@@ -142,6 +146,8 @@ since 25-04-06:
     StatusBar_Background_Colour =998899
     
   ; convert colours to correct format for listview color functions:
+    Listview_Colour_Max_Text :=       RGBtoBGR("0xffffff") ; highlight minimised windows
+    Listview_Colour_Max_Back :=       RGBtoBGR("0x000000")
     Listview_Colour_Min_Text :=       RGBtoBGR("0x000000") ; highlight minimised windows
     Listview_Colour_Min_Back :=       RGBtoBGR("0xffa724")
     Listview_Colour_OnTop_Text :=     RGBtoBGR("0x000000") ; highlight alwaysontop windows
@@ -248,14 +254,14 @@ Return
 
 
 Alt_Tab: ; alt-tab hotkey
-  Alt_Tab_Common_Function("Alt_Tab")
+  Alt_Tab_Common_Function(1)
 Return
 
 Alt_Shift_Tab: ; alt-shift-tab hotkey
-  Alt_Tab_Common_Function("Alt_Shift_Tab")
+  Alt_Tab_Common_Function(-1)
 Return
 
-Alt_Tab_Common_Function(Key) ; Key = "Alt_Tab" or "Alt_Shift_Tab"
+Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
 {
   Global
   If Display_List_Shown =0
@@ -272,26 +278,38 @@ Alt_Tab_Common_Function(Key) ; Key = "Alt_Tab" or "Alt_Shift_Tab"
       Hotkeys_Toggle_Temp_Hotkeys("On") ; (state = "On" or "Off") ; ensure hotkeys are on
       }
     }
-  Selected_Row := LV_GetNext(0, "F")
-  If Key =Alt_Tab
-    {
-    Selected_Row += 1
+
+    Selected_Row := LV_GetNext(0, "F")
+    Selected_Row += dir
     If (Selected_Row > Window_Found_Count)
       Selected_Row =1
-    }
-  Else If Key =Alt_Shift_Tab
-    {
-    Selected_Row -= 1
     If Selected_Row < 1
       Selected_Row := Window_Found_Count
+
+    ; Loop through all windows to get them to update the color
+    Loop %Window_Found_Count%
+    {
+    LV_Modify(A_Index, "Focus Select Vis") ; get selected row and ensure selection is visible
     }
-  LV_Modify(Selected_Row, "Focus Select Vis") ; get selected row and ensure selection is visible
+    LV_Modify(Selected_Row, "Focus Select Vis") ; get selected row and ensure selection is visible
+
+
+    ; Bring the focused lines window to the front
+    Get__Selected_Row_and_RowText()
+    Gui_wid := Window%RowText%
+    WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
+    WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
+
+    ; Sometimes you lose the window
+    WinSet, AlwaysOnTop, On, Alt-Tab Replacement
+
+
   SetTimer, Check_Alt_Hotkey2_Up, 30
 
-  GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
+  ; GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
 
-  Gosub, SB_Update__ProcessCPU
-  SetTimer, SB_Update__ProcessCPU, 1000
+  ; Gosub, SB_Update__ProcessCPU
+  ; SetTimer, SB_Update__ProcessCPU, 1000
   Return
 
   Alt_Tab_Common__Check_auto_switch_icon_sizes: ; limit gui height / auto-switch icon sizes
@@ -417,8 +435,8 @@ Display_List:
     ; Gosub, SB_Update__CPU
     ; SetTimer, SB_Update__CPU, 1000
     }
-  GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
-  GuiControl, ChooseString, Gui1_Tab, %Group_Active%
+  ; GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
+  ; GuiControl, ChooseString, Gui1_Tab, %Group_Active%
 
   ImageListID1 := IL_Create(10,5,Use_Large_Icons_Current) ; Create an ImageList so that the ListView can display some icons
   LV_SetImageList(ImageListID1, 1) ; Attach the ImageLists to the ListView so that it can later display the icons
@@ -498,7 +516,8 @@ Display_List__Find_windows_and_icons:
         Continue
       }
 
-      If (Group_Active = "EXE")
+      ; If EXE group is used, only accept windows with the same executable as the current
+         If (Group_Active = "EXE")
          {
 
       Same_Exe_Include_wid_temp = ; initialise/reset
@@ -565,6 +584,8 @@ Window__Store_attributes(Index, wid, ID_Parent) ; Index = Window_Found_Count, wi
       LV_ColorChange(Index, Listview_Colour_Dialog_Text, Listview_Colour_Dialog_Back)
     Else If OnTop%Index% =Top
       LV_ColorChange(Index, Listview_Colour_OnTop_Text, Listview_Colour_OnTop_Back)
+    Else If State%Index% =Max
+      LV_ColorChange(Index, Listview_Colour_Max_Text, Listview_Colour_Max_Back)
     Else If State%Index% =Min
       LV_ColorChange(Index, Listview_Colour_Min_Text, Listview_Colour_Min_Back)
 }
@@ -712,6 +733,7 @@ Get__Selected_Row_and_RowText()
 
 
 ListView_Event:
+Critical, 50
   If MButton_Clicked =1 ; closing a window so don't process events
     Return
   If A_GuiEvent =DoubleClick ; activate clicked window
@@ -1084,7 +1106,7 @@ Gui_Hotkeys:
     If (A_LoopField != "Settings")
   	   LV_Add("", A_LoopField, %A_LoopField%_Group_Hotkey)
   Gui, 2: Add, Button, x+10 yp+40 gGui_2_Group_Hotkey_Assign w170, Assign hotkey to selected group:
-  Gui, 2: Add, Hotkey, vGui_2_Group_Hotkey xp y+5, %Hotkey%
+  Gui, 2: Add, Edit, vGui_2_Group_Hotkey xp y+5, %Hotkey%
   Gui, 2: Add, Button, xp y+30 gGui_2_Group_Hotkey_Clear w170, Clear hotkey of selected group
   Gui, 2: Add, Text, xp y+30, ( Key: !=Alt, ^=Ctrl, +=Shift, #=Win )
   Gui, 2: Add, Text, xm+250, WARNING! No error checking for hotkeys - be careful what you choose! (Delete the .ini file to reset settings)
@@ -1561,20 +1583,18 @@ Group_Hotkey: ; from loading ini file - determine hotkey behaviour based on curr
         Group_Active=%A_LoopField% ; load custom group
         Gosub, Custom_Group__make_array_of_contents
         }
+
       ; check if currently active window is in the newly loaded group, else switch to 1st
       Gosub, Single_Key_Show_Alt_Tab ; show list to generate updated variables to check
       Viewed_Window_List .="|" Active_ID
-      ; Loop, %Window_Found_Count% ; abort switching and start to cycle through windows in list next
-        ; {
-        ; If (!InStr(Viewed_Window_List, Window%A_Index%) or Window_Found_Count <=1)
-          ; {
-          ; Gosub, ListView_Destroy
-          ; WinActivate, % "ahk_id" Window%A_Index%
-          ; If A_Index =%Window_Found_Count%
-          ;   Viewed_Window_List = ; viewed all windows so reset list
-          ; Break
-          ; }
-        ; }
+        If (!InStr(Viewed_Window_List, Window%A_Index%) or Window_Found_Count <=1)
+          {
+          Gosub, ListView_Destroy
+          WinActivate, % "ahk_id" Window%A_Index%
+          If A_Index =%Window_Found_Count%
+            Viewed_Window_List = ; viewed all windows so reset list
+          Break
+          }
       Break
       }
     }
@@ -1686,10 +1706,11 @@ Return
 
 
 Key_Pressed_1st_Letter:
+; Tooltip %A_EventInfo%
   Key_Pressed_ASCII =%A_EventInfo%
   Get__Selected_Row_and_RowText()
 
-  If Key_Pressed_ASCII =93 ; Alt+Apps key - context menu
+  If Key_Pressed_ASCII =13 ; Alt+Apps key - context menu
     {
     Gosub, GuiContextMenu
     Return
@@ -1885,7 +1906,6 @@ Return
   Gui, 1: Default
 Return
 
-
 IniFile_Data(Read_or_Write)
 {
   Global
@@ -1916,7 +1936,7 @@ IniFile_Data(Read_or_Write)
     If %A_LoopField%_Group_Hotkey
       {
       Hotkey_temp := A_LoopField . "_Group_Hotkey"
-      Hotkey, % %Hotkey_temp%, Group_Hotkey, On
+      Hotkey, % %Hotkey_temp%, Group_Hotkey, On, T5
       }
     }
 }
