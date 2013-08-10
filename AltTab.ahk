@@ -48,14 +48,27 @@ NOTE: Stroke-It (and maybe other mouse gesture programs) can cause the context m
 LATEST_VERSION_CHANGES = ; Gui, 98
 (LTrim0
 
+:taskpaper:
+
 TO DO (maybe):
-  settings window
-  save other settings between restarts
-  include a filter for docked windows to be displayed in alt-tab or not (ie a tab for docked windows) - perhaps alter title? e.g. DOCKED***
-  stick items to top or bottom of list
-    use listview insert command to place windows at specific locations in list?
+- settings window
+- save other settings between restarts
+- include a filter for docked windows to be displayed in alt-tab or not (ie a tab for docked windows) - perhaps alter title? e.g. DOCKED***
+- stick items to top or bottom of list
+- use listview insert command to place windows at specific locations in list?
+- get best rpactices with compiz and other compositing programs for other ways of dealing with alt tab
+- develop more keyboard shortcuts like those used with VistaSwitcher
+- get color schemes to work on startup 
+- sort the window list with shortcuts
+- stop ringing the bell when using keyboard to select the window
+- remove docking functionality
+- incorporate window images based on AeroThumbnails library
 
 LATEST VERSION CHANGES:
+since 08-08-13:
+- remove a magority of UI
+- add EXE only mode to cycle between current application windows
+-
 since 25-04-06:
   +: Groups of windows are shown in tabs - they can be re-arranged by drag-and-drop.
   +: Settings tab.
@@ -83,9 +96,9 @@ since 25-04-06:
     Use_Large_Icons =1 ; 0 = small icons, 1 = large icons in listview
 
   ; Fonts
-    Font_Size=10
-    Font_Color=d9cec3
-    Font_Style=
+    Font_Size=11
+    Font_Color=e9ded3
+    Font_Style=Bold
     Font_Size_Tab =9
     Font_Type_Tab =Consolas
     Font_Type =Segoe UI
@@ -98,7 +111,7 @@ since 25-04-06:
     Height_Max_Modifier =0.92 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
 
   ; Width
-    Listview_Width := A_ScreenWidth * 0.4
+    Listview_Width := A_ScreenWidth * 0.40
     SB_Width := Listview_Width / 4 ; StatusBar section sizes
     Exe_Width_Max := Listview_Width / 5 ; Exe column max width
 
@@ -124,7 +137,7 @@ since 25-04-06:
     Small_to_Large_Ratio =1.6 ; height of small rows compared to large rows
 
   ; Colours in RGB hex
-    Tab_Colour =d9cec3
+    Tab_Colour =1a1a1a
     Listview_Colour =1c1b1a ; does not need converting as only used for background
     StatusBar_Background_Colour =998899
     
@@ -390,18 +403,19 @@ Display_List:
     ; Create the ListView gui
     Gui, 1: +AlwaysOnTop +ToolWindow -Caption
     Gui, 1: Color, %Tab_Colour% ; i.e. border/background (default = 404040) ; barely visible - right and bottom sides only
-    Gui, 1: Margin, 0, 0
+    Gui, 1: Margin, 4, 4
     ; Tab stuff
-    Gui, 1: Font, s%Font_Size_Tab%, %Font_Type_Tab%
-    Gui, 1: Add, Tab2, vGui1_Tab HWNDhw_Gui1_Tab Background w%Gui1_Tab__width% -0x200, %Group_List% ; -0x200 = ! TCS_MULTILINE
-    Gui, 1: Tab, %Group_Active%,, Exact ; Future controls are owned by this tab
-    Gui, 1: Add, StatusBar, Background%StatusBar_Background_Colour% ; add before changing font
+    Gui, 1: Font, s%Font_Size_Tab% , %Font_Type_Tab%
+    ; Gui, 1: Add, Tab2, vGui1_Tab HWNDhw_Gui1_Tab Background w%Gui1_Tab__width% -0x200, %Group_List% ; -0x200 = ! TCS_MULTILINE
+    ; Gui, 1: Tab, %Group_Active%,, Exact ; Future controls are owned by this tab
+    ; Gui, 1: Add, StatusBar, Background%StatusBar_Background_Colour% ; add before changing font
     Gui, 1: Font, s%Font_Size% c%Font_Color% %Font_Style%, %Font_Type%
+    ; Gui, 1: Add, ListView, w%Listview_Width% AltSubmit -Hdr -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     Gui, 1: Add, ListView, x-1 y+-4 w%Listview_Width% AltSubmit -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     LV_ModifyCol(2, "Integer") ; sort hidden column 2 as numbers
     SB_SetParts(SB_Width, SB_Width, SB_Width)
-    Gosub, SB_Update__CPU
-    SetTimer, SB_Update__CPU, 1000
+    ; Gosub, SB_Update__CPU
+    ; SetTimer, SB_Update__CPU, 1000
     }
   GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
   GuiControl, ChooseString, Gui1_Tab, %Group_Active%
@@ -1530,8 +1544,8 @@ Gui_Window_Group_Delete:
   StringTrimLeft, Group_List, Group_List, 1 ; remove leading |
 
   Hotkey, % %A_ThisMenuItem%_Group_Hotkey, Off, UseErrorLevel
-  IniDelete, Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%
-  IniDelete, Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%_Group_Hotkey
+  IniDelete, %A_ScriptDir%\Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%
+  IniDelete, %A_ScriptDir%\Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%_Group_Hotkey
   Gosub, Alt_Esc_Check_Alt_State ; hides alt-tab gui - shows again if alt still pressed
 Return
 
@@ -1704,7 +1718,7 @@ Key_Pressed_1st_Letter:
     }
 
   ; / key - close all instances of exe
-  If (Key_Pressed_ASCII =47 or Key_Pressed_ASCII =191) ; / or Alt+/
+  If (Key_Pressed_ASCII =47 or Key_Pressed_ASCII =191 ) ; / or Alt+/
     {
     If ( A_TickCount - Time_Since_Last_Alt_Close < 200 ) ; prevention of accidentally closing too many windows
       Return
@@ -1913,12 +1927,12 @@ IniFile(Var, Section, Default="")
   Global
   If IniFile_Read_or_Write =Read
     {
-    IniRead, %Var%, Alt_Tab_Settings.ini, %Section%, %Var%, %Default%
+    IniRead, %Var%, %A_ScriptDir%\Alt_Tab_Settings.ini, %Section%, %Var%, %Default%
     If %Var% =ERROR
       %Var% = ; set to blank value instead of "error"
     }
   Else If IniFile_Read_or_Write =Write
-    IniWrite, % %Var%, Alt_Tab_Settings.ini, %Section%, %Var%
+    IniWrite, % %Var%, %A_ScriptDir%\Alt_Tab_Settings.ini, %Section%, %Var%
 }
 
 
@@ -2164,7 +2178,7 @@ Delete_Ini_File_Settings:
   MsgBox, 1, ALT-TAB REPLACEMENT, Delete Settings (.ini) and load defaults?
   IfMsgbox, Cancel
     Return
-  FileDelete, Alt_Tab_Settings.ini
+  FileDelete, %A_ScriptDir%\Alt_Tab_Settings.ini
   IniFile_Data("Read") ; load defaults
 Return
 
