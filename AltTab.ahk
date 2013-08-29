@@ -66,6 +66,9 @@ TO DO (maybe):
 - sometimes windows don't come to the front (outlook)
 
 LATEST VERSION CHANGES:
+since 08-29-13:
+- return passing window to previous zorder
+
 since 08-08-13:
 - remove a majority of UI
 - add EXE only mode to cycle between current application windows
@@ -218,6 +221,9 @@ Return
 
 ~WheelDown::
   MouseGetPos, JUNK, JUNK, Scroll_Over_wID
+    GetMouseTaskButton(win_id)
+  ; CoordMode, tooltip, screen
+  ;   tooltip % win_id, 0, 0
     If ! (Scroll_Over_wID = TaskBar_ID)
       Return
     Gosub, Single_Key_Show_Alt_Tab
@@ -271,6 +277,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     Gosub, Display_List
     Gosub, Alt_Tab_Common__Check_auto_switch_icon_sizes ; limit gui height / auto-switch icon sizes
     Gosub, Alt_Tab_Common__Highlight_Active_Window
+    PrevRowText:=
     If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
       {
       Gui_vx := Gui_CenterX()
@@ -297,11 +304,34 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     ; Bring the focused lines window to the front
     Get__Selected_Row_and_RowText()
     Gui_wid := Window%RowText%
+
+    WinGet, OldExStyle, ExStyle, ahk_id %Gui_wid%
+
+    PPrevRowText:=(PrevRowText>RowText)?PrevRowText+1:RowText+1
+    ; Pur previous window back in window stack
+    DllCall("SetWindowPos", "uint", Window%PrevRowText%, "uint", Window%PPrevRowText%
+        , "int", 0, "int", 0, "int", 0, "int", 0
+        , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
+    
+    ; DllCall("SetForegroundWindow", "uint", Gui_wid)
     WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
     WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
 
+    ; CoordMode, Tooltip, Screen
+
+
+    ; Tooltip, % RowText . ":" . Title%RowText% . "|" . PrevRowText . ":" . Title%PrevRowText%, 0, 0
+    
+    ; PPrevRowText:=RowText
+    PrevRowText:=RowText
+
     ; Sometimes you lose the window
     WinSet, AlwaysOnTop, On, Alt-Tab Replacement
+
+    ; Check if AlwaysOnTop status changed.   
+    WinGet, ExStyle, ExStyle, ahk_id %Gui_wid%
+    if (OldExStyle ^ ExStyle) & 0x8
+        WinSet, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
 
 
   SetTimer, Check_Alt_Hotkey2_Up, 30
@@ -431,7 +461,7 @@ Display_List:
     ; Gui, 1: Add, ListView, w%Listview_Width% AltSubmit -Hdr -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     Gui, 1: Add, ListView, x-1 y+-4 w%Listview_Width% AltSubmit -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     LV_ModifyCol(2, "Integer") ; sort hidden column 2 as numbers
-    SB_SetParts(SB_Width, SB_Width, SB_Width)
+    ; SB_SetParts(SB_Width, SB_Width, SB_Width)
     ; Gosub, SB_Update__CPU
     ; SetTimer, SB_Update__CPU, 1000
     }
@@ -2238,4 +2268,112 @@ Gui_CenterX()
           return (0.5*(MonRight-MonLeft)+MonLeft-Listview_Width/2)
         }
     }
+}
+
+; Like GetWindow(hwnd, GW_HWNDPREV), but ignores invisible windows.
+GetPrevWindow(hwnd)
+{
+    global GetPrevWindow_RetVal
+
+    static cb_EnumChildProc
+    if (!cb_EnumChildProc)
+        cb_EnumChildProc := RegisterCallback("GetPrevWindow_EnumChildProc","F")
+
+    ; Set default in case enumeration fails.
+    GetPrevWindow_RetVal := DllCall("GetWindow", "uint", hwnd, "uint", 3)
+   
+    ; Enumerate all siblings of hwnd.
+    hwnd_parent := DllCall("GetParent", "uint", hwnd)
+    DllCall("EnumChildWindows", "uint", hwnd_parent, "uint", cb_EnumChildProc, "uint", hwnd)
+   
+    ; Return the last visible window before hwnd.
+    return GetPrevWindow_RetVal
+}
+GetPrevWindow_EnumChildProc(test_hwnd, hwnd)
+{
+    global GetPrevWindow_RetVal
+    ; Continue until hwnd is enumerated.
+    if (test_hwnd = hwnd)
+        return false
+    ; Remember the last visible window before hwnd.
+    if (DllCall("IsWindowVisible", "uint", test_hwnd))
+    {
+      ; Tooltip % A_Gui . " " . test_hwnd, 0, 0
+      GetPrevWindow_RetVal := test_hwnd
+    }
+    return true
+}
+
+; Gets the index+1 of the taskbar button which the mouse is hovering over.
+; Returns an empty string if the mouse is not over the taskbar's task toolbar.
+; Does not work for Windows 7 / 64-bit
+;
+; Some code and inspiration from Sean's TaskButton.ahk
+
+GetMouseTaskButton(ByRef hwnd)
+{
+    MouseGetPos, x, y, win, ctl, 2
+    ; Check if hovering over taskbar.
+    WinGetClass, cl, ahk_id %win%
+    if (cl != "Shell_TrayWnd")
+        return
+    ; Check if hovering over a Toolbar.
+    WinGetClass, cl, ahk_id %ctl%
+    if (cl != "ToolbarWindow32")
+        return
+    ; Check if hovering over task-switching buttons (specific toolbar).
+    hParent := DllCall("GetParent", "Uint", ctl)
+    WinGetClass, cl, ahk_id %hParent%
+    if (cl != "MSTaskSwWClass")
+        return
+
+   
+    WinGet, pidTaskbar, PID, ahk_class Shell_TrayWnd
+
+    hProc := DllCall("OpenProcess", "Uint", 0x38, "int", 0, "Uint", pidTaskbar)
+    pRB := DllCall("VirtualAllocEx", "Uint", hProc
+        , "Uint", 0, "Uint", 20, "Uint", 0x1000, "Uint", 0x4)
+
+    VarSetCapacity(pt, 8, 0)
+    NumPut(x, pt, 0, "int")
+    NumPut(y, pt, 4, "int")
+   
+    ; Convert screen coords to toolbar-client-area coords.
+    DllCall("ScreenToClient", "uint", ctl, "uint", &pt)
+   
+    ; Write POINT into explorer.exe.
+    DllCall("WriteProcessMemory", "uint", hProc, "uint", pRB+0, "uint", &pt, "uint", 8, "uint", 0)
+
+;     SendMessage, 0x447,,,, ahk_id %ctl%  ; TB_GETHOTITEM
+    SendMessage, 0x445, 0, pRB,, ahk_id %ctl%  ; TB_HITTEST
+    btn_index := ErrorLevel
+    ; Convert btn_index to a signed int, since result may be -1 if no 'hot' item.
+    if btn_index > 0x7FFFFFFF
+        btn_index := -(~btn_index) - 1
+   
+   
+    if (btn_index > -1)
+    {
+        ; Get button info.
+        SendMessage, 0x417, btn_index, pRB,, ahk_id %ctl%   ; TB_GETBUTTON
+   
+        VarSetCapacity(btn, 20)
+        DllCall("ReadProcessMemory", "Uint", hProc
+            , "Uint", pRB, "Uint", &btn, "Uint", 20, "Uint", 0)
+   
+        state := NumGet(btn, 8, "UChar")  ; fsState
+        pdata := NumGet(btn, 12, "UInt")  ; dwData
+       
+        ret := DllCall("ReadProcessMemory", "Uint", hProc
+            , "Uint", pdata, "UintP", hwnd, "Uint", 4, "Uint", 0)
+    } else
+        hwnd = 0
+
+       
+    DllCall("VirtualFreeEx", "Uint", hProc, "Uint", pRB, "Uint", 0, "Uint", 0x8000)
+    DllCall("CloseHandle", "Uint", hProc)
+
+
+    ; Negative values indicate seperator items. (abs(btn_index) is the index)
+    return btn_index > -1 ? btn_index+1 : 0
 }
