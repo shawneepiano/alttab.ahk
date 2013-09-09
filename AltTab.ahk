@@ -278,6 +278,20 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     Gosub, Alt_Tab_Common__Check_auto_switch_icon_sizes ; limit gui height / auto-switch icon sizes
     Gosub, Alt_Tab_Common__Highlight_Active_Window
     PrevRowText:=
+
+    ; define background GUI to dim all active applications
+    SysGet, Width, 78
+    SysGet, Height, 79
+
+    SysGet, X0, 76
+    SysGet, Y0, 77
+
+    Gui, 4: +LastFound -Caption +ToolWindow
+    Gui, 4: Color, Black
+    Gui, 4: Show, Hide
+    WinSet, Transparent, 80
+    Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
+
     If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
       {
       Gui_vx := Gui_CenterX()
@@ -317,6 +331,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
     WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
 
+    ; WinSet, Top,, ahk_id %Gui_wid%
     ; CoordMode, Tooltip, Screen
 
 
@@ -1617,14 +1632,8 @@ Group_Hotkey: ; from loading ini file - determine hotkey behaviour based on curr
       ; check if currently active window is in the newly loaded group, else switch to 1st
       Gosub, Single_Key_Show_Alt_Tab ; show list to generate updated variables to check
       Viewed_Window_List .="|" Active_ID
-        If (!InStr(Viewed_Window_List, Window%A_Index%) or Window_Found_Count <=1)
-          {
+        If (Window_Found_Count <=1)
           Gosub, ListView_Destroy
-          WinActivate, % "ahk_id" Window%A_Index%
-          If A_Index =%Window_Found_Count%
-            Viewed_Window_List = ; viewed all windows so reset list
-          Break
-          }
       Break
       }
     }
@@ -1872,6 +1881,7 @@ ListView_Destroy:
   Else If Alt_Esc =1 ; WM_ACTIVATE - clicked outside alt-tab gui 1
     WinActivate, ahk_id %Active_ID%
   Gui, 1: Destroy ; destroy after switching to avoid re-activation of some windows
+  Gui, 4: Destroy ; destroy after switching to avoid re-activation of some windows
   LV_ColorChange() ; clear all highlighting
   OnTop_Found = ; reset
   Status_Found = ; reset
