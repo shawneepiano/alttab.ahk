@@ -1,0 +1,47 @@
+Keyboard Shortcuts
+
+Below is the full list of keyboard shortcuts that you can use with VistaSwitcher.
+
+System-Wide Key Combinations
+
+Hot Keys	Description
+Alt + Tab	Switch between open windows
+Alt + ` (Backtick)	Switch between open windows of a single application (for example, MS Word documents or Explorer folders)
+Ctrl + Alt + Tab	Switch between open windows on the current monitor (monitor with the mouse pointer or active window)
+Win + F12 *	Show the list of all open windows ("Sticky" mode)
+Win + F11 *	Show the list of open windows of the active application ("Sticky" mode)
+* You can reassign these hotkeys in the VistaSwitcher Preferences, General tab.
+
+Task List Navigation
+
+Shortcut Keys	Description
+Arrow Keys,
+Page Up, Page Down,
+Home, End	Navigate the task list
+` (Backtick)	Navigate to the next window of the selected application
+1, 2, ..., 9, 0	Select the task number 1, 2, ..., 9, 10 (hold down the number key for a while to switch to the selected task)
+Shift + Arrow Keys	Select the current task and navigate the list
+Insert, S	Select the current task and go to the next
+Backspace, D	Deselect the current task and go to the next
+A	Select all / Deselect all
+Delete	Remove selected task(s) from the list
+Window Management
+
+Shortcut Keys	Description
+Space, Enter	Switch to the selected task
+F2, M	Minimize selected task(s)
+C	Cascade selected tasks on the desktop.
+V	Tile vertically selected tasks on the desktop
+H	Tile horizontally selected tasks on the desktop
+F6, <	Restore selected task(s)
+F7, >	Maximize selected task(s)
+F4, X	Close selected task(s)
+F8, T	Terminate selected task(s)
+Other
+
+Shortcut Keys	Description
+F9, -	Sort the task list by title
+F10, +	Sort the task list by application (groups on the taskbar)
+E	Explore the EXE path of the selected task
+P	Open the Preferences dialog
+App (or Menu)	Show the context menu

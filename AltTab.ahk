@@ -64,6 +64,11 @@ TO DO (maybe):
 - make it work with Win8 apps
 
 LATEST VERSION CHANGES:
+
+since 09-10-13:
+- fix close app from reopening the all window list if closing app from Group
+- sometimes windows don't come to the front (outlook)
+
 since 08-29-13:
 - return passing window to previous zorder
 
