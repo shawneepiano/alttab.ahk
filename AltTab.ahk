@@ -286,6 +286,8 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     SysGet, X0, 76
     SysGet, Y0, 77
 
+
+
     Gui, 4: +LastFound -Caption +ToolWindow
     Gui, 4: Color, Black
     Gui, 4: Show, Hide
@@ -322,7 +324,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     WinGet, OldExStyle, ExStyle, ahk_id %Gui_wid%
 
     PPrevRowText:=(PrevRowText>RowText)?PrevRowText+1:RowText+1
-    ; Pur previous window back in window stack
+    ; Put previous window back in window stack
     DllCall("SetWindowPos", "uint", Window%PrevRowText%, "uint", Window%PPrevRowText%
         , "int", 0, "int", 0, "int", 0, "int", 0
         , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
@@ -330,6 +332,20 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     ; DllCall("SetForegroundWindow", "uint", Gui_wid)
     WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
     WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
+
+    WinGet, MinMax, MinMax, ahk_id %Gui_wid%
+
+    Tooltip, %MinMax%
+    If MinMax = -1
+    {
+    WinGetPos, minX, minY, minW, minH, ahk_id %Gui_wid%
+    Coordmode, Tooltip, Screen
+; 28, 29	SM_CXMIN, SM_CYMIN: Minimum width and height of a window, in pixels.
+; 57, 58	SM_CXMINIMIZED, SM_CYMINIMIZED: Dimensions of a minimized window, in pixels.
+    Sysget, MINX, 57, ahk_id %Gui_wid%
+    ; Tooltip minX %minX% minY %minY% minW %minW% minH %minH% ahk_id %Gui_wid%, 0, 0
+    }
+
 
     ; WinSet, Top,, ahk_id %Gui_wid%
     ; CoordMode, Tooltip, Screen
@@ -1874,9 +1890,15 @@ ListView_Destroy:
     If wid_MinMax =-1 ;minimised
       WinRestore, ahk_id %wid%
     If hw_popup
-      WinActivate, ahk_id %hw_popup%
+    { 
+        DllCall("SetForegroundWindow", UInt, hw_popup) 
+        WinActivate, ahk_id %hw_popup%
+    }
     Else
-      WinActivate, ahk_id %wid%
+    {
+        DllCall("SetForegroundWindow", UInt, wid) 
+        WinActivate, ahk_id %wid%
+    }
     }
   Else If Alt_Esc =1 ; WM_ACTIVATE - clicked outside alt-tab gui 1
     WinActivate, ahk_id %Active_ID%
