@@ -62,8 +62,6 @@ TO DO (maybe):
 - get rid of a lot of the fluff and unused code
 - get on forums and post to people to try to get more cooperation
 - make it work with Win8 apps
-- fix close app from reopening the all window list if closing app from Group
-- sometimes windows don't come to the front (outlook)
 
 LATEST VERSION CHANGES:
 since 08-29-13:
@@ -286,12 +284,10 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     SysGet, X0, 76
     SysGet, Y0, 77
 
-
-
     Gui, 4: +LastFound -Caption +ToolWindow
     Gui, 4: Color, Black
     Gui, 4: Show, Hide
-    WinSet, Transparent, 80
+    WinSet, Transparent, 50
     Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
 
     If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
@@ -331,11 +327,12 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     
     ; DllCall("SetForegroundWindow", "uint", Gui_wid)
     WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
+    WinSet, Top, , ahk_id %Gui_wid%
     WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
 
     WinGet, MinMax, MinMax, ahk_id %Gui_wid%
 
-    Tooltip, %MinMax%
+    ; Tooltip, %MinMax%
     If MinMax = -1
     {
     WinGetPos, minX, minY, minW, minH, ahk_id %Gui_wid%
@@ -1890,15 +1887,10 @@ ListView_Destroy:
     If wid_MinMax =-1 ;minimised
       WinRestore, ahk_id %wid%
     If hw_popup
-    { 
-        DllCall("SetForegroundWindow", UInt, hw_popup) 
-        WinActivate, ahk_id %hw_popup%
-    }
-    Else
-    {
-        DllCall("SetForegroundWindow", UInt, wid) 
-        WinActivate, ahk_id %wid%
-    }
+      wid:=hw_popup
+    ; DllCall("SetForegroundWindow", UInt, hw_popup) 
+    WinSet, Top, , ahk_id %Gui_wid%
+    WinActivate, ahk_id %wid%
     }
   Else If Alt_Esc =1 ; WM_ACTIVATE - clicked outside alt-tab gui 1
     WinActivate, ahk_id %Active_ID%
