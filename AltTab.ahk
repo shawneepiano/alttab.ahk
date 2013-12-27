@@ -197,6 +197,10 @@ If A_OSVersion =WIN_2000
   lv_h_win_2000_adj =2 ; adjust height of main listview by +2 pixels to avoid scrollbar in windows 2000
 Else
   lv_h_win_2000_adj =0
+If A_PtrSize = 8  ; Should not use A_Is64bitOS
+  GetClass_API = GetClassLongPtr
+else
+  GetClass_API = GetClassLong
 
 WinGet, TaskBar_ID, ID, ahk_class Shell_TrayWnd ; for docked windows check
 
@@ -1725,10 +1729,10 @@ Get_Window_Icon(wid, Use_Large_Icons_Current) ; (window id, whether to get large
         If ( ! h_icon )
         {
           If Use_Large_Icons_Current =1
-            h_icon := DllCall( "GetClassLong", "uint", wid, "int", -14 ) ; GCL_HICON is -14
+              h_icon := DllCall( GetClass_API, "uint", wid, "int", -14 ) ; GCL_HICON is -14
           If ( ! h_icon )
           {
-            h_icon := DllCall( "GetClassLong", "uint", wid, "int", -34 ) ; GCL_HICONSM is -34
+              h_icon := DllCall( GetClass_API, "uint", wid, "int", -34 ) ; GCL_HICONSM is -34
             If ( ! h_icon )
               h_icon := DllCall( "LoadIcon", "uint", 0, "uint", 32512 ) ; IDI_APPLICATION is 32512
           }
