@@ -168,6 +168,7 @@ Listview_Colour_Not_Responding_Back := RGBtoBGR("0xFF0000")
 #InstallKeybdHook
 #InstallMouseHook
 #NoTrayIcon
+#MaxHotkeysPerInterval 1000
 Process Priority,,High
 SetWinDelay, -1
 SetBatchLines, -1
