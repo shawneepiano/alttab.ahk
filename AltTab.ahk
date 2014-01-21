@@ -215,24 +215,25 @@ Viewed_Window_List =
 Col_Title_List =#| |Window|Exe|View|Top|Status
 StringSplit, Col_Title, Col_Title_List,| ; create list of listview header titles
 
-~WheelUp::
-  Gosub, ~WheelDown
-  If (Scroll_Over_wID = TaskBar_ID)
-    Loop, 2
-      Gosub, Alt_Shift_Tab
+#If (MouseWID() == TaskBar_ID)
+WheelUp::
+  Gosub, Single_Key_Show_Alt_Tab
+  Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
+  Loop, 2
+  {
+    Gosub, Alt_Shift_Tab
+  }
 Return
 
-~WheelDown::
-  MouseGetPos, JUNK, JUNK, Scroll_Over_wID
-    GetMouseTaskButton(win_id)
+WheelDown::
+  ; GetMouseTaskButton(win_id)
   ; CoordMode, tooltip, screen
   ;   tooltip % win_id, 0, 0
-    If ! (Scroll_Over_wID = TaskBar_ID)
-      Return
     Gosub, Single_Key_Show_Alt_Tab
     Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
 Return
 
+#If
 
 ;========================================================================================================
 
@@ -2405,4 +2406,10 @@ GetMouseTaskButton(ByRef hwnd)
 
     ; Negative values indicate seperator items. (abs(btn_index) is the index)
     return btn_index > -1 ? btn_index+1 : 0
+}
+
+MouseWID()
+{
+  MouseGetPos, JUNK, JUNK, mouse_wid
+  return mouse_wid
 }
