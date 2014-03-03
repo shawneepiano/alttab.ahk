@@ -215,23 +215,23 @@ Viewed_Window_List =
 Col_Title_List =#| |Window|Exe|View|Top|Status
 StringSplit, Col_Title, Col_Title_List,| ; create list of listview header titles
 
-~WheelUp::
-  Gosub, ~WheelDown
-  If (Scroll_Over_wID = TaskBar_ID)
-    Loop, 2
-      Gosub, Alt_Shift_Tab
-Return
+; ~WheelUp::
+;   Gosub, ~WheelDown
+;   If (Scroll_Over_wID = TaskBar_ID)
+;     Loop, 2
+;       Gosub, Alt_Shift_Tab
+; Return
 
-~WheelDown::
-  MouseGetPos, JUNK, JUNK, Scroll_Over_wID
-    GetMouseTaskButton(win_id)
-  ; CoordMode, tooltip, screen
-  ;   tooltip % win_id, 0, 0
-    If ! (Scroll_Over_wID = TaskBar_ID)
-      Return
-    Gosub, Single_Key_Show_Alt_Tab
-    Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
-Return
+; ~WheelDown::
+;   MouseGetPos, JUNK, JUNK, Scroll_Over_wID
+;     GetMouseTaskButton(win_id)
+;   ; CoordMode, tooltip, screen
+;   ;   tooltip % win_id, 0, 0
+;     If ! (Scroll_Over_wID = TaskBar_ID)
+;       Return
+;     Gosub, Single_Key_Show_Alt_Tab
+;     Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
+; Return
 
 
 ;========================================================================================================
@@ -470,7 +470,7 @@ Check_Alt_Hotkey2_Up:
     Gosub, ListView_Destroy
 Return
 
-LAlt & RAlt::Reload
+; LAlt & RAlt::Reload
 
 ;========================================================================================================
 
