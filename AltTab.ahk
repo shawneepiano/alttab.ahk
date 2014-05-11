@@ -215,23 +215,23 @@ Viewed_Window_List =
 Col_Title_List =#| |Window|Exe|View|Top|Status
 StringSplit, Col_Title, Col_Title_List,| ; create list of listview header titles
 
-; ~WheelUp::
-;   Gosub, ~WheelDown
-;   If (Scroll_Over_wID = TaskBar_ID)
-;     Loop, 2
-;       Gosub, Alt_Shift_Tab
-; Return
+~WheelUp::
+  Gosub, ~WheelDown
+  If (Scroll_Over_wID = TaskBar_ID)
+    Loop, 2
+      Gosub, Alt_Shift_Tab
+Return
 
-; ~WheelDown::
-;   MouseGetPos, JUNK, JUNK, Scroll_Over_wID
-;     GetMouseTaskButton(win_id)
-;   ; CoordMode, tooltip, screen
-;   ;   tooltip % win_id, 0, 0
-;     If ! (Scroll_Over_wID = TaskBar_ID)
-;       Return
-;     Gosub, Single_Key_Show_Alt_Tab
-;     Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
-; Return
+~WheelDown::
+  MouseGetPos, JUNK, JUNK, Scroll_Over_wID
+    GetMouseTaskButton(win_id)
+  ; CoordMode, tooltip, screen
+  ;   tooltip % win_id, 0, 0
+    If ! (Scroll_Over_wID = TaskBar_ID)
+      Return
+    Gosub, Single_Key_Show_Alt_Tab
+    Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
+Return
 
 
 ;========================================================================================================
@@ -470,7 +470,7 @@ Check_Alt_Hotkey2_Up:
     Gosub, ListView_Destroy
 Return
 
-; LAlt & RAlt::Reload
+LAlt & RAlt::Reload
 
 ;========================================================================================================
 
@@ -541,19 +541,23 @@ Display_List__Find_windows_and_icons:
         Continue
 
     WinGet, es, ExStyle, ahk_id %wid%
+    WinGetClass, cla, ahk_id %wid%
     Parent := Decimal_to_Hex( DllCall( "GetParent", "uint", wid ) )
     WinGet, Style_parent, Style, ahk_id %Parent%
     Owner := Decimal_to_Hex( DllCall( "GetWindow", "uint", wid , "uint", "4" ) ) ; GW_OWNER = 4
     WinGet, Style_Owner, Style, ahk_id %Owner%
 
-    If (((es & WS_EX_TOOLWINDOW)  and !(Parent)) ; filters out program manager, etc
-        or ( !(es & WS_EX_APPWINDOW)
-          and (((Parent) and ((Style_parent & WS_DISABLED) =0)) ; These 2 lines filter out windows that have a parent or owner window that is NOT disabled -
-            or ((Owner) and ((Style_Owner & WS_DISABLED) =0))))) ; NOTE - some windows result in blank value so must test for zero instead of using NOT operator!
-      continue
-
     WinGet, Exe_Name, ProcessName, ahk_id %wid%
     WinGetClass, Win_Class, ahk_id %wid%
+
+    If (((es & WS_EX_TOOLWINDOW)  and !(Parent)) ; filters out program manager, etc
+	or (es =0x00200008)
+	; or (Win_Class ="Windows.U.Core.CoreWindow")
+	or ( !(es & WS_EX_APPWINDOW)
+	     and (((Parent) and ((Style_parent & WS_DISABLED) =0)) ; These 2 lines filter out windows that have a parent or owner window that is NOT disabled -
+		  or ((Owner) and ((Style_Owner & WS_DISABLED) =0))))) ; NOTE - some windows result in blank value so must test for zero instead of using NOT operator!
+	continue
+
     hw_popup := Decimal_to_Hex(DllCall("GetLastActivePopup", "uint", wid))
 
     ; CUSTOM GROUP FILTERING
