@@ -215,24 +215,25 @@ Viewed_Window_List =
 Col_Title_List =#| |Window|Exe|View|Top|Status
 StringSplit, Col_Title, Col_Title_List,| ; create list of listview header titles
 
-~WheelUp::
-  Gosub, ~WheelDown
-  If (Scroll_Over_wID = TaskBar_ID)
-    Loop, 2
-      Gosub, Alt_Shift_Tab
+#If (MouseWID() == TaskBar_ID)
+WheelUp::
+  Gosub, Single_Key_Show_Alt_Tab
+  Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
+  Loop, 2
+  {
+    Gosub, Alt_Shift_Tab
+  }
 Return
 
-~WheelDown::
-  MouseGetPos, JUNK, JUNK, Scroll_Over_wID
-    GetMouseTaskButton(win_id)
+WheelDown::
+  ; GetMouseTaskButton(win_id)
   ; CoordMode, tooltip, screen
   ;   tooltip % win_id, 0, 0
-    If ! (Scroll_Over_wID = TaskBar_ID)
-      Return
     Gosub, Single_Key_Show_Alt_Tab
     Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
 Return
 
+#If
 
 ;========================================================================================================
 
@@ -331,9 +332,9 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
         , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
     
     ; DllCall("SetForegroundWindow", "uint", Gui_wid)
-    WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
+    ;; WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
     WinSet, Top, , ahk_id %Gui_wid%
-    WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
+    ;; WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
 
     WinGet, MinMax, MinMax, ahk_id %Gui_wid%
 
@@ -470,7 +471,7 @@ Check_Alt_Hotkey2_Up:
     Gosub, ListView_Destroy
 Return
 
-LAlt & RAlt::Reload
+; LAlt & RAlt::Reload
 
 ;========================================================================================================
 
@@ -491,7 +492,7 @@ Display_List:
     ; Gui, 1: Tab, %Group_Active%,, Exact ; Future controls are owned by this tab
     ; Gui, 1: Add, StatusBar, Background%StatusBar_Background_Colour% ; add before changing font
     Gui, 1: Font, s%Font_Size% c%Font_Color% %Font_Style%, %Font_Type%
-    ; Gui, 1: Add, ListView, w%Listview_Width% AltSubmit -Hdr -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
+    ;; Gui, 1: Add, ListView, w%Listview_Width% AltSubmit -Hdr -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     Gui, 1: Add, ListView, x-1 y+-4 w%Listview_Width% AltSubmit -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     LV_ModifyCol(2, "Integer") ; sort hidden column 2 as numbers
     ; SB_SetParts(SB_Width, SB_Width, SB_Width)
@@ -2409,4 +2410,10 @@ GetMouseTaskButton(ByRef hwnd)
 
     ; Negative values indicate seperator items. (abs(btn_index) is the index)
     return btn_index > -1 ? btn_index+1 : 0
+}
+
+MouseWID()
+{
+  MouseGetPos, JUNK, JUNK, mouse_wid
+  return mouse_wid
 }
