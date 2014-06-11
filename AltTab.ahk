@@ -326,17 +326,20 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     WinGet, OldExStyle, ExStyle, ahk_id %Gui_wid%
 
     PPrevRowText:=(PrevRowText>RowText)?PrevRowText+1:RowText+1
+
     ; Put previous window back in window stack
     DllCall("SetWindowPos", "uint", Window%PrevRowText%, "uint", Window%PPrevRowText%
         , "int", 0, "int", 0, "int", 0, "int", 0
         , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
     
     ; DllCall("SetForegroundWindow", "uint", Gui_wid)
-    ;; WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
+    WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
+    
     WinSet, Top, , ahk_id %Gui_wid%
-    ;; WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
-
+    WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
+    
     WinGet, MinMax, MinMax, ahk_id %Gui_wid%
+
 
     ; Tooltip, %MinMax%
     If MinMax = -1
@@ -350,7 +353,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     }
 
 
-    ; WinSet, Top,, ahk_id %Gui_wid%
+    WinSet, Top,, ahk_id %Gui_wid%
     ; CoordMode, Tooltip, Screen
 
 
