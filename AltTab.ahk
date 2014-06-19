@@ -399,36 +399,36 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
   Return
 
   Alt_Tab_Common__Highlight_Active_Window:
-    Active_ID_Found =0 ; init
-    Loop, %Window_Found_Count% ; select active program in list (not always the top item)
-      {
-      LV_GetText(RowText, A_Index, 2)  ; Get hidden column numbers
-      If (Window%RowText% = Active_ID)
-        {
-        Active_ID_Found :=A_Index
-        Break
-        }
-      }
-    If Active_ID_Found =0 ; active window has an icon in another main window & was excluded from Alt-Tab list
-      {
-      WinGet, Active_Process, ProcessName, ahk_id %Active_ID%
-      WinGetClass, Active_Class, ahk_id %Active_ID%
-      ; If desktop/taskbar selected or nothing at all, don't select item in alt-tab list
-      If ( !(Active_Class ="Progman" OR Active_Class ="WorkerW" OR Active_Class ="Shell_TrayWnd" OR Active_Class =""))
-        Loop, %Window_Found_Count% ; find top item in window list with same exe name as active window
-          If (Exe_Name%A_Index% = Active_Process)
-            {
-            Active_ID := Window%A_Index% ; find this new ID in the listview
-            LV_GetText(RowText, A_Index, 2)  ; Get hidden column numbers
-            If (Window%RowText% = Active_ID)
-              {
-              Active_ID_Found :=A_Index
-              Break
-              }
-            }
-      }
-    If Active_ID_Found !=0
-      LV_Modify(Active_ID_Found, "Focus Select Vis")
+  Active_ID_Found =0 ; init
+  Loop, %Window_Found_Count% ; select active program in list (not always the top item)
+  {
+    LV_GetText(RowText, A_Index, 2)  ; Get hidden column numbers
+    If (Window%RowText% = Active_ID)
+    {
+    Active_ID_Found :=A_Index
+    Break
+    }
+  }
+  If Active_ID_Found =0 ; active window has an icon in another main window & was excluded from Alt-Tab list
+  {
+    WinGet, Active_Process, ProcessName, ahk_id %Active_ID%
+    WinGetClass, Active_Class, ahk_id %Active_ID%
+    ; If desktop/taskbar selected or nothing at all, don't select item in alt-tab list
+    If ( !(Active_Class=="Progman" OR Active_Class=="WorkerW" OR Active_Class=="Shell_TrayWnd" OR Active_Class=="Shell_CharmWindow" OR Active_Class==""))
+    Loop, %Window_Found_Count% ; find top item in window list with same exe name as active window
+    If (Exe_Name%A_Index% = Active_Process)
+    {
+    Active_ID := Window%A_Index% ; find this new ID in the listview
+    LV_GetText(RowText, A_Index, 2)  ; Get hidden column numbers
+    If (Window%RowText% = Active_ID)
+    {
+    Active_ID_Found :=A_Index
+    Break
+    }
+    }
+  }
+  If Active_ID_Found !=0
+  LV_Modify(Active_ID_Found, "Focus Select Vis")
   Return
 }
 
@@ -503,7 +503,7 @@ Display_List:
     ; SetTimer, SB_Update__CPU, 1000
     }
   ; GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
-  ; GuiControl, ChooseString, Gui1_Tab, %Group_Active%
+ ; GuiControl, ChooseString, Gui1_Tab, %Group_Active%
 
   ImageListID1 := IL_Create(10,5,Use_Large_Icons_Current) ; Create an ImageList so that the ListView can display some icons
   LV_SetImageList(ImageListID1, 1) ; Attach the ImageLists to the ListView so that it can later display the icons
@@ -556,7 +556,7 @@ Display_List__Find_windows_and_icons:
 
     If (((es & WS_EX_TOOLWINDOW)  and !(Parent)) ; filters out program manager, etc
 	or (es =0x00200008)
-	; or (Win_Class ="Windows.U.Core.CoreWindow")
+	or (Win_Class ="Shell_CharmWindow")
 	or ( !(es & WS_EX_APPWINDOW)
 	     and (((Parent) and ((Style_parent & WS_DISABLED) =0)) ; These 2 lines filter out windows that have a parent or owner window that is NOT disabled -
 		  or ((Owner) and ((Style_Owner & WS_DISABLED) =0))))) ; NOTE - some windows result in blank value so must test for zero instead of using NOT operator!
