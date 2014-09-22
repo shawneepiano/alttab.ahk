@@ -24,7 +24,6 @@ EVENTS:
   Right-Click (context menu):
     Basic hotkey support for switching to specific windows (using window groups and adding window classes)
     Exclude (and un-exclude) specific windows and specific .EXEs - see "Window Groups" below.
-    Edge-docking - dock windows to the edges of the screen and have them auto-hide (like the taskbar can).
     Window Groups - define lists of windows to easily switch between only showing certain apps.
     Manage groups of windows and processes (min/max all, close all, etc).
 
@@ -51,13 +50,12 @@ LATEST_VERSION_CHANGES = ; Gui, 98
 :taskpaper:
 
 TO DO (maybe):
-- include a filter for docked windows to be displayed in alt-tab or not (ie a tab for docked windows) - perhaps alter title? e.g. DOCKED***
+- reduce UI to allow faster switches
 - stick items to top or bottom of list
 - use listview insert command to place windows at specific locations in list?
 - get best practices with compiz and other compositing programs for other ways of dealing with alt tab
 - develop more keyboard shortcuts like those used with VistaSwitcher
 - sort the window list with shortcuts
-- remove docking functionality
 - incorporate window images based on AeroThumbnails library
 - get rid of a lot of the fluff and unused code
 - get on forums and post to people to try to get more cooperation
@@ -76,7 +74,7 @@ since 08-08-13:
 - remove a majority of UI
 - add EXE only mode to cycle between current application windows
 - added coloring for max
-- get color schemes to work on startup 
+- get color schemes to work on startup
 - bring focused window to the font when cycling
 
 since 25-04-06:
@@ -106,10 +104,10 @@ since 25-04-06:
     Use_Large_Icons =1 ; 0 = small icons, 1 = large icons in listview
 
   ; Fonts
-    Font_Size=11
+    Font_Size=10
     Font_Color=e9ded3
     Font_Style=Bold
-    Font_Size_Tab =9
+    Font_Size_Tab =8
     Font_Type_Tab =Consolas
     Font_Type =Segoe UI
 
@@ -124,10 +122,6 @@ since 25-04-06:
     Listview_Width := A_ScreenWidth * 0.40
     SB_Width := Listview_Width / 4 ; StatusBar section sizes
     Exe_Width_Max := Listview_Width / 5 ; Exe column max width
-
-  ; Edge-Docking of windows to screen edges
-    Edge_Dock_Activation_Delay =750 ;  Delay in milliseconds for hovering over edge-docked window/dismissing window
-    Edge_Dock_Border_Visible =5 ; number of pixels of window to remain visible on screen edge
 
 ;========================================================================================================
 ; USER OVERRIDABLE SETTINGS:
@@ -150,7 +144,7 @@ since 25-04-06:
     Tab_Colour =1a1a1a
     Listview_Colour =1c1b1a ; does not need converting as only used for background
     StatusBar_Background_Colour =998899
-    
+
   ; convert colours to correct format for listview color functions:
     Listview_Colour_Max_Text :=       RGBtoBGR("0xffffff") ; highlight minimised windows
     Listview_Colour_Max_Back :=       RGBtoBGR("0x000000")
@@ -208,32 +202,11 @@ WinGet, TaskBar_ID, ID, ahk_class Shell_TrayWnd ; for docked windows check
 Display_List_Shown =0
 Window_Hotkey =0
 Use_Large_Icons_Current =%Use_Large_Icons% ; for remembering original user setting but changing on the fly
-Gui_Dock_Windows_List = ; keep track of number of docked windows
 Time_Since_Last_Alt_Close =0 ; initialise time for repeat rate allowed for closing windows with alt+\
 Viewed_Window_List =
 
 Col_Title_List =#| |Window|Exe|View|Top|Status
 StringSplit, Col_Title, Col_Title_List,| ; create list of listview header titles
-
-#If (MouseWID() == TaskBar_ID)
-WheelUp::
-  Gosub, Single_Key_Show_Alt_Tab
-  Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
-  Loop, 2
-  {
-    Gosub, Alt_Shift_Tab
-  }
-Return
-
-WheelDown::
-  ; GetMouseTaskButton(win_id)
-  ; CoordMode, tooltip, screen
-  ;   tooltip % win_id, 0, 0
-    Gosub, Single_Key_Show_Alt_Tab
-    Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
-Return
-
-#If
 
 ;========================================================================================================
 
@@ -290,11 +263,11 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     SysGet, X0, 76
     SysGet, Y0, 77
 
-    Gui, 4: +LastFound -Caption +ToolWindow
-    Gui, 4: Color, Black
-    Gui, 4: Show, Hide
-    WinSet, Transparent, 50
-    Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
+    ; Gui, 4: +LastFound -Caption +ToolWindow
+    ; Gui, 4: Color, Black
+    ; Gui, 4: Show, Hide
+    ; WinSet, Transparent, 50
+    ; Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
 
     If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
       {
@@ -331,13 +304,13 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     DllCall("SetWindowPos", "uint", Window%PrevRowText%, "uint", Window%PPrevRowText%
         , "int", 0, "int", 0, "int", 0, "int", 0
         , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
-    
+
     ; DllCall("SetForegroundWindow", "uint", Gui_wid)
     WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
-    
+
     WinSet, Top, , ahk_id %Gui_wid%
     WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
-    
+
     WinGet, MinMax, MinMax, ahk_id %Gui_wid%
 
 
@@ -358,14 +331,14 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
 
 
     ; Tooltip, % RowText . ":" . Title%RowText% . "|" . PrevRowText . ":" . Title%PrevRowText%, 0, 0
-    
+
     ; PPrevRowText:=RowText
     PrevRowText:=RowText
 
     ; Sometimes you lose the window
     WinSet, AlwaysOnTop, On, Alt-Tab Replacement
 
-    ; Check if AlwaysOnTop status changed.   
+    ; Check if AlwaysOnTop status changed.
     WinGet, ExStyle, ExStyle, ahk_id %Gui_wid%
     if (OldExStyle ^ ExStyle) & 0x8
         WinSet, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
@@ -515,7 +488,7 @@ Display_List:
     LV_Add("","","","","","","") ; No Windows Found! - avoids an error on selection if nothing is added
     }
 
-  ColumnClickSort(Sort_By_Column, 1) ; Col = column clicked on, Update = 1 if true else blank (apply only, not change order)
+  ColumnClickSort(Sort_By_Column, "") ; Col = column clicked on, Update = 1 if true else blank (apply only, not change order)
 
   Gosub, Gui_Resize_and_Position
   If Display_List_Shown =1 ; resize gui for updating listview
@@ -541,7 +514,7 @@ Display_List__Find_windows_and_icons:
     WinGetTitle, wid_Title, ahk_id %wid%
     WinGet, Style, Style, ahk_id %wid%
 
-    If ((Style & WS_DISABLED) or ! (wid_Title)) ; skip unimportant windows ; ! wid_Title or 
+    If ((Style & WS_DISABLED) or ! (wid_Title)) ; skip unimportant windows ; ! wid_Title or
         Continue
 
     WinGet, es, ExStyle, ahk_id %wid%
@@ -701,7 +674,7 @@ Tab_Swap(ByRef Tab_List, ByRef Text1, ByRef Text2)
 TCM_HITTEST() ; returns 1-based index of clicked tab
 {
   Global hw_Gui1_Tab
-  MouseGetPos, mX, mY, hWnd, Control, 2 
+  MouseGetPos, mX, mY, hWnd, Control, 2
   If (Control != hw_Gui1_Tab) ; not clicked on tab control
     Return, False
   ControlGetPos, cX, cY,,,, ahk_id %Control%
@@ -728,7 +701,7 @@ Tab_Button_Get_Text(Tab_Index)
 
 
 Gui_Settings_Tab:
-    
+
 Return
 
 
@@ -823,11 +796,10 @@ GuiContextMenu:  ; right-click or press of the Apps key -> displays the menu onl
   Gui_wid_Title :=Title%RowText%
   StringLeft, Gui_wid_Title, Gui_wid_Title, 40
 
-  Menu, Tray, UseErrorLevel 
+  Menu, Tray, UseErrorLevel
   ; Clear previous entries
   Menu, ContextMenu1, DeleteAll
   Menu, Gui_MinMax_Windows, DeleteAll
-  Menu, Gui_Dock_Windows, DeleteAll
   Menu, Gui_Un_Exclude_Windows, DeleteAll
   Menu, Gui_Window_Group_Load, DeleteAll
   Menu, Gui_Window_Group_Delete, DeleteAll
@@ -840,38 +812,6 @@ GuiContextMenu:  ; right-click or press of the Apps key -> displays the menu onl
   Menu, Gui_MinMax_Windows, Add
   Menu, Gui_MinMax_Windows, Add, % "Normal all:     " Exe_Name%RowText%, Gui_MinMax_Windows
   Menu, ContextMenu1, Add, &Min / Max, :Gui_MinMax_Windows
-
-  ; Dock to Screen Edge entries
-  Menu, Gui_Dock_Windows, Add, Left, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add, Right, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add, Top, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add, Bottom, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add
-  Menu, Gui_Dock_Windows, Add, Corner - Top Left, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add, Corner - Top Right, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add, Corner - Bottom Left, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add, Corner - Bottom Right, Gui_Dock_Windows
-  Menu, Gui_Dock_Windows, Add
-  Menu, Gui_Dock_Windows, Add, Un-Dock, Gui_Un_Dock_Window
-  Menu, Gui_Dock_Windows, Add, Un-Dock All, Gui_Un_Dock_Windows_All
-  IfNotInString, Gui_Dock_Windows_List,%Gui_wid%
-    Menu, Gui_Dock_Windows, Disable, Un-Dock
-  Else
-    {
-    Menu, Gui_Dock_Windows, Disable, Left
-    Menu, Gui_Dock_Windows, Disable, Right
-    Menu, Gui_Dock_Windows, Disable, Top
-    Menu, Gui_Dock_Windows, Disable, Bottom
-    Menu, Gui_Dock_Windows, Disable, Corner - Top Left
-    Menu, Gui_Dock_Windows, Disable, Corner - Top Right
-    Menu, Gui_Dock_Windows, Disable, Corner - Bottom Left
-    Menu, Gui_Dock_Windows, Disable, Corner - Bottom Right
-    If (Edge_Dock_Position_%Gui_wid% !="") ; produces error if doesn't exist
-      Menu, Gui_Dock_Windows, Check, % Edge_Dock_Position_%Gui_wid%
-    }
-  If Gui_Dock_Windows_List =
-    Menu, Gui_Dock_Windows, Disable, Un-Dock All
-  Menu, ContextMenu1, Add, &Dock to Edge, :Gui_Dock_Windows
 
   ; Window Group sub-menu entry
   Menu, ContextMenu1, Add ; spacer
@@ -954,194 +894,18 @@ GuiControl_Enable_ListView1:
   OnMessage( 0x06, "WM_ACTIVATE" ) ; turn on again - alt tab list window lost focus > hide list
 Return
 
-
-; DOCKED WINDOWS MENU SECTION:
-;============================================================================================================================
-
-Gui_Dock_Windows:
-  Edge_Dock_%Gui_wid% =%Gui_wid% ; write window ID to a unique variable
-  Edge_Dock_Position_%Gui_wid% :=A_ThisMenuItem ; store Left, Right, etc
-  WinGet, Edge_Dock_State_%Gui_wid%, MinMax, ahk_id %Gui_wid%
-  If Edge_Dock_State_%Gui_wid% =-1 ; if window is mimised, un-minimise
-    WinRestore, ahk_id %Gui_wid%
-  WinGetPos, Edge_Dock_X_%Gui_wid%, Edge_Dock_Y_%Gui_wid%, Edge_Dock_Width_%Gui_wid%, Edge_Dock_Height_%Gui_wid%, ahk_id %Gui_wid%
-  Edge_Dock_X_Initial_%Gui_wid% := Edge_Dock_X_%Gui_wid%
-  Edge_Dock_Y_Initial_%Gui_wid% := Edge_Dock_Y_%Gui_wid%
-  Edge_Dock_Width_Initial_%Gui_wid% := Edge_Dock_Width_%Gui_wid%
-  Edge_Dock_Height_Initial_%Gui_wid% := Edge_Dock_Height_%Gui_wid%
-  WinGet, Edge_Dock_AlwaysOnTop_%Gui_wid%, ExStyle, ahk_id %Gui_wid% ; store AlwaysOnTop original status
-  If Gui_Dock_Windows_List =
-    Gui_Dock_Windows_List =%Gui_wid% ; keep track of number of docked windows
-  Else
-    Gui_Dock_Windows_List .="|" Gui_wid
-  WinSet, AlwaysOnTop, On, ahk_id %Gui_wid%
-  Gosub, Alt_Esc_Check_Alt_State ; hides alt-tab gui - shows again if alt still pressed
-Gui_Dock_Windows_ReDock:
-  Edge_Dock_X =
-  Edge_Dock_Y =
-  ; leave just 5 pixels (Edge_Dock_Border_Visible) of side visible
-  If Edge_Dock_Position_%Gui_wid% contains Left
-    Edge_Dock_X := - ( Edge_Dock_Width_%Gui_wid% - Edge_Dock_Border_Visible )
-  Else If Edge_Dock_Position_%Gui_wid% contains Right
-    Edge_Dock_X := A_ScreenWidth - Edge_Dock_Border_Visible
-  If Edge_Dock_Position_%Gui_wid% contains Top
-    Edge_Dock_Y := - ( Edge_Dock_Height_%Gui_wid% - Edge_Dock_Border_Visible )
-  Else If Edge_Dock_Position_%Gui_wid% contains Bottom
-    Edge_Dock_Y := A_ScreenHeight - Edge_Dock_Border_Visible
-  WinMove, ahk_id %Gui_wid%,, %Edge_Dock_X%, %Edge_Dock_Y%
-
-  SetTimer, Check_Mouse_Position, %Edge_Dock_Activation_Delay% ; change to affect response time to having mouse over edge-docked window
-Return
-
-
-Check_Mouse_Position:
-  Gosub, Check_Docked_Windows_Exist
-  WinGet, Previously_Active_Window_Before_Using_Docked, ID, A
-  Edge_Dock_Active_Window =
-  If ( Edge_Dock_%Previously_Active_Window_Before_Using_Docked% != "" ) ; check keyboard focus
-    {
-    CoordMode, Mouse, Screen
-    MouseGetPos,Check_Mouse_Position_X, Check_Mouse_Position_Y
-    Edge_Dock_Active_Window := Previously_Active_Window_Before_Using_Docked
-    }
-  MouseGetPos,,, Mouse_Over_Window
-  If ( Edge_Dock_%Mouse_Over_Window% != "" ) ; over-ride keyboard with mouse "focus" if necessary
-    {
-    Edge_Dock_Active_Window := Mouse_Over_Window
-    WinActivate, ahk_id %Mouse_Over_Window%
-    }
-  If Edge_Dock_Active_Window != ; i.e. window is already docked
-    {
-    SetTimer, Check_Mouse_Position, Off
-    WinGet, PID_Edge_Dock_Active_Window, PID, ahk_id %Edge_Dock_Active_Window%
-    Edge_Dock_X =
-    Edge_Dock_Y =
-    ; move window onto screen
-    If Edge_Dock_Position_%Edge_Dock_Active_Window% contains Left
-      Edge_Dock_X =0
-    Else If Edge_Dock_Position_%Edge_Dock_Active_Window% contains Right
-      Edge_Dock_X := A_ScreenWidth - Edge_Dock_Width_%Edge_Dock_Active_Window%
-    If Edge_Dock_Position_%Edge_Dock_Active_Window% contains Top
-      Edge_Dock_Y =0
-    Else If Edge_Dock_Position_%Edge_Dock_Active_Window% contains Bottom
-      Edge_Dock_Y := A_ScreenHeight - Edge_Dock_Height_%Edge_Dock_Active_Window%
-    WinSet, AlwaysOnTop, Off, ahk_id %Edge_Dock_Active_Window%
-    WinMove, ahk_id %Edge_Dock_Active_Window%,, %Edge_Dock_X%, %Edge_Dock_Y%
-    SetTimer, Check_Mouse_Position_Deactivate, %Edge_Dock_Activation_Delay%
-    }
-Return
-
-Check_Docked_Windows_Exist:
-  If Gui_Dock_Windows_List = ; keep track of number of docked windows
-    {
-    SetTimer, Check_Mouse_Position, Off
-    SetTimer, Check_Mouse_Position_Deactivate, Off
-    Return
-    }
-  Loop, Parse, Gui_Dock_Windows_List,| ; check if windows in docked list have been closed before un-docking
-    {
-    IfWinNotExist, ahk_id %A_LoopField%
-      {
-      Gui_wid =%A_LoopField%
-      Gui_Un_Dock_Window_No_Alt_Esc =1
-      Gosub, Gui_Un_Dock_Window
-      }
-    }
-Return
-
-
-Check_Mouse_Position_Deactivate: ; check if not over an edge-docked window any more
-  Gosub, Check_Docked_Windows_Exist
-
-  WinGet, Style, Style, ahk_id %Edge_Dock_Active_Window%
-  If ( Style & WS_DISABLED ) ; don't allow disabled windows to be re-docked (e.g., showing save box)
-    Return
-
-  ; retrieve active window focus and mouse over window - active window has priority
-  WinGet, PID_Active_Window_Now, PID, A
-  WinGet, Active_Window_Now_ID, ID, A
-  WinGetTitle, Active_Window_Now_Title, A ; use titles to check if in same program title but over a problematic control such as xplorer2 dropdownbox (different id and pid)
-  WinGetTitle, Edge_Dock_Active_Window_Title, ahk_id %Edge_Dock_Active_Window%
-  WinGetTitle, Active_Window_Now_Mouse_Title, ahk_id %Active_Window_Now_Mouse%
-
-  CoordMode, Mouse, Screen
-  MouseGetPos,Active_Window_Now_Mouse_X, Active_Window_Now_Mouse_Y, Active_Window_Now_Mouse
-  If ((Check_Mouse_Position_X >= Active_Window_Now_Mouse_X -10 and Check_Mouse_Position_X <= Active_Window_Now_Mouse_X +10) ; ; mouse not moved - e.g. clicked taskbar
-    and (Check_Mouse_Position_Y >= Active_Window_Now_Mouse_Y -10 and Check_Mouse_Position_Y <= Active_Window_Now_Mouse_Y +10)
-    and (Active_Window_Now_Title = Edge_Dock_Active_Window_Title))
-      Return
-
-  If (Active_Window_Now_Title = Edge_Dock_Active_Window_Title and Active_Window_Now_Mouse_Title = ""
-        and (Active_Window_Now_ID != TaskBar_ID and Active_Window_Now_Mouse != TaskBar_ID))
-      Return
-  If (PID_Active_Window_Now != PID_Edge_Dock_Active_Window) ; compare pid to check that a child window is not created/active
-    Gosub, Gui_Dock_Windows_ReDock_Initiate
-  Else
-    {
-    WinGet, PID_Active_Window_Now_Mouse, PID, ahk_id %Active_Window_Now_Mouse%
-    If (PID_Active_Window_Now_Mouse != PID_Edge_Dock_Active_Window)
-      {
-      Gosub, Gui_Dock_Windows_ReDock_Initiate
-      If Gui_Dock_Windows_List contains %Previously_Active_Window_Before_Using_Docked% ; activate window under mouse to prevent looping
-        WinActivate, ahk_id %Active_Window_Now_Mouse%
-      Else
-        WinActivate, ahk_id %Previously_Active_Window_Before_Using_Docked%
-      }
-    }
-Return
-
-
-Gui_Dock_Windows_ReDock_Initiate:
-  SetTimer, Check_Mouse_Position_Deactivate, Off
-  WinSet, AlwaysOnTop, On, ahk_id %Edge_Dock_Active_Window%
-  WinGetPos, Edge_Dock_X_%Edge_Dock_Active_Window%, Edge_Dock_Y_%Edge_Dock_Active_Window%, Edge_Dock_Width_%Edge_Dock_Active_Window%
-    , Edge_Dock_Height_%Edge_Dock_Active_Window%, ahk_id %Edge_Dock_Active_Window%
-  Gui_wid =%Edge_Dock_Active_Window%
-  Gosub, Gui_Dock_Windows_ReDock
-Return
-
-
-Gui_Un_Dock_Window:
-  If Gui_Un_Dock_Window_No_Alt_Esc !=1
-    Gosub, Alt_Esc_Check_Alt_State ; hides alt-tab gui - shows again if alt still pressed
-  Gui_Un_Dock_Window_No_Alt_Esc = ; reset
-  If ! ( Edge_Dock_AlwaysOnTop_%Gui_wid% & 0x8 ) ; 0x8 is WS_EX_TOPMOST - keep AlwaysOnTop if originally on top
-    WinSet, AlwaysOnTop, Off, ahk_id %Gui_wid%
-  WinMove, ahk_id %Gui_wid%,, % Edge_Dock_X_Initial_%Gui_wid%, % Edge_Dock_Y_Initial_%Gui_wid%, % Edge_Dock_Width_Initial_%Gui_wid%
-    , % Edge_Dock_Height_Initial_%Gui_wid% ; original position
-
-  ; erase variables
-  Edge_Dock_%Gui_wid% =
-  Edge_Dock_X_Initial_%Gui_wid% =
-  Edge_Dock_Y_Initial_%Gui_wid% =
-  Edge_Dock_Width_Initial_%Gui_wid% =
-  Edge_Dock_Height_Initial_%Gui_wid% =
-  Edge_Dock_State_%Gui_wid% =
-  Edge_Dock_X_%Gui_wid% =
-  Edge_Dock_Y_%Gui_wid% =
-  Edge_Dock_Width_%Gui_wid% =
-  Edge_Dock_Height_%Gui_wid% =
-  Edge_Dock_Position_%Gui_wid% =
-  Edge_Dock_AlwaysOnTop_%Gui_wid% =
-
-  StringReplace, Gui_Dock_Windows_List, Gui_Dock_Windows_List,%Gui_wid%| ; remove entry
-  If ErrorLevel =1
-    StringReplace, Gui_Dock_Windows_List, Gui_Dock_Windows_List,%Gui_wid% ; last window so no delimiter to replace too
-Return
-
-
-Gui_Un_Dock_Windows_All:
-  Loop, Parse, Gui_Dock_Windows_List,| ; check if windows in docked list have been closed before un-docking
-    {
-    Gui_wid := A_LoopField
-    Gui_Un_Dock_Window_No_Alt_Esc =1
-    Gosub, Gui_Un_Dock_Window
-    }
-Return
-
-
 ; HOTKEYS MENU SECTION:
 ;============================================================================================================================
+
+#If WinActive("Alt-Tab Replacement ahk_class AutoHotkeyGUI")
+
+ !1:: ColumnClickSort(1, 1) ;
+ !2:: ColumnClickSort(3, 1) ;
+ !3:: ColumnClickSort(4, 1) ;
+ !4:: ColumnClickSort(5, 1) ; Sort by window
+
+#If
+
 
 Gui_Hotkeys:
   Gosub, Alt_Esc
@@ -1699,16 +1463,13 @@ Return
 
 
 End_Process_Subroutine:
-  Loop, Parse, Gui_Dock_Windows_List,| ; un-dock docked window first (might remember off-screen position)
-    If A_LoopField =%Gui_wid%
-      {
-      Gui_Un_Dock_Window_No_Alt_Esc =1
-      Gosub, Gui_Un_Dock_Window
-      }
   PostMessage, 0x112, 0xF060,,, ahk_id %Gui_wid% ; 0x112 = WM_SYSCOMMAND, 0xF060 = SC_CLOSE
   WinWaitClose, ahk_id %Gui_wid%,, 1
 Return
 
+Toggle_Always_OnTop:
+    Winset, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
+Return
 
 End_Process_All_Instances:
   Gosub, GuiControl_Disable_ListView1
@@ -1803,6 +1564,17 @@ Key_Pressed_1st_Letter:
     Return
     }
 
+  ; = key - toggle always on top
+  If (Key_Pressed_ASCII =187) ; = or Alt+=
+    {
+    If ( A_TickCount - Time_Since_Last_Alt_Close < 200 ) ; prevention of accidentally closing too many windows
+      Return
+    Time_Since_Last_Alt_Close := A_TickCount
+    Gui_wid := Window%RowText%
+    Gosub, Toggle_Always_OnTop
+    Return
+    }
+
   ; / key - close all instances of exe
   If (Key_Pressed_ASCII =47 or Key_Pressed_ASCII =191 ) ; / or Alt+/
     {
@@ -1841,8 +1613,8 @@ Return
 ColumnClickSort(Col, Update="") ; Col = column clicked on, Update = 1 if true else blank (apply only, not change order)
 {
   Global
-  If Update=
-    {
+    If (Update = 1)
+  {
     If ((Sort_By_Direction = "Sort") and (Col = Sort_By_Column)) ; opposite sort direction - unless choosing a new column
       {
       Sort_By_Direction =SortDesc
@@ -1854,6 +1626,7 @@ ColumnClickSort(Col, Update="") ; Col = column clicked on, Update = 1 if true el
       Sort_Direction_Symbol =[+]
       }
     }
+
   Loop, %Col_Title0% ; reset column titles to remove [+] or [-] suffix
     {
     Col_Title_temp := Col_Title%A_Index%
@@ -1866,9 +1639,10 @@ ColumnClickSort(Col, Update="") ; Col = column clicked on, Update = 1 if true el
     }
   Else
     LV_ModifyCol(Col, Sort_By_Direction, Col_Title%Col% " " Sort_Direction_Symbol)
+
+  Sort_By_Column := Col ; store
   If Update=1
     Return
-  Sort_By_Column := Col ; store
   Display_List_Shown =0 ; set to execute update of listview widths
   Gosub, Gui_Resize_and_Position
   Display_List_Shown =1
@@ -1901,14 +1675,14 @@ ListView_Destroy:
       WinRestore, ahk_id %wid%
     If hw_popup
       wid:=hw_popup
-    ; DllCall("SetForegroundWindow", UInt, hw_popup) 
+    ; DllCall("SetForegroundWindow", UInt, hw_popup)
     WinSet, Top, , ahk_id %Gui_wid%
     WinActivate, ahk_id %wid%
     }
   Else If Alt_Esc =1 ; WM_ACTIVATE - clicked outside alt-tab gui 1
     WinActivate, ahk_id %Active_ID%
   Gui, 1: Destroy ; destroy after switching to avoid re-activation of some windows
-  Gui, 4: Destroy ; destroy after switching to avoid re-activation of some windows
+  ; Gui, 4: Destroy ; destroy after switching to avoid re-activation of some windows
   LV_ColorChange() ; clear all highlighting
   OnTop_Found = ; reset
   Status_Found = ; reset
@@ -2107,8 +1881,6 @@ WM_ACTIVATE(wParam)
 
 OnExit_Script_Closing:
   IniFile_Data("Write")
-  Gui_Un_Dock_Windows_All_No_Alt_Esc = 1
-  Gosub, Gui_Un_Dock_Windows_All
   ExitApp
 Return
 
@@ -2318,11 +2090,11 @@ GetPrevWindow(hwnd)
 
     ; Set default in case enumeration fails.
     GetPrevWindow_RetVal := DllCall("GetWindow", "uint", hwnd, "uint", 3)
-   
+
     ; Enumerate all siblings of hwnd.
     hwnd_parent := DllCall("GetParent", "uint", hwnd)
     DllCall("EnumChildWindows", "uint", hwnd_parent, "uint", cb_EnumChildProc, "uint", hwnd)
-   
+
     ; Return the last visible window before hwnd.
     return GetPrevWindow_RetVal
 }
@@ -2364,7 +2136,7 @@ GetMouseTaskButton(ByRef hwnd)
     if (cl != "MSTaskSwWClass")
         return
 
-   
+
     WinGet, pidTaskbar, PID, ahk_class Shell_TrayWnd
 
     hProc := DllCall("OpenProcess", "Uint", 0x38, "int", 0, "Uint", pidTaskbar)
@@ -2374,10 +2146,10 @@ GetMouseTaskButton(ByRef hwnd)
     VarSetCapacity(pt, 8, 0)
     NumPut(x, pt, 0, "int")
     NumPut(y, pt, 4, "int")
-   
+
     ; Convert screen coords to toolbar-client-area coords.
     DllCall("ScreenToClient", "uint", ctl, "uint", &pt)
-   
+
     ; Write POINT into explorer.exe.
     DllCall("WriteProcessMemory", "uint", hProc, "uint", pRB+0, "uint", &pt, "uint", 8, "uint", 0)
 
@@ -2387,26 +2159,26 @@ GetMouseTaskButton(ByRef hwnd)
     ; Convert btn_index to a signed int, since result may be -1 if no 'hot' item.
     if btn_index > 0x7FFFFFFF
         btn_index := -(~btn_index) - 1
-   
-   
+
+
     if (btn_index > -1)
     {
         ; Get button info.
         SendMessage, 0x417, btn_index, pRB,, ahk_id %ctl%   ; TB_GETBUTTON
-   
+
         VarSetCapacity(btn, 20)
         DllCall("ReadProcessMemory", "Uint", hProc
             , "Uint", pRB, "Uint", &btn, "Uint", 20, "Uint", 0)
-   
+
         state := NumGet(btn, 8, "UChar")  ; fsState
         pdata := NumGet(btn, 12, "UInt")  ; dwData
-       
+
         ret := DllCall("ReadProcessMemory", "Uint", hProc
             , "Uint", pdata, "UintP", hwnd, "Uint", 4, "Uint", 0)
     } else
         hwnd = 0
 
-       
+
     DllCall("VirtualFreeEx", "Uint", hProc, "Uint", pRB, "Uint", 0, "Uint", 0x8000)
     DllCall("CloseHandle", "Uint", hProc)
 
