@@ -1,16 +1,16 @@
 HELP = ; Gui, 99
 (LTrim0
 
-ALT-TAB REPLACEMENT (WITH ICONS AND WINDOW TITLES IN A LISTVIEW).
-      Latest version can be found at: http://file.autohotkey.net/evl/AltTab/AltTab.ahk
-      Forum topic for discussion: http://www.autohotkey.com/forum/viewtopic.php?t=6422
+  ALT-TAB REPLACEMENT (WITH ICONS AND WINDOW TITLES IN A LISTVIEW).
+  Latest version can be found at: http://file.autohotkey.net/evl/AltTab/AltTab.ahk
+  Forum topic for discussion: http://www.autohotkey.com/forum/viewtopic.php?t=6422
 
 HOTKEYS:
-  Default:    Alt+Tab - move forwards in window stack
-              Alt+Shift+Tab - move backwards in window stack
-              Alt+Esc - cancel switching window
-              Mouse wheel over the taskbar scrolls the list - Middle button selects a window in this mode.
-  Window Groups can be assigned hotkeys to load the group/cycle through the windows.
+Default:    Alt+Tab - move forwards in window stack
+Alt+Shift+Tab - move backwards in window stack
+Alt+Esc - cancel switching window
+Mouse wheel over the taskbar scrolls the list - Middle button selects a window in this mode.
+Window Groups can be assigned hotkeys to load the group/cycle through the windows.
 
 EVENTS:
   Double-click a row to select that item and switch to it.
@@ -22,25 +22,25 @@ EVENTS:
   Tabs (window groups) can be re-ordered by drag-and-drop.
 
   Right-Click (context menu):
-    Basic hotkey support for switching to specific windows (using window groups and adding window classes)
-    Exclude (and un-exclude) specific windows and specific .EXEs - see "Window Groups" below.
-    Window Groups - define lists of windows to easily switch between only showing certain apps.
-    Manage groups of windows and processes (min/max all, close all, etc).
+  Basic hotkey support for switching to specific windows (using window groups and adding window classes)
+  Exclude (and un-exclude) specific windows and specific .EXEs - see "Window Groups" below.
+  Window Groups - define lists of windows to easily switch between only showing certain apps.
+  Manage groups of windows and processes (min/max all, close all, etc).
 
   Close windows:
-    Alt+Middle mouse - close window under the mouse pointer in the Alt-Tab listview.
-    Alt+\ "hotkey"  - close selected window (while list is displayed)
-    Alt+/ "hotkey"  - close ALL windows whose EXE matches that of the selected entry (while list is displayed)
-    Process menu entry - end selected process or all instance of the EXE in the list.
+  Alt+Middle mouse - close window under the mouse pointer in the Alt-Tab listview.
+  Alt+\ "hotkey"  - close selected window (while list is displayed)
+  Alt+/ "hotkey"  - close ALL windows whose EXE matches that of the selected entry (while list is displayed)
+  Process menu entry - end selected process or all instance of the EXE in the list.
 
 SETTINGS:
   See "; USER EDITABLE SETTINGS:" section near top of source code.
 
-TO EXIT:
+  TO EXIT:
   Choose Exit from the system tray icon's menu.
 
 NOTE: Stroke-It (and maybe other mouse gesture programs) can cause the context menu to be shown twice/problematic.
-        Solution: exclude the program within the gesture recognition program (window title = Alt-Tab Replacement).
+Solution: exclude the program within the gesture recognition program (window title = Alt-Tab Replacement).
 )
 
 
@@ -78,18 +78,18 @@ since 08-08-13:
 - bring focused window to the font when cycling
 
 since 25-04-06:
-  +: Groups of windows are shown in tabs - they can be re-arranged by drag-and-drop.
-  +: Settings tab.
-  + & FIX: Updates to the listview colour code - much smoother now (thanks to ambi for updating the Listview script).
-  + & FIX: Sorting of columns with direction indication ([+] or [-])
-  +: Mouse wheel over the TASKBAR scrolls the list - Middle button SELECTS a window in this mode (it normally CLOSES a window!).
-  +: Save data on big changes (in addition to program exit) - e.g. new group created, hotkeys changed
-  CHANGE: Selections with the mouse are now made with a double click (or just release the Alt key) instead of a single one.
-  CHANGE: Adjusted display position to be centered by default.
-  CHANGE: Dialog windows only indicated by red higlight (not by title too).
-  CHANGE: Not Responding windows indicated in a new column (not by title).
-  CHANGE: Many speed optimisations and code improvements (it's almost decipherable now ;-))
-  FIX: Handling of "Not Responding" windows with no delays.
++: Groups of windows are shown in tabs - they can be re-arranged by drag-and-drop.
++: Settings tab.
++ & FIX: Updates to the listview colour code - much smoother now (thanks to ambi for updating the Listview script).
++ & FIX: Sorting of columns with direction indication ([+] or [-])
++: Mouse wheel over the TASKBAR scrolls the list - Middle button SELECTS a window in this mode (it normally CLOSES a window!).
++: Save data on big changes (in addition to program exit) - e.g. new group created, hotkeys changed
+CHANGE: Selections with the mouse are now made with a double click (or just release the Alt key) instead of a single one.
+CHANGE: Adjusted display position to be centered by default.
+CHANGE: Dialog windows only indicated by red higlight (not by title too).
+CHANGE: Not Responding windows indicated in a new column (not by title).
+CHANGE: Many speed optimisations and code improvements (it's almost decipherable now ;-))
+FIX: Handling of "Not Responding" windows with no delays.
 
 
 > For older changes, see the forum: http://www.autohotkey.com/forum/viewtopic.php?t=6422
@@ -100,64 +100,64 @@ since 25-04-06:
 ;========================================================================================================
 ; USER EDITABLE SETTINGS:
 
-  ; Icons
-    Use_Large_Icons =1 ; 0 = small icons, 1 = large icons in listview
+; Icons
+Use_Large_Icons =1 ; 0 = small icons, 1 = large icons in listview
 
-  ; Fonts
-    Font_Size=10
-    Font_Color=e9ded3
-    Font_Style=Bold
-    Font_Size_Tab =8
-    Font_Type_Tab =Consolas
-    Font_Type =Segoe UI
+; Fonts
+Font_Size=10
+Font_Color=e9ded3
+Font_Style=Bold
+Font_Size_Tab =8
+Font_Type_Tab =Consolas
+Font_Type =Segoe UI
 
-  ; Position
-    Gui_x =Center
-    Gui_y =Center
+; Position
+Gui_x =Center
+Gui_y =Center
 
-  ; Max height
-    Height_Max_Modifier =0.92 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
+; Max height
+Height_Max_Modifier =0.92 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
 
-  ; Width
-    Listview_Width := A_ScreenWidth * 0.40
-    SB_Width := Listview_Width / 4 ; StatusBar section sizes
-    Exe_Width_Max := Listview_Width / 5 ; Exe column max width
+; Width
+Listview_Width := A_ScreenWidth * 0.40
+SB_Width := Listview_Width / 4 ; StatusBar section sizes
+Exe_Width_Max := Listview_Width / 5 ; Exe column max width
 
 ;========================================================================================================
 ; USER OVERRIDABLE SETTINGS:
 
-  ; Widths
-    Col_1 =Auto ; icon column
-    Col_2 =0 ; hidden column for row number
-    ; col 3 is autosized based on other column sizes
-    Col_4 =Auto ; exe
-    Col_5 =AutoHdr ; State
-    Col_6 =Auto ; OnTop
-    Col_7 =Auto ; Status - e.g. Not Responding
-    Gui1_Tab__width := Listview_Width - 2
+; Widths
+Col_1 =Auto ; icon column
+Col_2 =0 ; hidden column for row number
+; col 3 is autosized based on other column sizes
+Col_4 =Auto ; exe
+Col_5 =AutoHdr ; State
+Col_6 =Auto ; OnTop
+Col_7 =Auto ; Status - e.g. Not Responding
+Gui1_Tab__width := Listview_Width - 2
 
-  ; Max height
-    Height_Max := A_ScreenHeight * Height_Max_Modifier ; limit height of listview
-    Small_to_Large_Ratio =1.6 ; height of small rows compared to large rows
+; Max height
+Height_Max := A_ScreenHeight * Height_Max_Modifier ; limit height of listview
+Small_to_Large_Ratio =1.6 ; height of small rows compared to large rows
 
-  ; Colours in RGB hex
-    Tab_Colour =1a1a1a
-    Listview_Colour =1c1b1a ; does not need converting as only used for background
-    StatusBar_Background_Colour =998899
+; Colours in RGB hex
+Tab_Colour =1a1a1a
+Listview_Colour =1c1b1a ; does not need converting as only used for background
+StatusBar_Background_Colour =998899
 
-  ; convert colours to correct format for listview color functions:
-    Listview_Colour_Max_Text :=       RGBtoBGR("0xffffff") ; highlight minimised windows
-    Listview_Colour_Max_Back :=       RGBtoBGR("0x000000")
-    Listview_Colour_Min_Text :=       RGBtoBGR("0x000000") ; highlight minimised windows
-    Listview_Colour_Min_Back :=       RGBtoBGR("0xffa724")
-    Listview_Colour_OnTop_Text :=     RGBtoBGR("0x000000") ; highlight alwaysontop windows
-    Listview_Colour_OnTop_Back :=     RGBtoBGR("0xff2c4b")
-    Listview_Colour_Dialog_Text :=    RGBtoBGR("0xd9cec3")
-    Listview_Colour_Dialog_Back :=    RGBtoBGR("0xFB5959")
-    Listview_Colour_Selected_Text :=  RGBtoBGR("0xffffff")
-    Listview_Colour_Selected_Back :=  RGBtoBGR("0x0a9dff")
-    Listview_Colour_Not_Responding_Text := RGBtoBGR("0xFFFFFF")
-    Listview_Colour_Not_Responding_Back := RGBtoBGR("0xFF0000")
+; convert colours to correct format for listview color functions:
+Listview_Colour_Max_Text :=       RGBtoBGR("0xffffff") ; highlight minimised windows
+Listview_Colour_Max_Back :=       RGBtoBGR("0x000000")
+Listview_Colour_Min_Text :=       RGBtoBGR("0x000000") ; highlight minimised windows
+Listview_Colour_Min_Back :=       RGBtoBGR("0xffa724")
+Listview_Colour_OnTop_Text :=     RGBtoBGR("0x000000") ; highlight alwaysontop windows
+Listview_Colour_OnTop_Back :=     RGBtoBGR("0xff2c4b")
+Listview_Colour_Dialog_Text :=    RGBtoBGR("0xd9cec3")
+Listview_Colour_Dialog_Back :=    RGBtoBGR("0xFB5959")
+Listview_Colour_Selected_Text :=  RGBtoBGR("0xffffff")
+Listview_Colour_Selected_Back :=  RGBtoBGR("0x0a9dff")
+Listview_Colour_Not_Responding_Text := RGBtoBGR("0xFFFFFF")
+Listview_Colour_Not_Responding_Back := RGBtoBGR("0xFF0000")
 
 
 ;========================================================================================================
@@ -215,10 +215,10 @@ Initiate_Hotkeys:
   Use_AND_Symbol = ; initiate
   ; If both Alt and Tab are modifier keys, write Tab as a word not a modifier symbol, else Alt-Tab is invalid hotkey
   If Alt_Hotkey contains #,!,^,+
-    {
+  {
     If Tab_Hotkey contains #,!,^,+
       Replace_Modifier_Symbol( "Tab_Hotkey" , "Tab_Hotkey" )
-    }
+  }
   Else If Alt_Hotkey contains XButton1,XButton2
     Use_AND_Symbol :=" & "
   Else If Tab_Hotkey contains WheelUp,WheelDown
@@ -233,175 +233,182 @@ Initiate_Hotkeys:
 
   If (! InStr(Tab_Hotkey, "Wheel") and ! InStr(Shift_Tab_Hotkey, "Wheel")) ; wheel isn't used as an alt-tab hotkey so can be used for scrolling list instead
     Use_Wheel_Scroll_List =1
-Return
+  Return
 
 
 Alt_Tab: ; alt-tab hotkey
-  Alt_Tab_Common_Function(1)
+Alt_Tab_Common_Function(1)
 Return
 
 Alt_Shift_Tab: ; alt-shift-tab hotkey
-  Alt_Tab_Common_Function(-1)
+Alt_Tab_Common_Function(-1)
 Return
 
 Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
 {
   Global
   If Display_List_Shown =0
-    {
+  {
     WinGet, Active_ID, ID, A
     Gosub, Custom_Group__make_array_of_contents
     Gosub, Display_List
     Gosub, Alt_Tab_Common__Check_auto_switch_icon_sizes ; limit gui height / auto-switch icon sizes
     Gosub, Alt_Tab_Common__Highlight_Active_Window
-    PrevRowText:=
+PrevRowText:=
 
-    ; define background GUI to dim all active applications
-    SysGet, Width, 78
-    SysGet, Height, 79
+; define background GUI to dim all active applications
+SysGet, Width, 78
+SysGet, Height, 79
 
-    SysGet, X0, 76
-    SysGet, Y0, 77
+SysGet, X0, 76
+SysGet, Y0, 77
 
-    ; Gui, 4: +LastFound -Caption +ToolWindow
-    ; Gui, 4: Color, Black
-    ; Gui, 4: Show, Hide
-    ; WinSet, Transparent, 50
-    ; Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
+; Gui, 4: +LastFound -Caption +ToolWindow
+; Gui, 4: Color, Black
+; Gui, 4: Show, Hide
+; WinSet, Transparent, 50
+; Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
 
-    If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
-      {
-      Gui_vx := Gui_CenterX()
-      Gui, 1: Show, AutoSize x%Gui_vx% y%Gui_y%, Alt-Tab Replacement
-      Hotkeys_Toggle_Temp_Hotkeys("On") ; (state = "On" or "Off") ; ensure hotkeys are on
-      }
-    }
+If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
+{
+  Gui_vx := Gui_CenterX()
+  Gui, 1: Show, AutoSize x%Gui_vx% y%Gui_y%, Alt-Tab Replacement
+  Hotkeys_Toggle_Temp_Hotkeys("On") ; (state = "On" or "Off") ; ensure hotkeys are on
+}
 
-    Selected_Row := LV_GetNext(0, "F")
-    Selected_Row += dir
-    If (Selected_Row > Window_Found_Count)
-      Selected_Row =1
-    If Selected_Row < 1
-      Selected_Row := Window_Found_Count
+Loop %Window_Found_Count%
+{
+  LV_Modify(A_Index, "Select Vis") ; get selected row and ensure selection is visible
+}
+}
 
-    ; Loop through all windows to get them to update the color
-    Loop %Window_Found_Count%
-    {
-    LV_Modify(A_Index, "Focus Select Vis") ; get selected row and ensure selection is visible
-    }
-    LV_Modify(Selected_Row, "Focus Select Vis") ; get selected row and ensure selection is visible
+  Selected_Row := LV_GetNext(0, "F")
+  Selected_Row += dir
+  If (Selected_Row > Window_Found_Count)
+    Selected_Row =1
+  If Selected_Row < 1
+    Selected_Row := Window_Found_Count
 
+  ; Loop through all windows to get them to update the color
 
-    ; Bring the focused lines window to the front
-    Get__Selected_Row_and_RowText()
-    Gui_wid := Window%RowText%
-
-    WinGet, OldExStyle, ExStyle, ahk_id %Gui_wid%
-
-    PPrevRowText:=(PrevRowText>RowText)?PrevRowText+1:RowText+1
-
-    ; Put previous window back in window stack
-    DllCall("SetWindowPos", "uint", Window%PrevRowText%, "uint", Window%PPrevRowText%
-        , "int", 0, "int", 0, "int", 0, "int", 0
-        , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
-
-    ; DllCall("SetForegroundWindow", "uint", Gui_wid)
-    WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
-
-    WinSet, Top, , ahk_id %Gui_wid%
-    WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
-
-    WinGet, MinMax, MinMax, ahk_id %Gui_wid%
+  LV_Modify(Selected_Row, "Focus Select Vis") ; get selected row and ensure selection is visible
 
 
-    ; Tooltip, %MinMax%
-    If MinMax = -1
-    {
-    WinGetPos, minX, minY, minW, minH, ahk_id %Gui_wid%
-    Coordmode, Tooltip, Screen
+  ; Bring the focused lines window to the front
+  Get__Selected_Row_and_RowText()
+  Gui_wid := Window%RowText%
+
+  WinGet, OldExStyle, ExStyle, ahk_id %Gui_wid%
+
+PPrevRowText:=(PrevRowText>RowText)?PrevRowText+1:RowText+1
+
+; Put previous window back in window stack
+DllCall("SetWindowPos", "uint", Window%PrevRowText%, "uint", Window%PPrevRowText%
+, "int", 0, "int", 0, "int", 0, "int", 0
+, "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
+
+; DllCall("SetForegroundWindow", "uint", Gui_wid)
+
+WinGetClass, cla, ahk_id %Gui_wid%
+if cla !="ahk_class VirtualConsoleClass"
+{
+  WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
+  WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
+}
+
+WinSet, Top, , ahk_id %Gui_wid%
+
+WinGet, MinMax, MinMax, ahk_id %Gui_wid%
+
+
+; Tooltip, %MinMax%
+If MinMax = -1
+{
+  WinGetPos, minX, minY, minW, minH, ahk_id %Gui_wid%
+  Coordmode, Tooltip, Screen
 ; 28, 29	SM_CXMIN, SM_CYMIN: Minimum width and height of a window, in pixels.
 ; 57, 58	SM_CXMINIMIZED, SM_CYMINIMIZED: Dimensions of a minimized window, in pixels.
-    Sysget, MINX, 57, ahk_id %Gui_wid%
-    ; Tooltip minX %minX% minY %minY% minW %minW% minH %minH% ahk_id %Gui_wid%, 0, 0
+  Sysget, MINX, 57, ahk_id %Gui_wid%
+  ; Tooltip minX %minX% minY %minY% minW %minW% minH %minH% ahk_id %Gui_wid%, 0, 0
+}
+
+
+WinSet, Top,, ahk_id %Gui_wid%
+; CoordMode, Tooltip, Screen
+
+
+; Tooltip, % RowText . ":" . Title%RowText% . "|" . PrevRowText . ":" . Title%PrevRowText%, 0, 0
+
+; PPrevRowText:=RowText
+PrevRowText:=RowText
+
+; Sometimes you lose the window
+WinSet, AlwaysOnTop, On, Alt-Tab Replacement
+
+; Check if AlwaysOnTop status changed.
+WinGet, ExStyle, ExStyle, ahk_id %Gui_wid%
+if (OldExStyle ^ ExStyle) & 0x8
+  WinSet, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
+
+
+SetTimer, Check_Alt_Hotkey2_Up, 30
+
+; GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
+
+; Gosub, SB_Update__ProcessCPU
+; SetTimer, SB_Update__ProcessCPU, 1000
+Return
+
+Alt_Tab_Common__Check_auto_switch_icon_sizes: ; limit gui height / auto-switch icon sizes
+If (Listview_NowH > Height_Max AND Use_Large_Icons_Current =1) ; switch to small icons
+{
+  Use_Large_Icons_Current =0
+  Gosub, Alt_Tab_Common__Switching_Icon_Sizes
+}
+If ((Listview_NowH * Small_to_Large_Ratio) < Height_Max AND Use_Large_Icons_Current =0 AND Use_Large_Icons=1) ; switch to large icons
+{
+  Use_Large_Icons_Current =1
+  Gosub, Alt_Tab_Common__Switching_Icon_Sizes
+}
+Return
+
+Alt_Tab_Common__Switching_Icon_Sizes:
+  Gui, 1: Destroy
+  Display_List_Shown =0
+  Gosub, Display_List ; update colours
+  Return
+
+Alt_Tab_Common__Highlight_Active_Window:
+  Active_ID_Found =0 ; init
+  Loop, %Window_Found_Count% ; select active program in list (not always the top item)
+  {
+    LV_GetText(RowText, A_Index, 2)  ; Get hidden column numbers
+    If (Window%RowText% = Active_ID)
+    {
+      Active_ID_Found :=A_Index
+      Break
     }
-
-
-    WinSet, Top,, ahk_id %Gui_wid%
-    ; CoordMode, Tooltip, Screen
-
-
-    ; Tooltip, % RowText . ":" . Title%RowText% . "|" . PrevRowText . ":" . Title%PrevRowText%, 0, 0
-
-    ; PPrevRowText:=RowText
-    PrevRowText:=RowText
-
-    ; Sometimes you lose the window
-    WinSet, AlwaysOnTop, On, Alt-Tab Replacement
-
-    ; Check if AlwaysOnTop status changed.
-    WinGet, ExStyle, ExStyle, ahk_id %Gui_wid%
-    if (OldExStyle ^ ExStyle) & 0x8
-        WinSet, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
-
-
-  SetTimer, Check_Alt_Hotkey2_Up, 30
-
-  ; GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
-
-  ; Gosub, SB_Update__ProcessCPU
-  ; SetTimer, SB_Update__ProcessCPU, 1000
-  Return
-
-  Alt_Tab_Common__Check_auto_switch_icon_sizes: ; limit gui height / auto-switch icon sizes
-    If (Listview_NowH > Height_Max AND Use_Large_Icons_Current =1) ; switch to small icons
-      {
-      Use_Large_Icons_Current =0
-      Gosub, Alt_Tab_Common__Switching_Icon_Sizes
-      }
-    If ((Listview_NowH * Small_to_Large_Ratio) < Height_Max AND Use_Large_Icons_Current =0 AND Use_Large_Icons=1) ; switch to large icons
-      {
-      Use_Large_Icons_Current =1
-      Gosub, Alt_Tab_Common__Switching_Icon_Sizes
-      }
-  Return
-
-  Alt_Tab_Common__Switching_Icon_Sizes:
-    Gui, 1: Destroy
-    Display_List_Shown =0
-    Gosub, Display_List ; update colours
-  Return
-
-  Alt_Tab_Common__Highlight_Active_Window:
-    Active_ID_Found =0 ; init
-    Loop, %Window_Found_Count% ; select active program in list (not always the top item)
-      {
+  }
+  If Active_ID_Found =0 ; active window has an icon in another main window & was excluded from Alt-Tab list
+  {
+    WinGet, Active_Process, ProcessName, ahk_id %Active_ID%
+    WinGetClass, Active_Class, ahk_id %Active_ID%
+    ; If desktop/taskbar selected or nothing at all, don't select item in alt-tab list
+    If ( !(Active_Class ="Progman" OR Active_Class ="WorkerW" OR Active_Class ="Shell_TrayWnd" OR Active_Class =""))
+      Loop, %Window_Found_Count% ; find top item in window list with same exe name as active window
+    If (Exe_Name%A_Index% = Active_Process)
+    {
+      Active_ID := Window%A_Index% ; find this new ID in the listview
       LV_GetText(RowText, A_Index, 2)  ; Get hidden column numbers
       If (Window%RowText% = Active_ID)
-        {
+      {
         Active_ID_Found :=A_Index
         Break
-        }
       }
-    If Active_ID_Found =0 ; active window has an icon in another main window & was excluded from Alt-Tab list
-      {
-      WinGet, Active_Process, ProcessName, ahk_id %Active_ID%
-      WinGetClass, Active_Class, ahk_id %Active_ID%
-      ; If desktop/taskbar selected or nothing at all, don't select item in alt-tab list
-      If ( !(Active_Class ="Progman" OR Active_Class ="WorkerW" OR Active_Class ="Shell_TrayWnd" OR Active_Class =""))
-        Loop, %Window_Found_Count% ; find top item in window list with same exe name as active window
-          If (Exe_Name%A_Index% = Active_Process)
-            {
-            Active_ID := Window%A_Index% ; find this new ID in the listview
-            LV_GetText(RowText, A_Index, 2)  ; Get hidden column numbers
-            If (Window%RowText% = Active_ID)
-              {
-              Active_ID_Found :=A_Index
-              Break
-              }
-            }
-      }
-    If Active_ID_Found !=0
-      LV_Modify(Active_ID_Found, "Focus Select Vis")
+    }
+  }
+  If Active_ID_Found !=0
+    LV_Modify(Active_ID_Found, "Focus Select Vis")
   Return
 }
 
@@ -411,19 +418,19 @@ Single_Key_Show_Alt_Tab:
   Send, {%Alt_Hotkey2% down}
   Gosub, Alt_Tab
   Hotkey, *%Single_Key_Hide_Alt_Tab%, ListView_Destroy, On
-Return
+  Return
 
 
 Alt_Esc: ; abort switching
-  Alt_Esc =1
-  Gosub, ListView_Destroy
+Alt_Esc =1
+Gosub, ListView_Destroy
 Return
 
 
 Alt_Esc_Check_Alt_State: ; hides alt-tab gui - shows again if alt still pressed
-  Gosub, Alt_Esc
-  If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed - show alt-tab again
-    Gosub, Alt_Tab
+Gosub, Alt_Esc
+If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed - show alt-tab again
+  Gosub, Alt_Tab
 Return
 
 
@@ -433,10 +440,10 @@ Hotkeys_Toggle_Temp_Hotkeys(state) ; (state = "On" or "Off")
 ; UseErrorLevel in case of exiting script before hotkey created
   Hotkey, %Alt_Hotkey%%Use_AND_Symbol%%Esc_Hotkey%, Alt_Esc, %state% UseErrorLevel ; abort
   If Use_Wheel_Scroll_List =1
-    {
+  {
     Hotkey, %Alt_Hotkey%%Use_AND_Symbol%WheelUp,    Alt_Shift_Tab, %state% UseErrorLevel ; previous window
     Hotkey, %Alt_Hotkey%%Use_AND_Symbol%WheelDown,  Alt_Tab,     %state% UseErrorLevel ; next window
-    }
+  }
   Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, MButton_Close, %state% UseErrorLevel ; close the window clicked on
   Hotkey, *~LButton, LButton_Tab_Check, %state% UseErrorLevel ; check if user clicked/dragged a tab
 }
@@ -445,7 +452,7 @@ Hotkeys_Toggle_Temp_Hotkeys(state) ; (state = "On" or "Off")
 Check_Alt_Hotkey2_Up:
   If ! ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key released
     Gosub, ListView_Destroy
-Return
+  Return
 
 ; LAlt & RAlt::Reload
 
@@ -457,7 +464,7 @@ Display_List:
   If Display_List_Shown =1 ; empty listview and image list if only updating - e.g. when closing a window (mbutton)
     LV_Delete()
   Else ; not shown - need to create gui for updating listview
-    {
+  {
     ; Create the ListView gui
     Gui, 1: +AlwaysOnTop +ToolWindow -Caption
     Gui, 1: Color, %Tab_Colour% ; i.e. border/background (default = 404040) ; barely visible - right and bottom sides only
@@ -474,7 +481,7 @@ Display_List:
     ; SB_SetParts(SB_Width, SB_Width, SB_Width)
     ; Gosub, SB_Update__CPU
     ; SetTimer, SB_Update__CPU, 1000
-    }
+  }
   ; GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
   ; GuiControl, ChooseString, Gui1_Tab, %Group_Active%
 
@@ -483,24 +490,24 @@ Display_List:
 
   Gosub, Display_List__Find_windows_and_icons
   If Window_Found_Count =0
-    {
+  {
     Window_Found_Count =1
     LV_Add("","","","","","","") ; No Windows Found! - avoids an error on selection if nothing is added
-    }
+  }
 
   ColumnClickSort(Sort_By_Column, "") ; Col = column clicked on, Update = 1 if true else blank (apply only, not change order)
 
   Gosub, Gui_Resize_and_Position
   If Display_List_Shown =1 ; resize gui for updating listview
-    {
-      Gui_vx := Gui_CenterX()
+  {
+    Gui_vx := Gui_CenterX()
     Gui, 1: Show, AutoSize x%Gui_vx% y%Gui_y%, Alt-Tab Replacement
     If Selected_Row >%Window_Found_Count% ; less windows now - select last one instead of default 1st row
       Selected_Row =%Window_Found_Count%
     LV_Modify(Selected_Row, "Focus Select Vis") ; select 1st entry since nothing selected
-    }
+  }
   Display_List_Shown =1 ; Gui 1 is shown back in Alt_Tab_Common_Function() for initial creation
-Return
+  Return
 
 
 Display_List__Find_windows_and_icons:
@@ -509,13 +516,13 @@ Display_List__Find_windows_and_icons:
 
   Window_Found_Count =0
   Loop, %Window_List%
-    {
+  {
     wid := Window_List%A_Index%
     WinGetTitle, wid_Title, ahk_id %wid%
     WinGet, Style, Style, ahk_id %wid%
 
     If ((Style & WS_DISABLED) or ! (wid_Title)) ; skip unimportant windows ; ! wid_Title or
-        Continue
+      Continue
 
     WinGet, es, ExStyle, ahk_id %wid%
     WinGetClass, cla, ahk_id %wid%
@@ -528,46 +535,46 @@ Display_List__Find_windows_and_icons:
     WinGetClass, Win_Class, ahk_id %wid%
 
     If (((es & WS_EX_TOOLWINDOW)  and !(Parent)) ; filters out program manager, etc
-	or (es =0x00200008)
-	; or (Win_Class ="Windows.U.Core.CoreWindow")
-	or ( !(es & WS_EX_APPWINDOW)
-	     and (((Parent) and ((Style_parent & WS_DISABLED) =0)) ; These 2 lines filter out windows that have a parent or owner window that is NOT disabled -
-		  or ((Owner) and ((Style_Owner & WS_DISABLED) =0))))) ; NOTE - some windows result in blank value so must test for zero instead of using NOT operator!
-	continue
+      or (es =0x00200008)
+    ; or (Win_Class ="Windows.U.Core.CoreWindow")
+    or ( !(es & WS_EX_APPWINDOW)
+    and (((Parent) and ((Style_parent & WS_DISABLED) =0)) ; These 2 lines filter out windows that have a parent or owner window that is NOT disabled -
+    or ((Owner) and ((Style_Owner & WS_DISABLED) =0))))) ; NOTE - some windows result in blank value so must test for zero instead of using NOT operator!
+    continue
 
     hw_popup := Decimal_to_Hex(DllCall("GetLastActivePopup", "uint", wid))
 
     ; CUSTOM GROUP FILTERING
     If (Group_Active != "Settings" AND Group_Active != "ALL") ; i.e. list is filtered, check filter contents to include
-      {
+    {
       Custom_Group_Include_wid_temp = ; initialise/reset
 
       Loop, %Group_Active_0% ; check current window id against the list to filter
-        {
+      {
         Loop_Item := Group_Active_%A_Index%
         StringLeft, Exclude_Item, Loop_Item, 1
         If Exclude_Item =! ; remove ! for matching strings
           StringTrimLeft, Loop_Item, Loop_Item, 1
         If ((Loop_Item = Exe_Name) or InStr(wid_Title, Loop_Item)) ; match exe name, title
-          {
+        {
           Custom_Group_Include_wid_temp =1 ; include this window
           Break
-          }
         }
-
-      If  (((Custom_Group_Include_wid_temp =1) and (Exclude_Item ="!"))
-          or ((Custom_Group_Include_wid_temp !=1) and (Exclude_Not_In_List =1)))
-        Continue
       }
 
-      ; If EXE group is used, only accept windows with the same executable as the current
-         If (Group_Active = "EXE")
-         {
+      If  (((Custom_Group_Include_wid_temp =1) and (Exclude_Item ="!"))
+        or ((Custom_Group_Include_wid_temp !=1) and (Exclude_Not_In_List =1)))
+      Continue
+    }
+
+    ; If EXE group is used, only accept windows with the same executable as the current
+    If (Group_Active = "EXE")
+    {
 
       Same_Exe_Include_wid_temp = ; initialise/reset
       If (Cur_Exe_Name != Exe_Name) ; match current exe name
         Continue
-     }
+    }
 
     Dialog =0 ; init/reset
     If (Parent and ! Style_parent)
@@ -577,16 +584,16 @@ Display_List__Find_windows_and_icons:
     If (CPA_file_name or (Win_Class ="#32770") or ((style & WS_POPUP) and (es & WS_EX_DLGMODALFRAME)))
       Dialog =1 ; found a Dialog window
     If (CPA_file_name)
-      {
+    {
       Window_Found_Count += 1
       Gui_Icon_Number := IL_Add( ImageListID1, CPA_file_name, 1 )
-      }
+    }
     Else
       Get_Window_Icon(wid, Use_Large_Icons_Current) ; (window id, whether to get large icons)
     Window__Store_attributes(Window_Found_Count, wid, "") ; Index, wid, parent (or blank if none)
     LV_Add("Icon" . Window_Found_Count,"", Window_Found_Count, Title%Window_Found_Count%, Exe_Name%Window_Found_Count%, State%Window_Found_Count%, OnTop%Window_Found_Count%, Status%Window_Found_Count%)
-    }
-Return
+  }
+  Return
 
 
 Window__Store_attributes(Index, wid, ID_Parent) ; Index = Window_Found_Count, wid = window id, ID_Parent = parent or blank if none
@@ -600,58 +607,58 @@ Window__Store_attributes(Index, wid, ID_Parent) ; Index = Window_Found_Count, wi
   WinGet, PID%Index%, PID, ahk_id %wid% ; store pid's to a list
   Dialog%Index% := Dialog  ; 1 if found a Dialog window, else 0
   WinGet, State_temp, MinMax, ahk_id %wid%
-    If State_temp =1
-      State%Index% =Max
-    Else If State_temp =-1
-      State%Index% =Min
-    Else If State_temp =0
-      State%Index% =
-    WinGet, es_hw_popup, ExStyle, ahk_id %hw_popup% ; eg to detect on top status of zoomplayer window
-    If ((es & 0x8) or (es_hw_popup & 0x8))  ; 0x8 is WS_EX_TOPMOST.
-      {
-      OnTop%Index% =Top
-      OnTop_Found =1
-      }
-    Else
-      OnTop%Index% =
+  If State_temp =1
+    State%Index% =Max
+  Else If State_temp =-1
+    State%Index% =Min
+  Else If State_temp =0
+    State%Index% =
+  WinGet, es_hw_popup, ExStyle, ahk_id %hw_popup% ; eg to detect on top status of zoomplayer window
+  If ((es & 0x8) or (es_hw_popup & 0x8))  ; 0x8 is WS_EX_TOPMOST.
+  {
+    OnTop%Index% =Top
+    OnTop_Found =1
+  }
+  Else
+    OnTop%Index% =
   If Responding
     Status%Index% =
   Else
-    {
+  {
     Status%Index% =Not Responding
     Status_Found =1
-    }
+  }
   ; Listview Higlighting Colours
-    If Status%Index% =Not Responding
-      LV_ColorChange(Index, Listview_Colour_Not_Responding_Text, Listview_Colour_Not_Responding_Back)
-    Else If Dialog%Index%
-      LV_ColorChange(Index, Listview_Colour_Dialog_Text, Listview_Colour_Dialog_Back)
-    Else If OnTop%Index% =Top
-      LV_ColorChange(Index, Listview_Colour_OnTop_Text, Listview_Colour_OnTop_Back)
-    Else If State%Index% =Max
-      LV_ColorChange(Index, Listview_Colour_Max_Text, Listview_Colour_Max_Back)
-    Else If State%Index% =Min
-      LV_ColorChange(Index, Listview_Colour_Min_Text, Listview_Colour_Min_Back)
+  If Status%Index% =Not Responding
+    LV_ColorChange(Index, Listview_Colour_Not_Responding_Text, Listview_Colour_Not_Responding_Back)
+  Else If Dialog%Index%
+    LV_ColorChange(Index, Listview_Colour_Dialog_Text, Listview_Colour_Dialog_Back)
+  Else If OnTop%Index% =Top
+    LV_ColorChange(Index, Listview_Colour_OnTop_Text, Listview_Colour_OnTop_Back)
+  Else If State%Index% =Max
+    LV_ColorChange(Index, Listview_Colour_Max_Text, Listview_Colour_Max_Back)
+  Else If State%Index% =Min
+    LV_ColorChange(Index, Listview_Colour_Min_Text, Listview_Colour_Min_Back)
 }
 
 
 LButton_Tab_Check:
   Tab_Button_Clicked := TCM_HITTEST()
   If Tab_Button_Clicked
-    {
+  {
     Tab_Button_Clicked_Text := Tab_Button_Get_Text(Tab_Button_Clicked)
     SetTimer, Tab__Drag_and_Drop, 60 ; check status of drag operation
-    }
-Return
+  }
+  Return
 
 Tab__Drag_and_Drop:
   If ! GetKeyState("LButton")
-    {
+  {
     SetTimer, Tab__Drag_and_Drop, Off
     Group_Active := Tab_Button_Clicked_Text
     Gosub, Gui_Window_Group_Load__part2
     Return
-    }
+  }
   If TCM_HITTEST()
     Tab_Button_Over := TCM_HITTEST()
   Tab_Button_Over_Text := Tab_Button_Get_Text(Tab_Button_Over)
@@ -659,7 +666,7 @@ Tab__Drag_and_Drop:
     Tab_Swap(Group_List, Tab_Button_Clicked_Text, Tab_Button_Over_Text)
   Else If (Tab_Button_Over > Tab_Button_Clicked)
     Tab_Swap(Group_List, Tab_Button_Over_Text, Tab_Button_Clicked_Text)
-Return
+  Return
 
 Tab_Swap(ByRef Tab_List, ByRef Text1, ByRef Text2)
 {
@@ -678,16 +685,16 @@ TCM_HITTEST() ; returns 1-based index of clicked tab
   If (Control != hw_Gui1_Tab) ; not clicked on tab control
     Return, False
   ControlGetPos, cX, cY,,,, ahk_id %Control%
-  x:=mX-cX, y:=mY-cY ; co-ordinatess relative to tab control
-  VarSetCapacity(lparam, 12, 0)
-  NumPut(x, lparam, 0, "Int")
-  NumPut(y, lparam, 4, "Int")
-  SendMessage, 0x130D, 0, &lparam,, ahk_id %Control% ; TCM_HITTEST
-  result := ErrorLevel ; 0-based index, FAIL, or 0xFFFFFFFF (in a tab but not the button)
-  If (result = "FAIL" or result = 0xFFFFFFFF)
-    Return, False
-  Else
-    Return, result + 1 ; change to 1-based index
+x:=mX-cX, y:=mY-cY ; co-ordinatess relative to tab control
+VarSetCapacity(lparam, 12, 0)
+NumPut(x, lparam, 0, "Int")
+NumPut(y, lparam, 4, "Int")
+SendMessage, 0x130D, 0, &lparam,, ahk_id %Control% ; TCM_HITTEST
+result := ErrorLevel ; 0-based index, FAIL, or 0xFFFFFFFF (in a tab but not the button)
+If (result = "FAIL" or result = 0xFFFFFFFF)
+  Return, False
+Else
+  Return, result + 1 ; change to 1-based index
 }
 
 Tab_Button_Get_Text(Tab_Index)
@@ -695,14 +702,14 @@ Tab_Button_Get_Text(Tab_Index)
   Global
   If Tab_Index
     Loop, Parse, Group_List,|
-      If (A_Index = Tab_Index)
-        Return,  A_LoopField
+  If (A_Index = Tab_Index)
+    Return,  A_LoopField
 }
 
 
 Gui_Settings_Tab:
 
-Return
+  Return
 
 
 Gui_Resize_and_Position:
@@ -710,15 +717,15 @@ Gui_Resize_and_Position:
   Gui, +LastFound
   Gui_ID := WinExist() ; for auto-sizing columns later
   If Display_List_Shown =0 ; resize listview columns - no need to resize columns for updating listview
-    {
+  {
     LV_ModifyCol(1, Col_1) ; icon column
     LV_ModifyCol(2, Col_2) ; hidden column for row number
     ; col 3 - see below
     LV_ModifyCol(4, Col_4) ; exe
     SendMessage, 0x1000+29, 3, 0,, ahk_id %hw_LV_ColorChange% ; LVM_GETCOLUMNWIDTH is 0x1000+29
-      Width_Column_4 := ErrorLevel
-      If Width_Column_4 > %Exe_Width_Max%
-        LV_ModifyCol(4, Exe_Width_Max) ; resize title column
+    Width_Column_4 := ErrorLevel
+    If Width_Column_4 > %Exe_Width_Max%
+      LV_ModifyCol(4, Exe_Width_Max) ; resize title column
     LV_ModifyCol(5, Col_5) ; State
     If OnTop_Found
       LV_ModifyCol(6, Col_6) ; OnTop
@@ -729,24 +736,24 @@ Gui_Resize_and_Position:
     Else
       LV_ModifyCol(7, 0) ; Status
     Loop, 7
-      {
+    {
       SendMessage, 0x1000+29, A_Index -1, 0,, ahk_id %hw_LV_ColorChange% ; LVM_GETCOLUMNWIDTH is 0x1000+29
-        Width_Column_%A_Index% := ErrorLevel
-      }
+      Width_Column_%A_Index% := ErrorLevel
+    }
     Col_3_w := Listview_Width - Width_Column_1 - Width_Column_2 - Width_Column_4 - Width_Column_5 - Width_Column_6 - Width_Column_7 - 4 ; total width of columns - 4 for border
     LV_ModifyCol(3, Col_3_w) ; resize title column
-    }
+  }
   ListView_Resize_Vertically(Gui_ID) ; Automatically resize listview vertically - pass the gui id value
   GuiControlGet, Listview_Now, Pos, ListView1 ; retrieve listview dimensions/position ; for auto-sizing (elsewhere)
   ; resize listview according to scrollbar presence
   If (Listview_NowH > Height_Max AND Use_Large_Icons_Current =0) ; already using small icons so limit height
-    {
+  {
     Col_3_w -= Scrollbar_Vertical_Thickness ; allow for vertical scrollbar being visible
     LV_ModifyCol(3, Col_3_w) ; resize title column
     GuiControl, Move, ListView1, h%Height_Max%
-    }
+  }
   DetectHiddenWindows, Off
-Return
+  Return
 
 
 SB_Update__CPU:
@@ -754,14 +761,14 @@ SB_Update__CPU:
   SetFormat, Float, 4.1
   SB_SetText( "CPU (%): " GetSystemTimes(), 1)
   SetFormat, Float, %Format_Float%
-Return
+  Return
 SB_Update__ProcessCPU:
   Format_Float := A_FormatFloat
   SetFormat, Float, 4.1
   Get__Selected_Row_and_RowText()
   SB_SetText( "Process CPU (%): " GetProcessTimes(PID%RowText%), 2)
   SetFormat, Float, %Format_Float%
-Return
+  Return
 
 
 Get__Selected_Row_and_RowText()
@@ -777,7 +784,7 @@ Get__Selected_Row_and_RowText()
 
 
 ListView_Event:
-Critical, 50
+  Critical, 50
   If MButton_Clicked =1 ; closing a window so don't process events
     Return
   If A_GuiEvent =DoubleClick ; activate clicked window
@@ -786,76 +793,76 @@ Critical, 50
     Gosub, Key_Pressed_1st_Letter
   If A_GuiEvent =ColClick ; column was clicked - do custom sort to allow for sorting hidden column + remembering state
     ColumnClickSort(A_EventInfo) ; A_EventInfo = column clicked on
-Return
+  Return
 
 
 GuiContextMenu:  ; right-click or press of the Apps key -> displays the menu only for clicks inside the ListView
-  If Menu__Gui_1 ; destroy previously generated menus
+If Menu__Gui_1 ; destroy previously generated menus
   Get__Selected_Row_and_RowText()
-  Gui_wid := Window%RowText%
-  Gui_wid_Title :=Title%RowText%
-  StringLeft, Gui_wid_Title, Gui_wid_Title, 40
+Gui_wid := Window%RowText%
+Gui_wid_Title :=Title%RowText%
+StringLeft, Gui_wid_Title, Gui_wid_Title, 40
 
-  Menu, Tray, UseErrorLevel
-  ; Clear previous entries
-  Menu, ContextMenu1, DeleteAll
-  Menu, Gui_MinMax_Windows, DeleteAll
-  Menu, Gui_Un_Exclude_Windows, DeleteAll
-  Menu, Gui_Window_Group_Load, DeleteAll
-  Menu, Gui_Window_Group_Delete, DeleteAll
-  Menu, Gui_Processes, DeleteAll
-  Menu, Gui_Settings_Help, DeleteAll
+Menu, Tray, UseErrorLevel
+; Clear previous entries
+Menu, ContextMenu1, DeleteAll
+Menu, Gui_MinMax_Windows, DeleteAll
+Menu, Gui_Un_Exclude_Windows, DeleteAll
+Menu, Gui_Window_Group_Load, DeleteAll
+Menu, Gui_Window_Group_Delete, DeleteAll
+Menu, Gui_Processes, DeleteAll
+Menu, Gui_Settings_Help, DeleteAll
 
-  ; Min/Max windows
-  Menu, Gui_MinMax_Windows, Add, % "Maximize all:  " Exe_Name%RowText%, Gui_MinMax_Windows
-  Menu, Gui_MinMax_Windows, Add, % "Minimize all:   " Exe_Name%RowText%, Gui_MinMax_Windows
-  Menu, Gui_MinMax_Windows, Add
-  Menu, Gui_MinMax_Windows, Add, % "Normal all:     " Exe_Name%RowText%, Gui_MinMax_Windows
-  Menu, ContextMenu1, Add, &Min / Max, :Gui_MinMax_Windows
+; Min/Max windows
+Menu, Gui_MinMax_Windows, Add, % "Maximize all:  " Exe_Name%RowText%, Gui_MinMax_Windows
+Menu, Gui_MinMax_Windows, Add, % "Minimize all:   " Exe_Name%RowText%, Gui_MinMax_Windows
+Menu, Gui_MinMax_Windows, Add
+Menu, Gui_MinMax_Windows, Add, % "Normal all:     " Exe_Name%RowText%, Gui_MinMax_Windows
+Menu, ContextMenu1, Add, &Min / Max, :Gui_MinMax_Windows
 
-  ; Window Group sub-menu entry
-  Menu, ContextMenu1, Add ; spacer
-  Menu, ContextMenu1, Add, Group - &No Filter, Gui_Window_Group_No_Filter
-  If (Group_Active != "Settings" AND Group_Active != "ALL")
-    Menu, ContextMenu1, Disable, Group - &No Filter
+; Window Group sub-menu entry
+Menu, ContextMenu1, Add ; spacer
+Menu, ContextMenu1, Add, Group - &No Filter, Gui_Window_Group_No_Filter
+If (Group_Active != "Settings" AND Group_Active != "ALL")
+  Menu, ContextMenu1, Disable, Group - &No Filter
 
-  Loop, Parse, Group_List,|
-    If (A_LoopField != "Settings")
-      Menu, Gui_Window_Group_Load, Add,%A_LoopField%, Gui_Window_Group_Load
-  Menu, Gui_Window_Group_Load, Check, %Group_Active%
-  Menu, ContextMenu1, Add, Group - &Load, :Gui_Window_Group_Load
-  Menu, ContextMenu1, Add, Group - &Save/Edit, Gui_Window_Group_Save_Edit
-  Menu, ContextMenu1, Add, Group - Global &Include, Gui_Window_Group_Global_Include
-  Menu, ContextMenu1, Add, Group - Global &Exclude, Gui_Window_Group_Global_Exclude
+Loop, Parse, Group_List,|
+If (A_LoopField != "Settings")
+  Menu, Gui_Window_Group_Load, Add,%A_LoopField%, Gui_Window_Group_Load
+Menu, Gui_Window_Group_Load, Check, %Group_Active%
+Menu, ContextMenu1, Add, Group - &Load, :Gui_Window_Group_Load
+Menu, ContextMenu1, Add, Group - &Save/Edit, Gui_Window_Group_Save_Edit
+Menu, ContextMenu1, Add, Group - Global &Include, Gui_Window_Group_Global_Include
+Menu, ContextMenu1, Add, Group - Global &Exclude, Gui_Window_Group_Global_Exclude
 
-  Loop, Parse, Group_List,|
-    If (A_LoopField != "Settings" AND A_LoopField != "ALL")
-      Menu, Gui_Window_Group_Delete, Add,%A_LoopField%, Gui_Window_Group_Delete
-  Menu, Gui_Window_Group_Delete, Check, %Group_Active%
-  Menu, Gui_Window_Group_Delete, Color, E10000, Single ; warning colour
-  Menu, ContextMenu1, Add, Group - &Delete, :Gui_Window_Group_Delete
+Loop, Parse, Group_List,|
+If (A_LoopField != "Settings" AND A_LoopField != "ALL")
+  Menu, Gui_Window_Group_Delete, Add,%A_LoopField%, Gui_Window_Group_Delete
+Menu, Gui_Window_Group_Delete, Check, %Group_Active%
+Menu, Gui_Window_Group_Delete, Color, E10000, Single ; warning colour
+Menu, ContextMenu1, Add, Group - &Delete, :Gui_Window_Group_Delete
 
-  ; Hotkeys entry
-  Menu, ContextMenu1, Add ; spacer
-  Menu, ContextMenu1, Add, &Hotkeys, Gui_Hotkeys
+; Hotkeys entry
+Menu, ContextMenu1, Add ; spacer
+Menu, ContextMenu1, Add, &Hotkeys, Gui_Hotkeys
 
-  ; Processes entry
-  Menu, ContextMenu1, Add ; spacer
-  Menu, Gui_Processes, Add, % "End:      " Gui_wid_Title, End_Process_Single
-  Menu, Gui_Processes, Add ; spacer
-  Menu, Gui_Processes, Add, % "End All:  " Exe_Name%RowText%, End_Process_All_Instances
-  Menu, Gui_Processes, Color, E10000, Single ; warning colour
-  Menu, ContextMenu1, Add, &Processes, :Gui_Processes
+; Processes entry
+Menu, ContextMenu1, Add ; spacer
+Menu, Gui_Processes, Add, % "End:      " Gui_wid_Title, End_Process_Single
+Menu, Gui_Processes, Add ; spacer
+Menu, Gui_Processes, Add, % "End All:  " Exe_Name%RowText%, End_Process_All_Instances
+Menu, Gui_Processes, Color, E10000, Single ; warning colour
+Menu, ContextMenu1, Add, &Processes, :Gui_Processes
 
-  ; Help + Latest changes
-  Menu, ContextMenu1, Add ; spacer
-  Menu, Gui_Settings_Help, Add, Delete Settings (.ini) && Reload, Delete_Ini_File_Settings
-  Menu, Gui_Settings_Help, Add, ; spacer
-  Menu, Gui_Settings_Help, Add, Help, HELP_and_LATEST_VERSION_CHANGES
-  Menu, Gui_Settings_Help, Add, Latest Changes, HELP_and_LATEST_VERSION_CHANGES
-  Menu, ContextMenu1, Add, Settings && Help, :Gui_Settings_Help
+; Help + Latest changes
+Menu, ContextMenu1, Add ; spacer
+Menu, Gui_Settings_Help, Add, Delete Settings (.ini) && Reload, Delete_Ini_File_Settings
+Menu, Gui_Settings_Help, Add, ; spacer
+Menu, Gui_Settings_Help, Add, Help, HELP_and_LATEST_VERSION_CHANGES
+Menu, Gui_Settings_Help, Add, Latest Changes, HELP_and_LATEST_VERSION_CHANGES
+Menu, ContextMenu1, Add, Settings && Help, :Gui_Settings_Help
 
- Menu, ContextMenu1, Show, %A_GuiX%, %A_GuiY%
+Menu, ContextMenu1, Show, %A_GuiX%, %A_GuiY%
 Return
 
 
@@ -863,10 +870,10 @@ Gui_MinMax_Windows:
   Gosub, GuiControl_Disable_ListView1
   List_of_Process_To_MinMax = ; need to store list now as re-drawing the listview over-writes necessary variables
   Loop, %Window_Found_Count%
-    {
+  {
     If ( Exe_Name%A_Index% = Exe_Name%RowText% and ! Dialog%A_Index% ) ; don't try to act on dialog windows (e.g. save prompts)
-        List_of_Process_To_MinMax .= "|" . Window%A_Index%
-    }
+      List_of_Process_To_MinMax .= "|" . Window%A_Index%
+  }
   StringTrimLeft, List_of_Process_To_MinMax, List_of_Process_To_MinMax, 1 ; remove 1st | character (empty reference otherwise)
   If A_ThisMenuItem contains Maximize
     MinMax_Message =0xF030 ; SC_MAXIMIZE
@@ -875,34 +882,34 @@ Gui_MinMax_Windows:
   Else If A_ThisMenuItem contains Normal
     MinMax_Message =0xF120 ; SC_RESTORE
   Loop, Parse, List_of_Process_To_MinMax,|
-    PostMessage, 0x112, %MinMax_Message%,,, ahk_id %A_LoopField% ; 0x112 = WM_SYSCOMMAND
+  PostMessage, 0x112, %MinMax_Message%,,, ahk_id %A_LoopField% ; 0x112 = WM_SYSCOMMAND
   Sleep, 50 ; wait for min/max state to change otherwise updated listview will be wrong
   Gosub, Display_List
   Gosub, GuiControl_Enable_ListView1
-Return
+  Return
 
 GuiControl_Disable_ListView1:
   OnMessage( 0x06, "" ) ; turn off: no alt tab list window lost focus -> hide list
   ListView1__Disabled = 1
   GuiControl, Disable, ListView1
-Return
+  Return
 
 GuiControl_Enable_ListView1:
   GuiControl, Enable, ListView1
   GuiControl, Focus, ListView1
   ListView1__Disabled = 0
   OnMessage( 0x06, "WM_ACTIVATE" ) ; turn on again - alt tab list window lost focus > hide list
-Return
+  Return
 
 ; HOTKEYS MENU SECTION:
 ;============================================================================================================================
 
 #If WinActive("Alt-Tab Replacement ahk_class AutoHotkeyGUI")
 
- !1:: ColumnClickSort(1, 1) ;
- !2:: ColumnClickSort(3, 1) ;
- !3:: ColumnClickSort(4, 1) ;
- !4:: ColumnClickSort(5, 1) ; Sort by window
+!1:: ColumnClickSort(1, 1) ;
+!2:: ColumnClickSort(3, 1) ;
+!3:: ColumnClickSort(4, 1) ;
+!4:: ColumnClickSort(5, 1) ; Sort by window
 
 #If
 
@@ -916,30 +923,30 @@ Gui_Hotkeys:
   Gui, 2: Add, Text, x+5 yp+2, (Note that "Alt" must be either Alt, Ctrl, Shift, Win or mouse XButton1 / 2 - but using XButton requires "Shift+Tab" is a single key!)
   ; Gui_Add_Hotkey(Gui number, Text, Comment, variable name)
   Gui_Add_Hotkey(2, "Alt","(key in Alt+Tab)", "Alt_Hotkey")
-    GuiControl, 2: Disable, Alt_Hotkey_Tab
-    GuiControl, 2: Disable, Alt_Hotkey_Esc
-    GuiControl, 2: Disable, Alt_Hotkey_Enter
-    GuiControl, 2: Disable, Alt_Hotkey_WheelUp
-    GuiControl, 2: Disable, Alt_Hotkey_WheelDown
-    GuiControl, 2: Disable, Alt_Hotkey_Hotkey
+  GuiControl, 2: Disable, Alt_Hotkey_Tab
+  GuiControl, 2: Disable, Alt_Hotkey_Esc
+  GuiControl, 2: Disable, Alt_Hotkey_Enter
+  GuiControl, 2: Disable, Alt_Hotkey_WheelUp
+  GuiControl, 2: Disable, Alt_Hotkey_WheelDown
+  GuiControl, 2: Disable, Alt_Hotkey_Hotkey
   Gui_Add_Hotkey(2, "Tab","(key in Alt+Tab)", "Tab_Hotkey")
   Gui_Add_Hotkey(2, "Shift+Tab","(Key(s) in Alt+Shift+Tab)", "Shift_Tab_Hotkey")
   Gui_Add_Hotkey(2, "Esc","(key in Alt+Esc)", "Esc_Hotkey")
-    Gui, 2: Font, s10
+  Gui, 2: Font, s10
   Gui, 2: Add, Text,xm y+15, Single keys:
-    Gui, 2: Font
+  Gui, 2: Font
   Gui, 2: Add, Text, x+5 yp+2, (Alternative way to show the Alt+Tab list by 1 key (blank for no hotkey) and another for selection)
   Gui_Add_Hotkey(2, "Alt+Tab list", "", "Single_Key_Show_Alt_Tab")
   Gui_Add_Hotkey(2, "Alt+Tab selection", "", "Single_Key_Hide_Alt_Tab")
-    Gui, 2: Font, s10
+  Gui, 2: Font, s10
   Gui, 2: Add, Text,xm y+30, Group hotkeys:
-    Gui, 2: Font
+  Gui, 2: Font
   GuiControl, 2: Focus, Static1
 
   Gui, 2: Add, ListView, section xm r15 w470 -Multi, Group name|Assigned hotkey
   Loop, Parse, Group_List, |
-    If (A_LoopField != "Settings")
-  	   LV_Add("", A_LoopField, %A_LoopField%_Group_Hotkey)
+  If (A_LoopField != "Settings")
+    LV_Add("", A_LoopField, %A_LoopField%_Group_Hotkey)
   Gui, 2: Add, Button, x+10 yp+40 gGui_2_Group_Hotkey_Assign w170, Assign hotkey to selected group:
   Gui, 2: Add, Edit, vGui_2_Group_Hotkey xp y+5, %Hotkey%
   Gui, 2: Add, Button, xp y+30 gGui_2_Group_Hotkey_Clear w170, Clear hotkey of selected group
@@ -948,7 +955,7 @@ Gui_Hotkeys:
   Gui, 2: Add, Button, xm+430 g2GuiClose w100, &Cancel
   Gui, 2: Add, Button, x+20 gGui_2_OK wp Default, &OK
   Gui, 2: Show,, Hotkeys
-Return
+  Return
 
 
 Gui_2_Group_Hotkey_Assign:
@@ -957,15 +964,15 @@ Gui_2_Group_Hotkey_Assign:
   If (! Selected_Row or ! Gui_2_Group_Hotkey)
     Return
   Loop, Parse, Group_List,|
-    If %A_LoopField%_Group_Hotkey =%Gui_2_Group_Hotkey%
-      {
-      Msgbox, Hotkey already exists! Please clear the duplicate hotkey first.
-      Return
-      }
+  If %A_LoopField%_Group_Hotkey =%Gui_2_Group_Hotkey%
+  {
+    Msgbox, Hotkey already exists! Please clear the duplicate hotkey first.
+    Return
+  }
   LV_GetText(Gui_2_Group_Selected, Selected_Row)
   %Gui_2_Group_Selected%_Group_Hotkey := Gui_2_Group_Hotkey
   LV_Modify(Selected_Row, "Col2", Gui_2_Group_Hotkey)
-Return
+  Return
 
 
 Gui_2_Group_Hotkey_Clear:
@@ -973,16 +980,16 @@ Gui_2_Group_Hotkey_Clear:
   If not Selected_Row
     Return
   LV_Modify(Selected_Row, "Col2", "")
-Return
+  Return
 
 
 Gui_2_OK:
   Loop, % LV_GetCount() ; process group hotkeys from listview
-    {
+  {
     LV_GetText(Group_Name, A_Index, 1)
     LV_GetText(Group_Hotkey, A_Index, 2)
     %Group_Name%_Group_Hotkey =%Group_Hotkey%
-    }
+  }
   Gui, 2: Submit
   Gui, 2: Destroy
   Gui_Read_Hotkey(2, "Alt_Hotkey") ; Gui_Read_Hotkey(Gui number, associated variable)
@@ -993,7 +1000,7 @@ Gui_2_OK:
   Gui_Read_Hotkey(2, "Single_Key_Hide_Alt_Tab")
   IniFile_Data("Write")
   Reload
-Return
+  Return
 
 
 Gui_Read_Hotkey(Gui, var_name)
@@ -1037,17 +1044,17 @@ Gui_Add_Hotkey(Gui, Text, Comment, var_name)
   StringSplit, hotkey_list__symbols, hotkey_list__symbols ,|
   StringSplit, hotkey_list__vars, hotkey_list__vars ,|
   Loop, %hotkey_list__symbols0%
-    {
+  {
     symbol_temp := hotkey_list__symbols%A_Index%
     var_temp    := hotkey_list__vars%A_Index%
     If hotkey_temp contains %symbol_temp%
-      {
+    {
       %var_temp% =1
       StringReplace, hotkey_temp, hotkey_temp, %symbol_temp%, ; remove it from list
-      }
+    }
     Else
       %var_temp% =0
-    }
+  }
   Hotkey=%hotkey_temp% ; remainder
 
   Gui, %Gui%: Font, bold
@@ -1078,7 +1085,7 @@ Gui_Add_Hotkey(Gui, Text, Comment, var_name)
 Gui_Window_Group_No_Filter:
   Group_Active =ALL
   Gosub, Alt_Esc_Check_Alt_State
-Return
+  Return
 
 
 Gui_Window_Group_Load:
@@ -1086,94 +1093,94 @@ Gui_Window_Group_Load:
 Gui_Window_Group_Load__part2:
   Gosub, Custom_Group__make_array_of_contents
   Gosub, Alt_Esc_Check_Alt_State ; hides alt-tab gui - shows again if alt still pressed
-Return
+  Return
 
 Custom_Group__make_array_of_contents:
   Exclude_Not_In_List =
   If (Group_Active != "Settings" AND Group_Active != "ALL")
-    {
+  {
     Group_Active_Contents := %Group_Active%
     If Group_Active_Contents contains Exclude_Not_In_List
-      {
+    {
       Exclude_Not_In_List =1
       StringReplace, Group_Active_Contents, Group_Active_Contents, Exclude_Not_In_List|, ; remove text
-      }
-    StringSplit, Group_Active_, Group_Active_Contents,|
     }
-Return
+    StringSplit, Group_Active_, Group_Active_Contents,|
+  }
+  Return
 
 Gui_Window_Group_Save_Edit:
   Gosub, Alt_Esc
   Gui, 3: Default ; for listview operations
   Gui, 3: Add, Text, y+15,
-(
-Choose window titles/exes to include/exclude when LOADING a list:
+  (
+    Choose window titles/exes to include/exclude when LOADING a list:
 
-  - Double-click / F2 to rename an entry.
-  - Titles match anywhere within a target window's title or parent's title (exe is ignored).
-  - Delete the title completely to match the EXE instead.
-  - To EXCLUDE a window, prefix title or EXE with an exclamation: e.g. !notepad.exe, or only ! in title column.
-  - "Exclude all windows not in list?" ignores new windows that do not match the list.
-  - Only ticked items are added to the list. Unticked are removed.
-  - Priority of rules is top (highest) to bottom (lowest).
-  - Not case sensitive.
-)
+    - Double-click / F2 to rename an entry.
+    - Titles match anywhere within a target window's title or parent's title (exe is ignored).
+    - Delete the title completely to match the EXE instead.
+    - To EXCLUDE a window, prefix title or EXE with an exclamation: e.g. !notepad.exe, or only ! in title column.
+    - "Exclude all windows not in list?" ignores new windows that do not match the list.
+    - Only ticked items are added to the list. Unticked are removed.
+    - Priority of rules is top (highest) to bottom (lowest).
+    - Not case sensitive.
+  )
 
   Gui, 3: Add, ListView, xm y+15 r15 w500 Checked -ReadOnly -Multi NoSortHdr AltSubmit gListView3_Event, (Partial) Window Title|EXE
-    Gui_3_ImageList:= IL_Create(15,5,0)
-    LV_SetImageList(Gui_3_ImageList, 1)
-    IL_Add( Gui_3_ImageList, "shell32.dll" , 110) ; not included icon
+Gui_3_ImageList:= IL_Create(15,5,0)
+LV_SetImageList(Gui_3_ImageList, 1)
+IL_Add( Gui_3_ImageList, "shell32.dll" , 110) ; not included icon
 
-  Gui, 3: Add, Picture, icon48 x+10 yp+100 gGui_3_ListView_Swap_Rows_Up, C:\WINDOWS\system32\progman.exe ; up arrow
-  Gui, 3: Add, Picture, icon45 gGui_3_ListView_Swap_Rows_Down, C:\WINDOWS\system32\progman.exe ; down arrow
-  Gui, 3: Add, Text, xm+20, Manual add:
-  Gui_3_Manual_Allow_Blank =1
-  Gui, 3: Add, Edit, x+5 w200 gGui_3_Manual_Exe_Blank vGui_3_Manual_Title, [window title]
-  Gui, 3: Add, Edit, x+5 w100 gGui_3_Manual_Title_Blank vGui_3_Manual_Exe, [program.exe]
-  Gui, 3: Add, Button, x+10 w80 gGui3_Manual_Add, A&dd
-  Gui, 3: Add, Text, xm+20 y+30, Group name:
+Gui, 3: Add, Picture, icon48 x+10 yp+100 gGui_3_ListView_Swap_Rows_Up, C:\WINDOWS\system32\progman.exe ; up arrow
+Gui, 3: Add, Picture, icon45 gGui_3_ListView_Swap_Rows_Down, C:\WINDOWS\system32\progman.exe ; down arrow
+Gui, 3: Add, Text, xm+20, Manual add:
+Gui_3_Manual_Allow_Blank =1
+Gui, 3: Add, Edit, x+5 w200 gGui_3_Manual_Exe_Blank vGui_3_Manual_Title, [window title]
+Gui, 3: Add, Edit, x+5 w100 gGui_3_Manual_Title_Blank vGui_3_Manual_Exe, [program.exe]
+Gui, 3: Add, Button, x+10 w80 gGui3_Manual_Add, A&dd
+Gui, 3: Add, Text, xm+20 y+30, Group name:
 
-  Gui, 3: Add, ComboBox, x+5 w200 vCustom_Name, %Group_List%
-    GuiControl, ChooseString, Custom_Name, %Group_Active%
-  Gui, 3: Add, Checkbox, x+20 vExclude_Not_In_List Checked, Exclude all windows not in list?
-  If %Group_Active% not contains Exclude_Not_In_List
-    GuiControl,, Exclude_Not_In_List, 0 ; check box
+Gui, 3: Add, ComboBox, x+5 w200 vCustom_Name, %Group_List%
+GuiControl, ChooseString, Custom_Name, %Group_Active%
+Gui, 3: Add, Checkbox, x+20 vExclude_Not_In_List Checked, Exclude all windows not in list?
+If %Group_Active% not contains Exclude_Not_In_List
+  GuiControl,, Exclude_Not_In_List, 0 ; check box
 
-  Gui, 3: Add, Button, xm+10 y+20 w80 gGui3_RESET, &Reset List
-  Gui, 3: Add, Button, x+20 wp gGui3_SelectALL, Select &All
-  Gui, 3: Add, Button, x+20 wp gGui3_SelectNONE, Select &None
-  Gui, 3: Add, Button, x+20 wp g3GuiClose, &Cancel
-  Gui, 3: Add, Button, x+20 wp Default gGui3_OK, &OK
+Gui, 3: Add, Button, xm+10 y+20 w80 gGui3_RESET, &Reset List
+Gui, 3: Add, Button, x+20 wp gGui3_SelectALL, Select &All
+Gui, 3: Add, Button, x+20 wp gGui3_SelectNONE, Select &None
+Gui, 3: Add, Button, x+20 wp g3GuiClose, &Cancel
+Gui, 3: Add, Button, x+20 wp Default gGui3_OK, &OK
 
-  If (Global_Include_Edit or Global_Exclude_Edit)
-    {
-    GuiControl, 3: Disable, Exclude_Not_In_List
-    GuiControl, 3: Disable, Custom_Name
-    }
+If (Global_Include_Edit or Global_Exclude_Edit)
+{
+  GuiControl, 3: Disable, Exclude_Not_In_List
+  GuiControl, 3: Disable, Custom_Name
+}
 
-  If Global_Include_Edit =1
-    Gui_3_Listview_Populate("Global_Include")
-  Else If Global_Exclude_Edit =1
-    Gui_3_Listview_Populate("Global_Exclude")
+If Global_Include_Edit =1
+  Gui_3_Listview_Populate("Global_Include")
+Else If Global_Exclude_Edit =1
+  Gui_3_Listview_Populate("Global_Exclude")
 
-  Else If (Group_Active = "Settings" OR Group_Active = "ALL")
-    Loop, %Window_Found_Count% ; populate listview
-      LV_Add("Check Icon2", Title%A_Index%, Exe_Name%A_Index%) ; Icon 1 = not included icon, Icon 2 = blank
-  Else
-    Gui_3_Listview_Populate(Group_Active)
-  Gosub, Gui_3_Update_Icons
+Else If (Group_Active = "Settings" OR Group_Active = "ALL")
+  Loop, %Window_Found_Count% ; populate listview
+LV_Add("Check Icon2", Title%A_Index%, Exe_Name%A_Index%) ; Icon 1 = not included icon, Icon 2 = blank
+Else
+  Gui_3_Listview_Populate(Group_Active)
+Gosub, Gui_3_Update_Icons
 
-  DetectHiddenWindows, On
-  Gui, 3: +LastFound
-  Gui_3_ID := WinExist() ; for auto-sizing columns later
-  LV_ModifyCol(1, 350)
-  ControlGet, Gui_3_Listview_Style, Style,, SysListView321, ahk_id %Gui_3_ID%
-  If ( Gui_3_Listview_Style & WS_VSCROLL ) ; has a vertical scrollbar - reduced width for listview
-    Gui_3_Col_2_w := 500 - 350 - Scrollbar_Vertical_Thickness - 4
-  Else
-    Gui_3_Col_2_w := 500 - 350 - 4
-  LV_ModifyCol(2, Gui_3_Col_2_w)
-  Gui, 3: Show,, Group - Save/Edit
+DetectHiddenWindows, On
+Gui, 3: +LastFound
+Gui_3_ID := WinExist() ; for auto-sizing columns later
+LV_ModifyCol(1, 350)
+ControlGet, Gui_3_Listview_Style, Style,, SysListView321, ahk_id %Gui_3_ID%
+If ( Gui_3_Listview_Style & WS_VSCROLL ) ; has a vertical scrollbar - reduced width for listview
+  Gui_3_Col_2_w := 500 - 350 - Scrollbar_Vertical_Thickness - 4
+Else
+  Gui_3_Col_2_w := 500 - 350 - 4
+LV_ModifyCol(2, Gui_3_Col_2_w)
+Gui, 3: Show,, Group - Save/Edit
 Return
 
 
@@ -1181,52 +1188,52 @@ Gui_3_Listview_Populate(list)
 {
   Global
   Loop, Parse, %list%,|
-    {
+  {
     If A_LoopField =Exclude_Not_In_List
       Continue
     If A_LoopField contains .exe
       LV_Add("Check Icon2" ,"", A_LoopField) ; Icon 1 = not included icon, Icon 2 = blank
     Else
       LV_Add("Check Icon2" ,A_LoopField,"") ; Icon 1 = not included icon, Icon 2 = blank
-    }
+  }
 }
 
 
 Gui_3_ListView_Swap_Rows_Up:
   ListView_Swap_Rows("Up") ; "move" selected row up 1 - higher priority
-Return
+  Return
 
 
 Gui_3_ListView_Swap_Rows_Down:
   ListView_Swap_Rows("Down") ; "move" selected row down 1 - lower priority
-Return
+  Return
 
 
 ListView_Swap_Rows(Direction) ; Direction=Up/Down -swaps all text in each column of 2 adjacent rows and their checked states
 {
   Row_Selected := LV_GetNext("Focused")
   If Row_Selected =0 ; no row selected
-    {
+  {
     LV_Modify(1, "Select Focus")
     Return
-    }
+  }
   If Direction =Up
-    {
+  {
     Row_Swap_With := Row_Selected -1
     If Row_Swap_With =0 ; reached top of listview
       Return
-    }
+  }
   Else
-    {
+  {
     Row_Swap_With := Row_Selected +1
     If ( Row_Swap_With > LV_GetCount() ) ; reached end of listview
       Return
-    }
+  }
   Loop, % LV_GetCount("Col")
-    {
+  {
     LV_GetText(Row_Text_%Row_Selected%_%A_Index%, Row_Selected, A_Index)
     LV_GetText(Row_Text_%Row_Swap_With%_%A_Index%, Row_Swap_With, A_Index)
-    }
+  }
   If ( LV_GetNext(Row_Selected - 1, "C") = Row_Selected ) ; save box checked states
     Row_Selected_Checked =Check
   Else
@@ -1236,10 +1243,10 @@ ListView_Swap_Rows(Direction) ; Direction=Up/Down -swaps all text in each column
   Else
     Row_Swap_With_Checked =-Check
   Loop, % LV_GetCount("Col")
-    {
+  {
     LV_Modify(Row_Selected, Row_Swap_With_Checked . " -Focus -Select Col" . A_Index, Row_Text_%Row_Swap_With%_%A_Index%)
     LV_Modify(Row_Swap_With, Row_Selected_Checked . " Focus Select Vis Col" . A_Index, Row_Text_%Row_Selected%_%A_Index%)
-    }
+  }
   Gosub, Gui_3_Update_Icons
 }
 
@@ -1248,22 +1255,22 @@ Gui3_OK:
   Gui, 3: Submit
 
   If Global_Include_Edit
-    {
+  {
     Custom_Name =Global_Include
     Exclude_Not_In_List =
-    }
+  }
   Else If Global_Exclude_Edit
-    {
+  {
     Custom_Name =Global_Exclude
     Exclude_Not_In_List =
-    }
+  }
 
   If (Custom_Name = "" OR Custom_Name = "Settings" OR Custom_Name = "ALL")
-    {
+  {
     MsgBox, 48, ERROR, Enter a valid name for the group!
     Gui, 3: Show
     Return
-    }
+  }
   StringReplace, Custom_Name, Custom_Name,%A_Space%,_,All
 
   If Exclude_Not_In_List =1 ; checked - add suffix to variable name to filter
@@ -1272,58 +1279,58 @@ Gui3_OK:
     %Custom_Name% = ; make sure it is empty in case it previously existed (over-writing)
   RowNumber = 0 ; init
   Loop
+  {
+    RowNumber := LV_GetNext(RowNumber, "C")  ; Resume the search at the row after that found by the previous iteration.
+    If not RowNumber  ; The above returned zero, so there are no more checked rows.
+      Break
+    LV_GetText(Title_temp, RowNumber)
+    If Title_temp = ; blank therefore set the exe name instead
+      LV_GetText(Title_temp, RowNumber, 2)
+    If Title_temp =! ; exclude exe name instead
     {
-  	RowNumber := LV_GetNext(RowNumber, "C")  ; Resume the search at the row after that found by the previous iteration.
-  	If not RowNumber  ; The above returned zero, so there are no more checked rows.
-  		Break
-  	LV_GetText(Title_temp, RowNumber)
-  	If Title_temp = ; blank therefore set the exe name instead
-    	LV_GetText(Title_temp, RowNumber, 2)
-  	If Title_temp =! ; exclude exe name instead
-      {
-    	LV_GetText(Title_temp, RowNumber, 2)
-    	If Title_temp not contains !
-      	Title_temp =!%Title_temp%
-    	}
-    %Custom_Name% .= "|" . Title_temp
+      LV_GetText(Title_temp, RowNumber, 2)
+      If Title_temp not contains !
+        Title_temp =!%Title_temp%
     }
+    %Custom_Name% .= "|" . Title_temp
+  }
   StringTrimLeft, %Custom_Name%, %Custom_Name%, 1 ; trim initial |
   If ! (Global_Include_Edit or Global_Exclude_Edit)
-    {
+  {
     If Group_List not contains %Custom_Name%
       Group_List .= "|" Custom_Name ; store name to a list for finding later
     Group_Active := Custom_Name ; automatically apply the saved group filter
-    }
+  }
   Gosub, 3GuiClose
   IniFile_Data("Write")
   Global_Include_Edit = ; reset
   Global_Exclude_Edit =
   Gosub, Alt_Esc_Check_Alt_State ; hides alt-tab gui - shows again if alt still pressed
-Return
+  Return
 
 
 ListView3_Event:
   If A_GuiEvent = E ; edited a row
     Gosub, Gui_3_Update_Icons
   If A_GuiEvent = DoubleClick
-     SendMessage, 0x1017, LV_GetNext(0, "Focused") - 1, 0, SysListView321  ; 0x1017 is LVM_EDITLABEL
-Return
+    SendMessage, 0x1017, LV_GetNext(0, "Focused") - 1, 0, SysListView321  ; 0x1017 is LVM_EDITLABEL
+  Return
 
 
 Gui_3_Update_Icons:
   Loop, % LV_GetCount()
-    {
+  {
     Gui_3_Row_To_Modify := A_Index
     Gui_3_Icon =2 ; blank icon as default
     Loop, 2 ; check column 1 and 2
-      {
+    {
       LV_GetText(Title_temp, Gui_3_Row_To_Modify, A_Index)
       If Title_temp contains !
         Gui_3_Icon =1 ; not included icon
-      }
-    LV_Modify(Gui_3_Row_To_Modify, "Icon" . Gui_3_Icon)
     }
-Return
+    LV_Modify(Gui_3_Row_To_Modify, "Icon" . Gui_3_Icon)
+  }
+  Return
 
 
 Gui3_Manual_Add:
@@ -1341,25 +1348,25 @@ Gui3_Manual_Add:
   GuiControl, Focus, &OK
   Sleep, 50
   GuiControl, +Default, &OK
-Return
+  Return
 
 
 Gui3_RESET:
   Gui, 3: Destroy
   Gosub, Gui_Window_Group_Save_Edit
-Return
+  Return
 
 
 Gui3_SelectALL:
   Loop, %Window_Found_Count%
-    LV_Modify(A_Index, "Check")
-Return
+  LV_Modify(A_Index, "Check")
+  Return
 
 
 Gui3_SelectNONE:
   Loop, %Window_Found_Count%
-    LV_Modify(A_Index, "-Check")
-Return
+  LV_Modify(A_Index, "-Check")
+  Return
 
 
 Gui_3_Manual_Title_Blank:
@@ -1367,7 +1374,7 @@ Gui_3_Manual_Title_Blank:
     GuiControl,, Gui_3_Manual_Title, ; blank
   Gui_3_Manual_Allow_Blank =0
   GuiControl, +Default, A&dd
-Return
+  Return
 
 
 Gui_3_Manual_Exe_Blank:
@@ -1375,7 +1382,7 @@ Gui_3_Manual_Exe_Blank:
     GuiControl,, Gui_3_Manual_Exe, ; blank
   Gui_3_Manual_Allow_Blank =0
   GuiControl, +Default, A&dd
-Return
+  Return
 
 
 
@@ -1386,7 +1393,7 @@ Gui_Window_Group_Global_Include:
 Gui_Window_Group_Global_Exclude:
   Global_Exclude_Edit =1
   Gosub, Gui_Window_Group_Save_Edit
-Return
+  Return
 
 
 Gui_Window_Group_Delete:
@@ -1396,38 +1403,38 @@ Gui_Window_Group_Delete:
   StringReplace, temp_List, Group_List, %A_ThisMenuItem% ; remove item from list
   Group_List =
   Loop, Parse, temp_List,|
-    If A_LoopField
-      Group_List .= "|" A_LoopField
+  If A_LoopField
+    Group_List .= "|" A_LoopField
   StringTrimLeft, Group_List, Group_List, 1 ; remove leading |
 
   Hotkey, % %A_ThisMenuItem%_Group_Hotkey, Off, UseErrorLevel
   IniDelete, %A_ScriptDir%\Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%
   IniDelete, %A_ScriptDir%\Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%_Group_Hotkey
   Gosub, Alt_Esc_Check_Alt_State ; hides alt-tab gui - shows again if alt still pressed
-Return
+  Return
 
 
 Group_Hotkey: ; from loading ini file - determine hotkey behaviour based on current hotkey
-  Group_Active_Before := Group_Active
-  Loop, Parse, Group_List,|
+Group_Active_Before := Group_Active
+Loop, Parse, Group_List,|
+{
+  If %A_LoopField%_Group_Hotkey =%A_ThisHotkey% ; find which group to activate
+  {
+    If Group_Active !=%A_LoopField%
     {
-    If %A_LoopField%_Group_Hotkey =%A_ThisHotkey% ; find which group to activate
-      {
-      If Group_Active !=%A_LoopField%
-        {
-        Group_Active=%A_LoopField% ; load custom group
-        Gosub, Custom_Group__make_array_of_contents
-        }
-
-      ; check if currently active window is in the newly loaded group, else switch to 1st
-      Gosub, Single_Key_Show_Alt_Tab ; show list to generate updated variables to check
-      Viewed_Window_List .="|" Active_ID
-        If (Window_Found_Count <=1)
-          Gosub, ListView_Destroy
-      Break
-      }
+      Group_Active=%A_LoopField% ; load custom group
+      Gosub, Custom_Group__make_array_of_contents
     }
-  Group_Active := Group_Active_Before
+
+    ; check if currently active window is in the newly loaded group, else switch to 1st
+    Gosub, Single_Key_Show_Alt_Tab ; show list to generate updated variables to check
+    Viewed_Window_List .="|" Active_ID
+    If (Window_Found_Count <=1)
+      Gosub, ListView_Destroy
+    Break
+  }
+}
+Group_Active := Group_Active_Before
 Return
 
 
@@ -1435,13 +1442,13 @@ MButton_Close:
   MButton_Clicked =1
   MouseGetPos,,, Mouse_Over_Gui
   If Mouse_Over_Gui =%Gui_ID% ; check to be safe
-    {
+  {
     SetTimer, MButton_Close_Cont, 50
     Click, Left
     ; weird pause after left click - hence using timers - continues after moving mouse
-    }
+  }
   MButton_Clicked =
-Return
+  Return
 
 MButton_Close_Cont:
   SetTimer, MButton_Close_Cont, Off
@@ -1449,7 +1456,7 @@ MButton_Close_Cont:
   Gui_wid =% Window%RowText%
   If Gui_wid ; prevent error if nothing was selected due to delay in program
     Gosub, End_Process_Single
-Return
+  Return
 
 
 End_Process_Single:
@@ -1459,76 +1466,76 @@ End_Process_Single:
   Window_After_1st_Ending_Window_ID := Window%RowText%
   Gosub, End_Process_Subroutine
   Gosub, End_Process_Update_Listview
-Return
+  Return
 
 
 End_Process_Subroutine:
   PostMessage, 0x112, 0xF060,,, ahk_id %Gui_wid% ; 0x112 = WM_SYSCOMMAND, 0xF060 = SC_CLOSE
   WinWaitClose, ahk_id %Gui_wid%,, 1
-Return
+  Return
 
 Toggle_Always_OnTop:
-    Winset, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
-Return
+  Winset, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
+  Return
 
 End_Process_All_Instances:
   Gosub, GuiControl_Disable_ListView1
   List_of_Process_To_End = ; need to store list now as re-drawing the listview over-writes necessary variables
   Loop, %Window_Found_Count%
-    {
+  {
     If Dialog%A_Index% ; don't try to close dialog windows (e.g. save prompts)
       Continue
     If Exe_Name%RowText% = % Exe_Name%A_Index%
       List_of_Process_To_End .= "|" . Window%A_Index%
-    }
+  }
   StringTrimLeft, List_of_Process_To_End, List_of_Process_To_End, 1 ; remove 1st | character (empty reference otherwise)
 
   Window_After_1st_Ending_Window_ID := Selected_Row + 1 ; find window after window to close for positioning focus in listview afterwards
   LV_GetText(RowText, Window_After_1st_Ending_Window_ID, 2)  ; Get the row's hidden text
   Window_After_1st_Ending_Window_ID =% Window%RowText% ; over-ridden below if necessary
   If Exe_Name%RowText% = % Exe_Name%Selected_Row% ; find an earlier window which won't be closed
-    {
+  {
     Loop, %Window_Found_Count%
-      {
+    {
       Window_After_1st_Ending_Window_ID := Selected_Row + 1 + A_Index
       If Window_After_1st_Ending_Window_ID =% Window_Found_Count
-        {
+      {
         LV_GetText(RowText, %Window_Found_Count%, 2)  ; Get the row's hidden text
         If RowText not between 1 and %Window_Found_Count% ; avoid an error when closing all windows
           Break
         Window_After_1st_Ending_Window_ID =% Window%RowText%
         Break
-        }
+      }
       LV_GetText(RowText, Window_After_1st_Ending_Window_ID, 2)  ; Get the row's hidden text
       If Exe_Name%RowText% != % Exe_Name%Selected_Row% ; find an earlier window which won't be closed
-        {
+      {
         Window_After_1st_Ending_Window_ID =% Window%RowText%
         Break
-        }
       }
     }
+  }
   Loop, Parse, List_of_Process_To_End,|
-    {
+  {
     Gui_wid := A_LoopField
     Gosub, End_Process_Subroutine
-    }
+  }
   List_of_Process_To_End = ; reset
   Gosub, End_Process_Update_Listview
-Return
+  Return
 
 
 End_Process_Update_Listview:
   Gosub, Display_List
   Loop, %Window_Found_Count%
-    {
+  {
     If Window%A_Index% =%Window_After_1st_Ending_Window_ID%
-      {
+    {
       LV_GetText(RowText, A_Index, 2)  ; Get the row's hidden text
       LV_Modify(RowText, "Focus Select Vis")
-      }
     }
+  }
   Gosub, GuiControl_Enable_ListView1
-Return
+  Return
 
 
 Key_Pressed_1st_Letter:
@@ -1537,57 +1544,57 @@ Key_Pressed_1st_Letter:
   Get__Selected_Row_and_RowText()
 
   If Key_Pressed_ASCII =13 ; Alt+Apps key - context menu
-    {
+  {
     Gosub, GuiContextMenu
     Return
-    }
+  }
 
   If (Key_Pressed_ASCII =40) ; Down arrow
-    {
+  {
     GoSub Alt_Tab
     Return
-    }
+  }
   If (Key_Pressed_ASCII =38) ; Up arrow
-    {
+  {
     GoSub Alt_Shift_Tab
     Return
-    }
+  }
 
   ; \ key - close window
   If (Key_Pressed_ASCII =92 or Key_Pressed_ASCII =220 or Key_Pressed_ASCII =222) ; \ or Alt+\
-    {
+  {
     If ( A_TickCount - Time_Since_Last_Alt_Close < 200 ) ; prevention of accidentally closing too many windows
       Return
     Time_Since_Last_Alt_Close := A_TickCount
     Gui_wid := Window%RowText%
     Gosub, End_Process_Single
     Return
-    }
+  }
 
   ; = key - toggle always on top
   If (Key_Pressed_ASCII =187) ; = or Alt+=
-    {
+  {
     If ( A_TickCount - Time_Since_Last_Alt_Close < 200 ) ; prevention of accidentally closing too many windows
       Return
     Time_Since_Last_Alt_Close := A_TickCount
     Gui_wid := Window%RowText%
     Gosub, Toggle_Always_OnTop
     Return
-    }
+  }
 
   ; / key - close all instances of exe
   If (Key_Pressed_ASCII =47 or Key_Pressed_ASCII =191 ) ; / or Alt+/
-    {
+  {
     If ( A_TickCount - Time_Since_Last_Alt_Close < 200 ) ; prevention of accidentally closing too many windows
       Return
     Time_Since_Last_Alt_Close := A_TickCount
     Gui_wid := Window%RowText%
     Gosub, End_Process_All_Instances
     Return
-    }
+  }
 
   Loop, %Window_Found_Count%
-    {
+  {
     Selected_Row +=1
     If Selected_Row > %Window_Found_Count% ; wrap around to start
       Selected_Row =1
@@ -1599,44 +1606,44 @@ Key_Pressed_1st_Letter:
     Else
       WinGetTitle, List_Title_Text, % "ahk_id " Window%List_Title_Text%
     StringUpper, List_Title_Text, List_Title_Text ; need to match against upper case when alt is held down
-    List_Title_Text:=Asc(List_Title_Text) ; convert to ASCII key code
+List_Title_Text:=Asc(List_Title_Text) ; convert to ASCII key code
 
-    If Key_Pressed_ASCII =%List_Title_Text%
-      {
-      LV_Modify(Selected_Row, "Focus Select Vis")
-      Break
-      }
-    }
-Return
+If Key_Pressed_ASCII =%List_Title_Text%
+{
+  LV_Modify(Selected_Row, "Focus Select Vis")
+  Break
+}
+}
+  Return
 
 
 ColumnClickSort(Col, Update="") ; Col = column clicked on, Update = 1 if true else blank (apply only, not change order)
 {
   Global
-    If (Update = 1)
+  If (Update = 1)
   {
     If ((Sort_By_Direction = "Sort") and (Col = Sort_By_Column)) ; opposite sort direction - unless choosing a new column
-      {
+    {
       Sort_By_Direction =SortDesc
       Sort_Direction_Symbol =[-]
-      }
+    }
     Else
-      {
+    {
       Sort_By_Direction =Sort
       Sort_Direction_Symbol =[+]
-      }
     }
+  }
 
   Loop, %Col_Title0% ; reset column titles to remove [+] or [-] suffix
-    {
+  {
     Col_Title_temp := Col_Title%A_Index%
     LV_ModifyCol(A_Index,"", Col_Title_temp)
-    }
+  }
   If (Col ="1" or Col ="2") ; Col 1 sorts using Col 2 (hidden)
-    {
+  {
     LV_ModifyCol(2, Sort_By_Direction)
     LV_ModifyCol(1,"", Col_Title1 " " Sort_Direction_Symbol)
-    }
+  }
   Else
     LV_ModifyCol(Col, Sort_By_Direction, Col_Title%Col% " " Sort_Direction_Symbol)
 
@@ -1654,11 +1661,11 @@ ListView_Destroy:
   SetTimer, SB_Update__CPU, Off
   SetTimer, SB_Update__ProcessCPU, Off
   If Single_Key_Show_Alt_Tab_Used =1
-    {
+  {
     Send, {%Alt_Hotkey2% up}
     Hotkey, *%Single_Key_Hide_Alt_Tab%, Off
     Single_Key_Show_Alt_Tab_Used = ; reset
-    }
+  }
   Hotkeys_Toggle_Temp_Hotkeys("Off") ; (state = "On" or "Off")
   Gui, 1: Default
   If Alt_Esc != 1 ; i.e. not called from Alt_Esc
@@ -1667,18 +1674,18 @@ ListView_Destroy:
   If Status%RowText% =Not Responding ; do not activate a Not Responding window (O/S unstable)
     Alt_Esc =1
   If Alt_Esc != 1 ; i.e. not called from Alt_Esc
-    {
+  {
     wid := Window%RowText%
     hw_popup := hw_popup%RowText%
     WinGet, wid_MinMax, MinMax, ahk_id %wid%
     If wid_MinMax =-1 ;minimised
       WinRestore, ahk_id %wid%
     If hw_popup
-      wid:=hw_popup
-    ; DllCall("SetForegroundWindow", UInt, hw_popup)
-    WinSet, Top, , ahk_id %Gui_wid%
-    WinActivate, ahk_id %wid%
-    }
+wid:=hw_popup
+; DllCall("SetForegroundWindow", UInt, hw_popup)
+WinSet, Top, , ahk_id %Gui_wid%
+WinActivate, ahk_id %wid%
+}
   Else If Alt_Esc =1 ; WM_ACTIVATE - clicked outside alt-tab gui 1
     WinActivate, ahk_id %Active_ID%
   Gui, 1: Destroy ; destroy after switching to avoid re-activation of some windows
@@ -1687,7 +1694,7 @@ ListView_Destroy:
   OnTop_Found = ; reset
   Status_Found = ; reset
   Alt_Esc = ; reset
-Return
+  Return
 
 
 Get_Window_Icon(wid, Use_Large_Icons_Current) ; (window id, whether to get large icons)
@@ -1699,39 +1706,39 @@ Get_Window_Icon(wid, Use_Large_Icons_Current) ; (window id, whether to get large
   h_icon =
   Responding := DllCall("SendMessageTimeout", "UInt", wid, "UInt", 0x0, "Int", 0, "Int", 0, "UInt", 0x2, "UInt", 150, "UInt *", NR_temp) ; 150 = timeout in millisecs
   If (Responding)
-    {
+  {
     ; WM_GETICON values -    ICON_SMALL =0,   ICON_BIG =1,   ICON_SMALL2 =2
     If Use_Large_Icons_Current =1
-      {
+    {
       SendMessage, 0x7F, 1, 0,, ahk_id %wid%
       h_icon := ErrorLevel
-      }
+    }
     If ( ! h_icon )
-      {
+    {
       SendMessage, 0x7F, 2, 0,, ahk_id %wid%
       h_icon := ErrorLevel
+      If ( ! h_icon )
+      {
+        SendMessage, 0x7F, 0, 0,, ahk_id %wid%
+        h_icon := ErrorLevel
         If ( ! h_icon )
-          {
-          SendMessage, 0x7F, 0, 0,, ahk_id %wid%
-          h_icon := ErrorLevel
+        {
+          If Use_Large_Icons_Current =1
+            h_icon := DllCall( "GetClassLong", "uint", wid, "int", -14 ) ; GCL_HICON is -14
           If ( ! h_icon )
-            {
-            If Use_Large_Icons_Current =1
-              h_icon := DllCall( "GetClassLong", "uint", wid, "int", -14 ) ; GCL_HICON is -14
+          {
+            h_icon := DllCall( "GetClassLong", "uint", wid, "int", -34 ) ; GCL_HICONSM is -34
             If ( ! h_icon )
-              {
-              h_icon := DllCall( "GetClassLong", "uint", wid, "int", -34 ) ; GCL_HICONSM is -34
-              If ( ! h_icon )
-                h_icon := DllCall( "LoadIcon", "uint", 0, "uint", 32512 ) ; IDI_APPLICATION is 32512
-              }
-            }
+              h_icon := DllCall( "LoadIcon", "uint", 0, "uint", 32512 ) ; IDI_APPLICATION is 32512
           }
         }
       }
+    }
+  }
   If ! ( h_icon = "" or h_icon = "FAIL") ; Add the HICON directly to the icon list
-  	Gui_Icon_Number := DllCall("ImageList_ReplaceIcon", UInt, ImageListID1, Int, -1, UInt, h_icon)
+    Gui_Icon_Number := DllCall("ImageList_ReplaceIcon", UInt, ImageListID1, Int, -1, UInt, h_icon)
   Else	; use a generic icon
-  	Gui_Icon_Number := IL_Add(ImageListID1, "shell32.dll" , 3)
+  Gui_Icon_Number := IL_Add(ImageListID1, "shell32.dll" , 3)
 }
 
 
@@ -1739,13 +1746,13 @@ Get_Window_Icon(wid, Use_Large_Icons_Current) ; (window id, whether to get large
 2GuiEscape:
   Gui, 2: Destroy
   Gui, 1: Default
-Return
+  Return
 
 3GuiClose:
 3GuiEscape:
   Gui, 3: Destroy
   Gui, 1: Default
-Return
+  Return
 
 IniFile_Data(Read_or_Write)
 {
@@ -1767,19 +1774,19 @@ IniFile_Data(Read_or_Write)
 ; Groups + Group_Hotkey - remember lists of windows
   IniFile("Group_List",               "Groups", "Settings|ALL|EXE")
   If ! (Global_Include_Edit or Global_Exclude_Edit)
-  IniFile("Global_Include",           "Groups", "")
+    IniFile("Global_Include",           "Groups", "")
   IniFile("Global_Include",           "Groups", "")
   IniFile("Group_Active",             "Groups", "ALL")
   Loop, Parse, Group_List,|
-    {
+  {
     IniFile(A_LoopField,                  "Groups", "")
     IniFile(A_LoopField . "_Group_Hotkey","Groups", "")
     If %A_LoopField%_Group_Hotkey
-      {
+    {
       Hotkey_temp := A_LoopField . "_Group_Hotkey"
       Hotkey, % %Hotkey_temp%, Group_Hotkey, On, T5
-      }
     }
+  }
 }
 Return
 
@@ -1787,11 +1794,11 @@ IniFile(Var, Section, Default="")
 {
   Global
   If IniFile_Read_or_Write =Read
-    {
+  {
     IniRead, %Var%, %A_ScriptDir%\Alt_Tab_Settings.ini, %Section%, %Var%, %Default%
     If %Var% =ERROR
       %Var% = ; set to blank value instead of "error"
-    }
+  }
   Else If IniFile_Read_or_Write =Write
     IniWrite, % %Var%, %A_ScriptDir%\Alt_Tab_Settings.ini, %Section%, %Var%
 }
@@ -1823,10 +1830,10 @@ ListView_Resize_Vertically(Gui_ID) ; Automatically resize listview vertically
   y1 := 0
   y2 := 0
   Loop, 4
-    {
+  {
     y1 += *( &rect + 3 + A_Index )
     y2 += *( &rect + 11 + A_Index )
-    }
+  }
   lv_row_h := y2 - y1
   lv_h := 4 + lv_header_h + ( lv_row_h * Window_Found_Count ) + lv_h_win_2000_adj
   GuiControl, Move, SysListView321, h%lv_h%
@@ -1835,34 +1842,34 @@ ListView_Resize_Vertically(Gui_ID) ; Automatically resize listview vertically
 
 GetCPA_file_name( p_hw_target ) ; retrives Control Panel applet icon
 {
-   WinGet, pid_target, PID, ahk_id %p_hw_target%
-   hp_target := DllCall( "OpenProcess", "uint", 0x18, "int", false, "uint", pid_target )
-   hm_kernel32 := DllCall( "GetModuleHandle", "str", "kernel32.dll" )
-   pGetCommandLineA := DllCall( "GetProcAddress", "uint", hm_kernel32, "str", "GetCommandLineA" )
-   buffer_size = 6
-   VarSetCapacity( buffer, buffer_size )
-   DllCall( "ReadProcessMemory", "uint", hp_target, "uint", pGetCommandLineA, "uint", &buffer, "uint", buffer_size, "uint", 0 )
-   loop, 4
-      ppCommandLine += ( ( *( &buffer+A_Index ) ) << ( 8*( A_Index-1 ) ) )
-   buffer_size = 4
-   VarSetCapacity( buffer, buffer_size, 0 )
-   DllCall( "ReadProcessMemory", "uint", hp_target, "uint", ppCommandLine, "uint", &buffer, "uint", buffer_size, "uint", 0 )
-   loop, 4
-      pCommandLine += ( ( *( &buffer+A_Index-1 ) ) << ( 8*( A_Index-1 ) ) )
-   buffer_size = 260
-   VarSetCapacity( buffer, buffer_size, 1 )
-   DllCall( "ReadProcessMemory", "uint", hp_target, "uint", pCommandLine, "uint", &buffer, "uint", buffer_size, "uint", 0 )
-   DllCall( "CloseHandle", "uint", hp_target )
-   IfInString, buffer, desk.cpl ; exception to usual string format
-     return, "C:\WINDOWS\system32\desk.cpl"
+  WinGet, pid_target, PID, ahk_id %p_hw_target%
+  hp_target := DllCall( "OpenProcess", "uint", 0x18, "int", false, "uint", pid_target )
+  hm_kernel32 := DllCall( "GetModuleHandle", "str", "kernel32.dll" )
+  pGetCommandLineA := DllCall( "GetProcAddress", "uint", hm_kernel32, "str", "GetCommandLineA" )
+  buffer_size = 6
+  VarSetCapacity( buffer, buffer_size )
+  DllCall( "ReadProcessMemory", "uint", hp_target, "uint", pGetCommandLineA, "uint", &buffer, "uint", buffer_size, "uint", 0 )
+  loop, 4
+  ppCommandLine += ( ( *( &buffer+A_Index ) ) << ( 8*( A_Index-1 ) ) )
+  buffer_size = 4
+  VarSetCapacity( buffer, buffer_size, 0 )
+  DllCall( "ReadProcessMemory", "uint", hp_target, "uint", ppCommandLine, "uint", &buffer, "uint", buffer_size, "uint", 0 )
+  loop, 4
+  pCommandLine += ( ( *( &buffer+A_Index-1 ) ) << ( 8*( A_Index-1 ) ) )
+  buffer_size = 260
+  VarSetCapacity( buffer, buffer_size, 1 )
+  DllCall( "ReadProcessMemory", "uint", hp_target, "uint", pCommandLine, "uint", &buffer, "uint", buffer_size, "uint", 0 )
+  DllCall( "CloseHandle", "uint", hp_target )
+  IfInString, buffer, desk.cpl ; exception to usual string format
+    return, "C:\WINDOWS\system32\desk.cpl"
 
-   ix_b := InStr( buffer, "Control_RunDLL" )+16
-   ix_e := InStr( buffer, ".cpl", false, ix_b )+3
-   StringMid, CPA_file_name, buffer, ix_b, ix_e-ix_b+1
-   if ( ix_e )
-      return, CPA_file_name
-   else
-      return, false
+  ix_b := InStr( buffer, "Control_RunDLL" )+16
+  ix_e := InStr( buffer, ".cpl", false, ix_b )+3
+  StringMid, CPA_file_name, buffer, ix_b, ix_e-ix_b+1
+  if ( ix_e )
+    return, CPA_file_name
+  else
+    return, false
 }
 
 
@@ -1872,17 +1879,17 @@ WM_ACTIVATE(wParam)
 {
   Global
   If ( wParam =0 and A_Gui =1 and Display_List_Shown =1) ; i.e. don't trigger when submitting gui
-    {
+  {
     Alt_Esc =1
     Gosub, Alt_Esc ; hides alt-tab gui
-    }
+  }
 }
 
 
 OnExit_Script_Closing:
   IniFile_Data("Write")
   ExitApp
-Return
+  Return
 
 
 ;============================================================================================================================
@@ -1903,14 +1910,14 @@ LV_ColorChange(Index="", TextColor="", BackColor="") ; change specific line's co
   global
   If Index =
     Loop, %Window_Found_Count% ; or use another count if listview not visible
-      LV_ColorChange(A_Index)
+  LV_ColorChange(A_Index)
 
   Else
-    {
+  {
     Line_Color_%Index%_Text := TextColor
     Line_Color_%Index%_Back := BackColor
     WinSet, Redraw,, ahk_id %hw_LV_ColorChange%
-    }
+  }
 }
 
 
@@ -1919,41 +1926,41 @@ WM_NOTIFY( p_w, p_l, p_m )
   local draw_stage, Current_Line, Index, IsSelected=0
   Critical
   if ( DecodeInteger( "uint4", p_l, 0 ) = hw_LV_ColorChange ) {      ; NMHDR->hwndFrom
-     if ( DecodeInteger( "int4", p_l, 8 ) = -12 ) {                ; NMHDR->code ; NM_CUSTOMDRAW
-       draw_stage := DecodeInteger( "uint4", p_l, 12 )                     ; NMCUSTOMDRAW->dwDrawStage
-      Current_Line := DecodeInteger( "uint4", p_l, 36 )+1               ; NMCUSTOMDRAW->dwItemSpec
-      if ( draw_stage = 1 )                                       ; CDDS_PREPAINT
-        return, 0x20                                              ; CDRF_NOTIFYITEMDRAW
-      else if ( draw_stage = 0x10000|1 ) {                        ; CDDS_ITEMPREPAINT
-           If ( DllCall("GetFocus") = hw_LV_ColorChange ) {                ; Control has Keyboard Focus?
-               SendMessage, 4140, Current_Line-1, 2, , ahk_id %hw_LV_ColorChange% ; LVM_GETITEMSTATE
-               IsSelected := ErrorLevel
-               If ( IsSelected = 2 ) {                                                 ; LVIS_SELECTED
+    if ( DecodeInteger( "int4", p_l, 8 ) = -12 ) {                ; NMHDR->code ; NM_CUSTOMDRAW
+      draw_stage := DecodeInteger( "uint4", p_l, 12 )                     ; NMCUSTOMDRAW->dwDrawStage
+  Current_Line := DecodeInteger( "uint4", p_l, 36 )+1               ; NMCUSTOMDRAW->dwItemSpec
+  if ( draw_stage = 1 )                                       ; CDDS_PREPAINT
+    return, 0x20                                              ; CDRF_NOTIFYITEMDRAW
+  else if ( draw_stage = 0x10000|1 ) {                        ; CDDS_ITEMPREPAINT
+    If ( DllCall("GetFocus") = hw_LV_ColorChange ) {                ; Control has Keyboard Focus?
+      SendMessage, 4140, Current_Line-1, 2, , ahk_id %hw_LV_ColorChange% ; LVM_GETITEMSTATE
+  IsSelected := ErrorLevel
+  If ( IsSelected = 2 ) {                                                 ; LVIS_SELECTED
 ; custom selected color highlighting
-                  EncodeInteger( Listview_Colour_Selected_Text, 4, p_l, 48 )           ; NMCUSTOMDRAW->clrText ; foreground
-                  EncodeInteger( Listview_Colour_Selected_Back, 4, p_l, 52 )           ; NMCUSTOMDRAW->clrTextBk ; background
-                   EncodeInteger(0x0, 4, &LvItem, 12)                            ; LVITEM->state
-                  EncodeInteger(0x2, 4, &LvItem, 16)                            ; LVITEM->stateMask ; LVIS_SELECTED
-                SendMessage, 4139, Current_Line-1, &LvItem, , ahk_id %hw_LV_ColorChange% ; Disable Highlighting
-                ; We want item post-paint notifications
-                Return, 0x00000010                                                    ; CDRF_NOTIFYPOSTPAINT
-              }
-            ; change the 3rd parameter in the line below if the line number isn't in the 2nd column!
-              LV_GetText(Index, Current_Line, 2)
-              If (Line_Color_%Index%_Text != "") {
-              EncodeInteger( Line_Color_%Index%_Text, 4, p_l, 48 ) ; NMLVCUSTOMDRAW->clrText ; foreground
-              EncodeInteger( Line_Color_%Index%_Back, 4, p_l, 52 ) ; NMLVCUSTOMDRAW->clrTextBk ; background
-           }
-           }
-        }
-        else if ( draw_stage = 0x10000|2 )                  ; CDDS_ITEMPOSTPAINT
-            If ( IsSelected ) {
-               EncodeInteger(0x02, 4, &LvItem, 12)            ; LVITEM->state
-               EncodeInteger(0x02, 4, &LvItem, 16)            ; LVITEM->stateMask ; LVIS_SELECTED
-               SendMessage, 4139, Current_Line-1, &LvItem, , ahk_id %hw_LV_ColorChange% ; LVM_SETITEMSTATE
-            }
-    }
+    EncodeInteger( Listview_Colour_Selected_Text, 4, p_l, 48 )           ; NMCUSTOMDRAW->clrText ; foreground
+    EncodeInteger( Listview_Colour_Selected_Back, 4, p_l, 52 )           ; NMCUSTOMDRAW->clrTextBk ; background
+    EncodeInteger(0x0, 4, &LvItem, 12)                            ; LVITEM->state
+    EncodeInteger(0x2, 4, &LvItem, 16)                            ; LVITEM->stateMask ; LVIS_SELECTED
+    SendMessage, 4139, Current_Line-1, &LvItem, , ahk_id %hw_LV_ColorChange% ; Disable Highlighting
+    ; We want item post-paint notifications
+    Return, 0x00000010                                                    ; CDRF_NOTIFYPOSTPAINT
   }
+  ; change the 3rd parameter in the line below if the line number isn't in the 2nd column!
+  LV_GetText(Index, Current_Line, 2)
+  If (Line_Color_%Index%_Text != "") {
+    EncodeInteger( Line_Color_%Index%_Text, 4, p_l, 48 ) ; NMLVCUSTOMDRAW->clrText ; foreground
+  EncodeInteger( Line_Color_%Index%_Back, 4, p_l, 52 ) ; NMLVCUSTOMDRAW->clrTextBk ; background
+}
+}
+}
+  else if ( draw_stage = 0x10000|2 )                  ; CDDS_ITEMPOSTPAINT
+    If ( IsSelected ) {
+      EncodeInteger(0x02, 4, &LvItem, 12)            ; LVITEM->state
+  EncodeInteger(0x02, 4, &LvItem, 16)            ; LVITEM->stateMask ; LVIS_SELECTED
+  SendMessage, 4139, Current_Line-1, &LvItem, , ahk_id %hw_LV_ColorChange% ; LVM_SETITEMSTATE
+}
+}
+}
 }
 
 
@@ -1975,11 +1982,11 @@ DecodeInteger( p_type, p_address, p_offset, p_hex=true )
   old_FormatInteger := A_FormatInteger
   ifEqual, p_hex, 1, SetFormat, Integer, hex
   else, SetFormat, Integer, dec
-  StringRight, size, p_type, 1
+    StringRight, size, p_type, 1
   loop, %size%
-      value += *( ( p_address+p_offset )+( A_Index-1 ) ) << ( 8*( A_Index-1 ) )
+  value += *( ( p_address+p_offset )+( A_Index-1 ) ) << ( 8*( A_Index-1 ) )
   if ( size <= 4 and InStr( p_type, "u" ) != 1 and *( p_address+p_offset+( size-1 ) ) & 0x80 )
-      value := -( ( ~value+1 ) & ( ( 2**( 8*size ) )-1 ) )
+    value := -( ( ~value+1 ) & ( ( 2**( 8*size ) )-1 ) )
   SetFormat, Integer, %old_FormatInteger%
   return, value
 }
@@ -1987,7 +1994,7 @@ DecodeInteger( p_type, p_address, p_offset, p_hex=true )
 EncodeInteger( p_value, p_size, p_address, p_offset )
 {
   loop, %p_size%
-    DllCall( "RtlFillMemory", "uint", p_address+p_offset+A_Index-1, "uint", 1, "uchar", p_value >> ( 8*( A_Index-1 ) ) )
+  DllCall( "RtlFillMemory", "uint", p_address+p_offset+A_Index-1, "uint", 1, "uchar", p_value >> ( 8*( A_Index-1 ) ) )
 }
 
 
@@ -2010,10 +2017,10 @@ GetProcessTimes(pid)    ; Individual CPU Load of the process with pid
   DllCall("GetProcessTimes", "Uint", hProc, "int64P", CreationTime, "int64P", ExitTime, "int64P", newKrnlTime, "int64P", newUserTime)
   DllCall("CloseHandle", "Uint", hProc)
   If (PreviousPID != pid)
-    {
+  {
     PreviousPID := pid
     Return 0 +0.0
-    }
+  }
   Return (newKrnlTime-oldKrnlTime + newUserTime-oldUserTime)/10000000 * 100   ; 1sec: 10**7
 }
 
@@ -2039,7 +2046,7 @@ Delete_Ini_File_Settings:
     Return
   FileDelete, %A_ScriptDir%\Alt_Tab_Settings.ini
   IniFile_Data("Read") ; load defaults
-Return
+  Return
 
 
 HELP_and_LATEST_VERSION_CHANGES:
@@ -2053,64 +2060,64 @@ HELP_and_LATEST_VERSION_CHANGES:
   Gui, 99: Show,, %A_ThisMenuItem%
   WinWaitActive, %A_ThisMenuItem%
   ControlSend, Edit1, ^{Home}, %A_ThisMenuItem%
-Return
+  Return
 
 99GuiClose:
 99GuiEscape:
   Gui, 99: Destroy
-Return
+  Return
 
 
 
 Gui_CenterX()
 {
   Global Listview_Width
-    Coordmode, Mouse, Screen
-    MouseGetPos,x,y
-    SysGet, m, MonitorCount
-    ; Iterate through all monitors.
-    Loop, %m%
-    {   ; Check if the window is on this monitor.
-      SysGet, Mon, Monitor, %A_Index%
-        if (x >= MonLeft && x <= MonRight && y >= MonTop && y <= MonBottom)
-        {
-          return (0.5*(MonRight-MonLeft)+MonLeft-Listview_Width/2)
-        }
+  Coordmode, Mouse, Screen
+  MouseGetPos,x,y
+  SysGet, m, MonitorCount
+  ; Iterate through all monitors.
+  Loop, %m%
+  {   ; Check if the window is on this monitor.
+    SysGet, Mon, Monitor, %A_Index%
+    if (x >= MonLeft && x <= MonRight && y >= MonTop && y <= MonBottom)
+    {
+      return (0.5*(MonRight-MonLeft)+MonLeft-Listview_Width/2)
     }
+  }
 }
 
 ; Like GetWindow(hwnd, GW_HWNDPREV), but ignores invisible windows.
 GetPrevWindow(hwnd)
 {
-    global GetPrevWindow_RetVal
+  global GetPrevWindow_RetVal
 
-    static cb_EnumChildProc
-    if (!cb_EnumChildProc)
-        cb_EnumChildProc := RegisterCallback("GetPrevWindow_EnumChildProc","F")
+  static cb_EnumChildProc
+  if (!cb_EnumChildProc)
+    cb_EnumChildProc := RegisterCallback("GetPrevWindow_EnumChildProc","F")
 
-    ; Set default in case enumeration fails.
-    GetPrevWindow_RetVal := DllCall("GetWindow", "uint", hwnd, "uint", 3)
+  ; Set default in case enumeration fails.
+  GetPrevWindow_RetVal := DllCall("GetWindow", "uint", hwnd, "uint", 3)
 
-    ; Enumerate all siblings of hwnd.
-    hwnd_parent := DllCall("GetParent", "uint", hwnd)
-    DllCall("EnumChildWindows", "uint", hwnd_parent, "uint", cb_EnumChildProc, "uint", hwnd)
+  ; Enumerate all siblings of hwnd.
+  hwnd_parent := DllCall("GetParent", "uint", hwnd)
+  DllCall("EnumChildWindows", "uint", hwnd_parent, "uint", cb_EnumChildProc, "uint", hwnd)
 
-    ; Return the last visible window before hwnd.
-    return GetPrevWindow_RetVal
+  ; Return the last visible window before hwnd.
+  return GetPrevWindow_RetVal
 }
 GetPrevWindow_EnumChildProc(test_hwnd, hwnd)
 {
-    global GetPrevWindow_RetVal
-    ; Continue until hwnd is enumerated.
-    if (test_hwnd = hwnd)
-        return false
-    ; Remember the last visible window before hwnd.
-    if (DllCall("IsWindowVisible", "uint", test_hwnd))
-    {
-      ; Tooltip % A_Gui . " " . test_hwnd, 0, 0
-      GetPrevWindow_RetVal := test_hwnd
-    }
-    return true
+  global GetPrevWindow_RetVal
+  ; Continue until hwnd is enumerated.
+  if (test_hwnd = hwnd)
+    return false
+  ; Remember the last visible window before hwnd.
+  if (DllCall("IsWindowVisible", "uint", test_hwnd))
+  {
+    ; Tooltip % A_Gui . " " . test_hwnd, 0, 0
+    GetPrevWindow_RetVal := test_hwnd
+  }
+  return true
 }
 
 ; Gets the index+1 of the taskbar button which the mouse is hovering over.
@@ -2121,70 +2128,70 @@ GetPrevWindow_EnumChildProc(test_hwnd, hwnd)
 
 GetMouseTaskButton(ByRef hwnd)
 {
-    MouseGetPos, x, y, win, ctl, 2
-    ; Check if hovering over taskbar.
-    WinGetClass, cl, ahk_id %win%
-    if (cl != "Shell_TrayWnd")
-        return
-    ; Check if hovering over a Toolbar.
-    WinGetClass, cl, ahk_id %ctl%
-    if (cl != "ToolbarWindow32")
-        return
-    ; Check if hovering over task-switching buttons (specific toolbar).
-    hParent := DllCall("GetParent", "Uint", ctl)
-    WinGetClass, cl, ahk_id %hParent%
-    if (cl != "MSTaskSwWClass")
-        return
+  MouseGetPos, x, y, win, ctl, 2
+  ; Check if hovering over taskbar.
+  WinGetClass, cl, ahk_id %win%
+  if (cl != "Shell_TrayWnd")
+    return
+  ; Check if hovering over a Toolbar.
+  WinGetClass, cl, ahk_id %ctl%
+  if (cl != "ToolbarWindow32")
+    return
+  ; Check if hovering over task-switching buttons (specific toolbar).
+  hParent := DllCall("GetParent", "Uint", ctl)
+  WinGetClass, cl, ahk_id %hParent%
+  if (cl != "MSTaskSwWClass")
+    return
 
 
-    WinGet, pidTaskbar, PID, ahk_class Shell_TrayWnd
+  WinGet, pidTaskbar, PID, ahk_class Shell_TrayWnd
 
-    hProc := DllCall("OpenProcess", "Uint", 0x38, "int", 0, "Uint", pidTaskbar)
-    pRB := DllCall("VirtualAllocEx", "Uint", hProc
-        , "Uint", 0, "Uint", 20, "Uint", 0x1000, "Uint", 0x4)
+  hProc := DllCall("OpenProcess", "Uint", 0x38, "int", 0, "Uint", pidTaskbar)
+  pRB := DllCall("VirtualAllocEx", "Uint", hProc
+  , "Uint", 0, "Uint", 20, "Uint", 0x1000, "Uint", 0x4)
 
-    VarSetCapacity(pt, 8, 0)
-    NumPut(x, pt, 0, "int")
-    NumPut(y, pt, 4, "int")
+  VarSetCapacity(pt, 8, 0)
+  NumPut(x, pt, 0, "int")
+  NumPut(y, pt, 4, "int")
 
-    ; Convert screen coords to toolbar-client-area coords.
-    DllCall("ScreenToClient", "uint", ctl, "uint", &pt)
+  ; Convert screen coords to toolbar-client-area coords.
+  DllCall("ScreenToClient", "uint", ctl, "uint", &pt)
 
-    ; Write POINT into explorer.exe.
-    DllCall("WriteProcessMemory", "uint", hProc, "uint", pRB+0, "uint", &pt, "uint", 8, "uint", 0)
+  ; Write POINT into explorer.exe.
+  DllCall("WriteProcessMemory", "uint", hProc, "uint", pRB+0, "uint", &pt, "uint", 8, "uint", 0)
 
 ;     SendMessage, 0x447,,,, ahk_id %ctl%  ; TB_GETHOTITEM
-    SendMessage, 0x445, 0, pRB,, ahk_id %ctl%  ; TB_HITTEST
-    btn_index := ErrorLevel
-    ; Convert btn_index to a signed int, since result may be -1 if no 'hot' item.
-    if btn_index > 0x7FFFFFFF
-        btn_index := -(~btn_index) - 1
+  SendMessage, 0x445, 0, pRB,, ahk_id %ctl%  ; TB_HITTEST
+  btn_index := ErrorLevel
+  ; Convert btn_index to a signed int, since result may be -1 if no 'hot' item.
+  if btn_index > 0x7FFFFFFF
+    btn_index := -(~btn_index) - 1
 
 
-    if (btn_index > -1)
-    {
-        ; Get button info.
-        SendMessage, 0x417, btn_index, pRB,, ahk_id %ctl%   ; TB_GETBUTTON
+  if (btn_index > -1)
+  {
+    ; Get button info.
+    SendMessage, 0x417, btn_index, pRB,, ahk_id %ctl%   ; TB_GETBUTTON
 
-        VarSetCapacity(btn, 20)
-        DllCall("ReadProcessMemory", "Uint", hProc
-            , "Uint", pRB, "Uint", &btn, "Uint", 20, "Uint", 0)
+    VarSetCapacity(btn, 20)
+    DllCall("ReadProcessMemory", "Uint", hProc
+    , "Uint", pRB, "Uint", &btn, "Uint", 20, "Uint", 0)
 
-        state := NumGet(btn, 8, "UChar")  ; fsState
-        pdata := NumGet(btn, 12, "UInt")  ; dwData
+    state := NumGet(btn, 8, "UChar")  ; fsState
+    pdata := NumGet(btn, 12, "UInt")  ; dwData
 
-        ret := DllCall("ReadProcessMemory", "Uint", hProc
-            , "Uint", pdata, "UintP", hwnd, "Uint", 4, "Uint", 0)
-    } else
-        hwnd = 0
-
-
-    DllCall("VirtualFreeEx", "Uint", hProc, "Uint", pRB, "Uint", 0, "Uint", 0x8000)
-    DllCall("CloseHandle", "Uint", hProc)
+    ret := DllCall("ReadProcessMemory", "Uint", hProc
+    , "Uint", pdata, "UintP", hwnd, "Uint", 4, "Uint", 0)
+  } else
+  hwnd = 0
 
 
-    ; Negative values indicate seperator items. (abs(btn_index) is the index)
-    return btn_index > -1 ? btn_index+1 : 0
+  DllCall("VirtualFreeEx", "Uint", hProc, "Uint", pRB, "Uint", 0, "Uint", 0x8000)
+  DllCall("CloseHandle", "Uint", hProc)
+
+
+  ; Negative values indicate seperator items. (abs(btn_index) is the index)
+  return btn_index > -1 ? btn_index+1 : 0
 }
 
 MouseWID()
