@@ -47,8 +47,6 @@ Solution: exclude the program within the gesture recognition program (window tit
 LATEST_VERSION_CHANGES = ; Gui, 98
 (LTrim0
 
-:taskpaper:
-
 TO DO (maybe):
 - reduce UI to allow faster switches
 - stick items to top or bottom of list
@@ -100,6 +98,9 @@ FIX: Handling of "Not Responding" windows with no delays.
 ;========================================================================================================
 ; USER EDITABLE SETTINGS:
 
+  ; Ini Setting file
+    Setting_INI_File = Alt_Tab_Settings.ini
+  
 ; Icons
 Use_Large_Icons =1 ; 0 = small icons, 1 = large icons in listview
 
@@ -122,6 +123,10 @@ Height_Max_Modifier =0.92 ; multiplier for screen height (e.g. 0.92 = 92% of scr
 Listview_Width := A_ScreenWidth * 0.40
 SB_Width := Listview_Width / 4 ; StatusBar section sizes
 Exe_Width_Max := Listview_Width / 5 ; Exe column max width
+
+  ; Tray Icon file name
+  Tray_Icon := "Icon.ico"
+
 
 ;========================================================================================================
 ; USER OVERRIDABLE SETTINGS:
@@ -173,6 +178,16 @@ Process Priority,,High
 SetWinDelay, -1
 SetBatchLines, -1
 
+Group_Active =
+WinGet, TaskBar_ID, ID, ahk_class Shell_TrayWnd ; for docked windows check
+Hidden_Tag := "Hidden"
+Exclude_Other_Tag := "Exclude_Not_In_List"
+
+If A_PtrSize = 8
+  GetClassLong_API := "GetClassLongPtr"
+else
+  GetClassLong_API := "GetClassLong"
+
 IniFile_Data("Read")
 
 OnExit, OnExit_Script_Closing
@@ -181,7 +196,7 @@ OnMessage( 0x06, "WM_ACTIVATE" ) ; alt tab list window lost focus > hide list
 
 LV_ColorInitiate() ; initiate listview color change procedure
 
-Gosub, Initiate_Hotkeys ; initiate Alt-Tab and Alt-Shift-Tab hotkeys and translate some modifier symbols
+Gosub, Initiate_Hotkeys ; initiate Alt-Tab and Alt-Shift-Tab hotkeys, taskbar scorll event and translate some modifier symbols.
 
 WS_EX_CONTROLPARENT =0x10000
 WS_EX_DLGMODALFRAME =0x1
@@ -197,21 +212,29 @@ If A_OSVersion =WIN_2000
   lv_h_win_2000_adj =2 ; adjust height of main listview by +2 pixels to avoid scrollbar in windows 2000
 Else
   lv_h_win_2000_adj =0
-If A_PtrSize = 8  ; Should not use A_Is64bitOS
-  GetClass_API = GetClassLongPtr
-else
-  GetClass_API = GetClassLong
 
-WinGet, TaskBar_ID, ID, ahk_class Shell_TrayWnd ; for docked windows check
-
+;Setting when showing tabs
+Exclude_Not_In_List =0
+PID_Filter =  ;Filter windows if does not math the PID. Set empty disable this feature
+Hide_Other_Group =0
 Display_List_Shown =0
 Window_Hotkey =0
 Use_Large_Icons_Current =%Use_Large_Icons% ; for remembering original user setting but changing on the fly
 Time_Since_Last_Alt_Close =0 ; initialise time for repeat rate allowed for closing windows with alt+\
 Viewed_Window_List =
+Tab_Shown =
 
 Col_Title_List =#| |Window|Exe|View|Top|Status
 StringSplit, Col_Title, Col_Title_List,| ; create list of listview header titles
+
+If not No_Tray_Icon
+{
+  Menu TRAY, Icon
+  IfExist Icon.ico
+    Menu TRAY, Icon, %Tray_Icon%
+}
+
+Return
 
 ;========================================================================================================
 
@@ -238,6 +261,13 @@ Initiate_Hotkeys:
 
   If (! InStr(Tab_Hotkey, "Wheel") and ! InStr(Shift_Tab_Hotkey, "Wheel")) ; wheel isn't used as an alt-tab hotkey so can be used for scrolling list instead
     Use_Wheel_Scroll_List =1
+  
+  ; Listen wheel scroll event in taskbar if need
+  if Scroll_In_TaskBar
+  {
+    Hotkey, ~WheelUp, Taskbar_Scroll_Up
+    Hotkey, ~WheelDown, Taskbar_Scroll_Down
+  }
   Return
 
 
@@ -358,7 +388,7 @@ if (OldExStyle ^ ExStyle) & 0x8
 
 SetTimer, Check_Alt_Hotkey2_Up, 30
 
-; GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
+;  GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
 
 ; Gosub, SB_Update__ProcessCPU
 ; SetTimer, SB_Update__ProcessCPU, 1000
@@ -1442,6 +1472,29 @@ Loop, Parse, Group_List,|
 Group_Active := Group_Active_Before
 Return
 
+TaskBar_Scroll_Up:
+  TaskBar_Scroll("Up")
+return
+
+TaskBar_Scroll_Down:
+  TaskBar_Scroll("Down")
+return
+
+TaskBar_Scroll(UpOrDown)
+{
+  global
+  MouseGetPos, JUNK, JUNK, Scroll_Over_wID
+  If ! (Scroll_Over_wID = TaskBar_ID)
+    Return
+  Gosub, Single_Key_Show_Alt_Tab
+  Hotkey, %Alt_Hotkey%%Use_AND_Symbol%Mbutton, ListView_Destroy, %state% UseErrorLevel ; select the window if launched from the taskbar
+  if UpOrDown = "Down"
+  {
+    Loop, 2
+      Gosub, Alt_Shift_Tab
+  }
+  Return
+}
 
 MButton_Close:
   MButton_Clicked =1
@@ -1729,10 +1782,10 @@ Get_Window_Icon(wid, Use_Large_Icons_Current) ; (window id, whether to get large
         If ( ! h_icon )
         {
           If Use_Large_Icons_Current =1
-              h_icon := DllCall( GetClass_API, "uint", wid, "int", -14 ) ; GCL_HICON is -14
+              h_icon := DllCall( GetClassLong_API, "uint", wid, "int", -14 ) ; GCL_HICON is -14
           If ( ! h_icon )
           {
-              h_icon := DllCall( GetClass_API, "uint", wid, "int", -34 ) ; GCL_HICONSM is -34
+              h_icon := DllCall( GetClassLong_API, "uint", wid, "int", -34 ) ; GCL_HICONSM is -34
             If ( ! h_icon )
               h_icon := DllCall( "LoadIcon", "uint", 0, "uint", 32512 ) ; IDI_APPLICATION is 32512
           }

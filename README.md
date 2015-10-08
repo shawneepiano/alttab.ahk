@@ -10,6 +10,8 @@ This version of AltTab.ahk features:
 * No warnings from AutoHotKey when using two-finger scrolling
 * Hidden group support (by h46incon)
 * Tray icon hidden optional, and custom tray icon support (by h46incon)
+
+
   ALT-TAB REPLACEMENT (WITH ICONS AND WINDOW TITLES IN A LISTVIEW).
 
   Latest version can be found at: http://file.autohotkey.net/evl/AltTab/AltTab.ahk
