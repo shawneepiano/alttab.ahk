@@ -500,7 +500,7 @@ Display_List:
     ; Create the ListView gui
     Gui, 1: +AlwaysOnTop +ToolWindow -Caption
     Gui, 1: Color, %Tab_Colour% ; i.e. border/background (default = 404040) ; barely visible - right and bottom sides only
-    Gui, 1: Margin, 4, 4
+    Gui, 1: Margin, 10,10
     ; Tab stuff
     Gui, 1: Font, s%Font_Size_Tab% , %Font_Type_Tab%
     ; Gui, 1: Add, Tab2, vGui1_Tab HWNDhw_Gui1_Tab Background w%Gui1_Tab__width% -0x200, %Group_List% ; -0x200 = ! TCS_MULTILINE
