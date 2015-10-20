@@ -118,7 +118,7 @@ Gui_x =Center
 Gui_y =Center
 
 ; Max height
-Height_Max_Modifier =0.92 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
+Height_Max_Modifier =0.75 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
 
 ; Width
 Listview_Width := A_ScreenWidth * 0.40
@@ -298,11 +298,12 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     SysGet, X0, 76
     SysGet, Y0, 77
 
-    ; Gui, 4: +LastFound -Caption +ToolWindow
-    ; Gui, 4: Color, Black
-    ; Gui, 4: Show, Hide
-    ; WinSet, Transparent, 50
-    ; Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
+    ; Background GUI used to show foremost window
+    Gui, 4: +LastFound -Caption +ToolWindow
+    Gui, 4: Color, Black
+    Gui, 4: Show, Hide
+    WinSet, Transparent, 65
+    Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
 
     If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
     {
@@ -311,10 +312,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
       Hotkeys_Toggle_Temp_Hotkeys("On") ; (state = "On" or "Off") ; ensure hotkeys are on
     }
 
-    Loop %Window_Found_Count%
-    {
-      LV_Modify(A_Index, "Select Vis") ; get selected row and ensure selection is visible
-    }
+    LV_Modify(0, "Select Vis") ; get selected row and ensure selection is visible
   }
 
   Selected_Row := LV_GetNext(0, "F")
@@ -323,7 +321,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     Selected_Row =1
   If Selected_Row < 1
     Selected_Row := Window_Found_Count
-  
+
   ; Loop through all windows to get them to update the color
 
   LV_Modify(Selected_Row, "Focus Select Vis") ; get selected row and ensure selection is visible
@@ -342,75 +340,75 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     , "int", 0, "int", 0, "int", 0, "int", 0
     , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
 
-    ; DllCall("SetForegroundWindow", "uint", Gui_wid)
+  ; DllCall("SetForegroundWindow", "uint", Gui_wid)
 
-    WinGetClass, cla, ahk_id %Gui_wid%
-    if cla !="ahk_class VirtualConsoleClass"
-    {
-      WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
-      WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
-    }
+  WinGetClass, cla, ahk_id %Gui_wid%
+  if cla !="ahk_class VirtualConsoleClass"
+  {
+    WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
+    WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
+  }
 
-    WinSet, Top, , ahk_id %Gui_wid%
+  WinSet, Top, , ahk_id %Gui_wid%
+  WinGet, MinMax, MinMax, ahk_id %Gui_wid%
 
-    WinGet, MinMax, MinMax, ahk_id %Gui_wid%
+  ; Tooltip, %MinMax%
+  If MinMax = -1
+  {
+    WinGetPos, minX, minY, minW, minH, ahk_id %Gui_wid%
+    Coordmode, Tooltip, Screen
+    ; 28, 29	SM_CXMIN, SM_CYMIN: Minimum width and height of a window, in pixels.
+    ; 57, 58	SM_CXMINIMIZED, SM_CYMINIMIZED: Dimensions of a minimized window, in pixels.
+    Sysget, MINX, 57, ahk_id %Gui_wid%
+    ; Tooltip minX %minX% minY %minY% minW %minW% minH %minH% ahk_id %Gui_wid%, 0, 0
+  }
+
+  WinSet, Top,, ahk_id %Gui_wid%
+  ; CoordMode, Tooltip, Screen
+
+  ; Tooltip, % RowText . ":" . Title%RowText% . "|" . PrevRowText . ":" . Title%PrevRowText%, 0, 0
+
+  ; PPrevRowText:=RowText
+  PrevRowText:=RowText
+
+  ; Sometimes you lose the window
+  WinSet, AlwaysOnTop, On, Alt-Tab Replacement
+
+  ; Check if AlwaysOnTop status changed.
+  WinGet, ExStyle, ExStyle, ahk_id %Gui_wid%
+  if (OldExStyle ^ ExStyle) & 0x8
+    WinSet, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
 
 
-    ; Tooltip, %MinMax%
-    If MinMax = -1
-    {
-      WinGetPos, minX, minY, minW, minH, ahk_id %Gui_wid%
-      Coordmode, Tooltip, Screen
-      ; 28, 29	SM_CXMIN, SM_CYMIN: Minimum width and height of a window, in pixels.
-      ; 57, 58	SM_CXMINIMIZED, SM_CYMINIMIZED: Dimensions of a minimized window, in pixels.
-      Sysget, MINX, 57, ahk_id %Gui_wid%
-      ; Tooltip minX %minX% minY %minY% minW %minW% minH %minH% ahk_id %Gui_wid%, 0, 0
-    }
+  SetTimer, Check_Alt_Hotkey2_Up, 30
 
+  ;  GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
 
-    WinSet, Top,, ahk_id %Gui_wid%
-    ; CoordMode, Tooltip, Screen
+  ; Gosub, SB_Update__ProcessCPU
+  ; SetTimer, SB_Update__ProcessCPU, 1000
+  Return
 
-
-    ; Tooltip, % RowText . ":" . Title%RowText% . "|" . PrevRowText . ":" . Title%PrevRowText%, 0, 0
-
-    ; PPrevRowText:=RowText
-    PrevRowText:=RowText
-
-    ; Sometimes you lose the window
-    WinSet, AlwaysOnTop, On, Alt-Tab Replacement
-
-    ; Check if AlwaysOnTop status changed.
-    WinGet, ExStyle, ExStyle, ahk_id %Gui_wid%
-    if (OldExStyle ^ ExStyle) & 0x8
-      WinSet, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
-    
-    
-    SetTimer, Check_Alt_Hotkey2_Up, 30
-
-    ;  GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
-
-    ; Gosub, SB_Update__ProcessCPU
-    ; SetTimer, SB_Update__ProcessCPU, 1000
-    Return
-
-  Alt_Tab_Common__Check_auto_switch_icon_sizes: ; limit gui height / auto-switch icon sizes
+Alt_Tab_Common__Check_auto_switch_icon_sizes: ; limit gui height / auto-switch icon sizes
   If (Listview_NowH > Height_Max AND Use_Large_Icons_Current =1) ; switch to small icons
   {
     Use_Large_Icons_Current =0
+    Progress, 100, , Resizing Icons to Fit... 
     Gosub, Alt_Tab_Common__Switching_Icon_Sizes
   }
   If ((Listview_NowH * Small_to_Large_Ratio) < Height_Max AND Use_Large_Icons_Current =0 AND Use_Large_Icons=1) ; switch to large icons
   {
     Use_Large_Icons_Current =1
+    Progress, 100, , Expanding Icons to Full Size... 
     Gosub, Alt_Tab_Common__Switching_Icon_Sizes
   }
   Return
 
 Alt_Tab_Common__Switching_Icon_Sizes:
-  Gui, 1: Destroy
   Display_List_Shown =0
-  Gosub, Display_List ; update colours
+  Gui, 1: Destroy
+  Sleep, 500
+  Progress, OFF
+  Exit
   Return
 
 Alt_Tab_Common__Highlight_Active_Window:
@@ -781,7 +779,8 @@ Gui_Resize_and_Position:
   ListView_Resize_Vertically(Gui_ID) ; Automatically resize listview vertically - pass the gui id value
   GuiControlGet, Listview_Now, Pos, ListView1 ; retrieve listview dimensions/position ; for auto-sizing (elsewhere)
   ; resize listview according to scrollbar presence
-  If (Listview_NowH > Height_Max AND Use_Large_Icons_Current =0) ; already using small icons so limit height
+  ; If (Listview_NowH > Height_Max AND Use_Large_Icons_Current =0) ; already using small icons so limit height
+  If (Listview_NowH > Height_Max) ; already using small icons so limit height
   {
     Col_3_w -= Scrollbar_Vertical_Thickness ; allow for vertical scrollbar being visible
     LV_ModifyCol(3, Col_3_w) ; resize title column
@@ -1198,40 +1197,41 @@ Gui_Window_Group_Save_Edit:
   Else If Global_Exclude_Edit =1
     Gui_3_Listview_Populate("Global_Exclude")
 
-  Else If (Group_Active = "Settings" OR Group_Active = "ALL")
+  Else If (Group_Active = "Settings" OR Group_Active = "ALL") {
     Loop, %Window_Found_Count% ; populate listview
         LV_Add("Check Icon2", Title%A_Index%, Exe_Name%A_Index%) ; Icon 1 = not included icon, Icon 2 = blank
-      Else
-        Gui_3_Listview_Populate(Group_Active)
-        Gosub, Gui_3_Update_Icons
+  }
+  Else
+    Gui_3_Listview_Populate(Group_Active)
 
-        DetectHiddenWindows, On
-        Gui, 3: +LastFound
-        Gui_3_ID := WinExist() ; for auto-sizing columns later
-        LV_ModifyCol(1, 350)
-        ControlGet, Gui_3_Listview_Style, Style,, SysListView321, ahk_id %Gui_3_ID%
-        If ( Gui_3_Listview_Style & WS_VSCROLL ) ; has a vertical scrollbar - reduced width for listview
-          Gui_3_Col_2_w := 500 - 350 - Scrollbar_Vertical_Thickness - 4
-        Else
-          Gui_3_Col_2_w := 500 - 350 - 4
-          LV_ModifyCol(2, Gui_3_Col_2_w)
-          Gui, 3: Show,, Group - Save/Edit
-          Return
+  Gosub, Gui_3_Update_Icons
 
+  DetectHiddenWindows, On
+  Gui, 3: +LastFound
+  Gui_3_ID := WinExist() ; for auto-sizing columns later
+  LV_ModifyCol(1, 350)
+  ControlGet, Gui_3_Listview_Style, Style,, SysListView321, ahk_id %Gui_3_ID%
+  If ( Gui_3_Listview_Style & WS_VSCROLL ) ; has a vertical scrollbar - reduced width for listview
+    Gui_3_Col_2_w := 500 - 350 - Scrollbar_Vertical_Thickness - 4
+  Else
+    Gui_3_Col_2_w := 500 - 350 - 4
+  LV_ModifyCol(2, Gui_3_Col_2_w)
+  Gui, 3: Show,, Group - Save/Edit
+  Return 
 
-        Gui_3_Listview_Populate(list)
-        {
-          Global
-          Loop, Parse, %list%,|
-          {
-            If A_LoopField =Exclude_Not_In_List
-              Continue
-            If A_LoopField contains .exe
-              LV_Add("Check Icon2" ,"", A_LoopField) ; Icon 1 = not included icon, Icon 2 = blank
-            Else
-              LV_Add("Check Icon2" ,A_LoopField,"") ; Icon 1 = not included icon, Icon 2 = blank
-          }
-        }
+Gui_3_Listview_Populate(list)
+{
+  Global
+  Loop, Parse, %list%,|
+  {
+    If A_LoopField =Exclude_Not_In_List
+      Continue
+    If A_LoopField contains .exe
+      LV_Add("Check Icon2" ,"", A_LoopField) ; Icon 1 = not included icon, Icon 2 = blank
+    Else
+      LV_Add("Check Icon2" ,A_LoopField,"") ; Icon 1 = not included icon, Icon 2 = blank
+  }
+}
 
 
 Gui_3_ListView_Swap_Rows_Up:
@@ -1747,7 +1747,7 @@ ListView_Destroy:
   Else If Alt_Esc =1 ; WM_ACTIVATE - clicked outside alt-tab gui 1
     WinActivate, ahk_id %Active_ID%
   Gui, 1: Destroy ; destroy after switching to avoid re-activation of some windows
-  ; Gui, 4: Destroy ; destroy after switching to avoid re-activation of some windows
+  Gui, 4: Destroy ; destroy after switching to avoid re-activation of some windows
   LV_ColorChange() ; clear all highlighting
   OnTop_Found = ; reset
   Status_Found = ; reset
