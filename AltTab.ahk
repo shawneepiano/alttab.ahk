@@ -305,7 +305,8 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     WinSet, Transparent, 65
     Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
 
-    If ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key still pressed, else gui not shown
+    If (Single_Key_Show_Alt_Tab_Used = "1" 
+      or ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2))) ; Alt key still pressed, else gui not shown
     {
       Gui_vx := Gui_CenterX()
       Gui, 1: Show, AutoSize x%Gui_vx% y%Gui_y%, Alt-Tab Replacement
@@ -321,8 +322,6 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     Selected_Row =1
   If Selected_Row < 1
     Selected_Row := Window_Found_Count
-
-  ; Loop through all windows to get them to update the color
 
   LV_Modify(Selected_Row, "Focus Select Vis") ; get selected row and ensure selection is visible
 
@@ -379,7 +378,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
   if (OldExStyle ^ ExStyle) & 0x8
     WinSet, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
 
-
+  ;; Check for Alt Up 
   SetTimer, Check_Alt_Hotkey2_Up, 30
 
   ;  GuiControl, Focus, Listview1 ; workaround for gui tab bug - gosub not activated when already activated button clicked on again
