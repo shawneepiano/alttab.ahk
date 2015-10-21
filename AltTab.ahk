@@ -147,7 +147,7 @@ Height_Max := A_ScreenHeight * Height_Max_Modifier ; limit height of listview
 Small_to_Large_Ratio =1.6 ; height of small rows compared to large rows
 
 ; Colours in RGB hex
-Tab_Colour =1a1a1a
+Tab_Colour =1c1b1a
 Listview_Colour =1c1b1a ; does not need converting as only used for background
 StatusBar_Background_Colour =998899
 
@@ -492,30 +492,34 @@ Check_Alt_Hotkey2_Up:
 
 
 Display_List:
+  ; TODO use GuiControl, -Redraw, MyListView  to speed up drawing
   LV_ColorChange() ; clear all highlighting
+  if Hide_Other_Group 
+    Tab_Shown = %Group_Active%
+  else
+    Tab_Shown = %Group_Shown%
+  
   If Display_List_Shown =1 ; empty listview and image list if only updating - e.g. when closing a window (mbutton)
     LV_Delete()
   Else ; not shown - need to create gui for updating listview
   {
     ; Create the ListView gui
     Gui, 1: +AlwaysOnTop +ToolWindow -Caption
-    Gui, 1: Color, %Tab_Colour% ; i.e. border/background (default = 404040) ; barely visible - right and bottom sides only
-    Gui, 1: Margin, 10,10
+    Gui, 1: Color, %Tab_Colour% ; i.e. border/background 
+    Gui, 1: Margin, 0, 0
     ; Tab stuff
-    Gui, 1: Font, s%Font_Size_Tab% , %Font_Type_Tab%
-    ; Gui, 1: Add, Tab2, vGui1_Tab HWNDhw_Gui1_Tab Background w%Gui1_Tab__width% -0x200, %Group_List% ; -0x200 = ! TCS_MULTILINE
-    ; Gui, 1: Tab, %Group_Active%,, Exact ; Future controls are owned by this tab
+    Gui, 1: Font, s%Font_Size_Tab% c%Font_Color% bold, %Font_Type%
+    Gui, 1: Add, Tab2, vGui1_Tab HWNDhw_Gui1_Tab w%Gui1_Tab__width% -0x200, %Group_List% ; -0x200 = ! TCS_MULTILINE
     ; Gui, 1: Add, StatusBar, Background%StatusBar_Background_Colour% ; add before changing font
     Gui, 1: Font, s%Font_Size% c%Font_Color% %Font_Style%, %Font_Type%
-    ;; Gui, 1: Add, ListView, w%Listview_Width% AltSubmit -Hdr -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     Gui, 1: Add, ListView, x-1 y+-4 w%Listview_Width% AltSubmit -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
     LV_ModifyCol(2, "Integer") ; sort hidden column 2 as numbers
     ; SB_SetParts(SB_Width, SB_Width, SB_Width)
     ; Gosub, SB_Update__CPU
     ; SetTimer, SB_Update__CPU, 1000
   }
-  ; GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
-  ; GuiControl, ChooseString, Gui1_Tab, %Group_Active%
+  GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
+  GuiControl, ChooseString, Gui1_Tab2, %Group_Active%
 
   ImageListID1 := IL_Create(10,5,Use_Large_Icons_Current) ; Create an ImageList so that the ListView can display some icons
   LV_SetImageList(ImageListID1, 1) ; Attach the ImageLists to the ListView so that it can later display the icons
@@ -543,15 +547,23 @@ Display_List:
 
 
 Display_List__Find_windows_and_icons:
-  WinGet, Cur_Exe_Name, ProcessName, A
+  if PID_Filter != 
+    {
+      WinGet, Window_List, List, ahk_pid %PID_Filter%
+    }
+  else
+    {
   WinGet, Window_List, List ; Gather a list of running programs
+    }
 
   Window_Found_Count =0
+  Window_Found_Count_For_Top_Recent=0
   Loop, %Window_List%
   {
+    ;TODO: filter according to process name
     wid := Window_List%A_Index%
+    
     WinGetTitle, wid_Title, ahk_id %wid%
-    WinGet, Style, Style, ahk_id %wid%
 
     If ((Style & WS_DISABLED) or ! (wid_Title)) ; skip unimportant windows ; ! wid_Title or
       Continue
@@ -559,25 +571,38 @@ Display_List__Find_windows_and_icons:
     WinGet, es, ExStyle, ahk_id %wid%
     WinGetClass, cla, ahk_id %wid%
     Parent := Decimal_to_Hex( DllCall( "GetParent", "uint", wid ) )
+    If ((es & WS_EX_TOOLWINDOW)  and !(Parent)) or (es =0x00200008) ; filters out program manager, etc
+      continue
+    
     WinGet, Style_parent, Style, ahk_id %Parent%
     Owner := Decimal_to_Hex( DllCall( "GetWindow", "uint", wid , "uint", "4" ) ) ; GW_OWNER = 4
     WinGet, Style_Owner, Style, ahk_id %Owner%
+    If (!( es & WS_EX_APPWINDOW ))
+    {      
+      ; NOTE - some windows result in blank value so must test for zero instead of using NOT operator!
+      If ((Parent) and ((Style_parent & WS_DISABLED) =0)) ; filter out windows that have a parent 
+        continue
+      If ((Owner) and ((Style_Owner & WS_DISABLED) =0))  ; filter out owner window that is NOT disabled -
+        continue
 
+      ; This filter's logic is copy from the internet, I don't know the detail.
+      If ( Owner or ( es & WS_EX_TOOLWINDOW )) 
+      {
+    WinGetClass, Win_Class, ahk_id %wid%
+        If ( ! ( Win_Class ="#32770" ) )
+          Continue
+      }
+    }
+    
     WinGet, Exe_Name, ProcessName, ahk_id %wid%
     WinGetClass, Win_Class, ahk_id %wid%
-
-    If (((es & WS_EX_TOOLWINDOW)  and !(Parent)) ; filters out program manager, etc
-      or (es =0x00200008)
-    ; or (Win_Class ="Windows.U.Core.CoreWindow")
-      or ( !(es & WS_EX_APPWINDOW)
-      and (((Parent) and ((Style_parent & WS_DISABLED) =0)) ; These 2 lines filter out windows that have a parent or owner window that is NOT disabled -
-      or ((Owner) and ((Style_Owner & WS_DISABLED) =0))))) ; NOTE - some windows result in blank value so must test for zero instead of using NOT operator!
-    continue
-
     hw_popup := Decimal_to_Hex(DllCall("GetLastActivePopup", "uint", wid))
 
+    Window_Found_Count_For_Top_Recent += 1
+    if Window_Found_Count_For_Top_Recent !=2  ; the last window will escap from GROUP FILTERING
+    {
     ; CUSTOM GROUP FILTERING
-    If (Group_Active != "Settings" AND Group_Active != "ALL") ; i.e. list is filtered, check filter contents to include
+    If (Group_Active != "ALL") ; i.e. list is filtered, check filter contents to include
     {
       Custom_Group_Include_wid_temp = ; initialise/reset
 
@@ -598,15 +623,7 @@ Display_List__Find_windows_and_icons:
         or ((Custom_Group_Include_wid_temp !=1) and (Exclude_Not_In_List =1)))
       Continue
     }
-
-    ; If EXE group is used, only accept windows with the same executable as the current
-    If (Group_Active = "EXE")
-    {
-
-      Same_Exe_Include_wid_temp = ; initialise/reset
-      If (Cur_Exe_Name != Exe_Name) ; match current exe name
-        Continue
-    }
+}
 
     Dialog =0 ; init/reset
     If (Parent and ! Style_parent)
@@ -679,6 +696,7 @@ LButton_Tab_Check:
   If Tab_Button_Clicked
   {
     Tab_Button_Clicked_Text := Tab_Button_Get_Text(Tab_Button_Clicked)
+    if not Hide_Other_Group
     SetTimer, Tab__Drag_and_Drop, 60 ; check status of drag operation
   }
   Return
@@ -695,9 +713,9 @@ Tab__Drag_and_Drop:
     Tab_Button_Over := TCM_HITTEST()
   Tab_Button_Over_Text := Tab_Button_Get_Text(Tab_Button_Over)
   If (Tab_Button_Over < Tab_Button_Clicked)
-    Tab_Swap(Group_List, Tab_Button_Clicked_Text, Tab_Button_Over_Text)
+    Tab_Swap(Group_Shown, Tab_Button_Clicked_Text, Tab_Button_Over_Text)
   Else If (Tab_Button_Over > Tab_Button_Clicked)
-    Tab_Swap(Group_List, Tab_Button_Over_Text, Tab_Button_Clicked_Text)
+    Tab_Swap(Group_Shown, Tab_Button_Over_Text, Tab_Button_Clicked_Text)
   Return
 
 Tab_Swap(ByRef Tab_List, ByRef Text1, ByRef Text2)
@@ -706,7 +724,7 @@ Tab_Swap(ByRef Tab_List, ByRef Text1, ByRef Text2)
   StringReplace, Tab_List, Tab_List, %Text1% , %Text2%
   StringReplace, Tab_List, Tab_List, %Text2% , %Text1%
   Tab_Button_Clicked := Tab_Button_Over ; update
-  GuiControl,, Gui1_Tab, |%Group_List%
+  GuiControl,, Gui1_Tab, |%Group_Shown%  ; This function must not been called when Hide_Other_Group is 1.
   GuiControl, ChooseString, Gui1_Tab, %Tab_Button_Clicked_Text%
 }
 
@@ -733,15 +751,10 @@ Tab_Button_Get_Text(Tab_Index)
 {
   Global
   If Tab_Index
-    Loop, Parse, Group_List,|
+    Loop, Parse, Tab_Shown,|
         If (A_Index = Tab_Index)
             Return,  A_LoopField
 }
-
-
-Gui_Settings_Tab:
-
-  Return
 
 
 Gui_Resize_and_Position:
@@ -856,12 +869,12 @@ Menu, ContextMenu1, Add, &Min / Max, :Gui_MinMax_Windows
 ; Window Group sub-menu entry
 Menu, ContextMenu1, Add ; spacer
 Menu, ContextMenu1, Add, Group - &No Filter, Gui_Window_Group_No_Filter
-If (Group_Active != "Settings" AND Group_Active != "ALL")
+If (Group_Active != "ALL")
   Menu, ContextMenu1, Disable, Group - &No Filter
 
 Loop, Parse, Group_List,|
-  If (A_LoopField != "Settings")
-      Menu, Gui_Window_Group_Load, Add,%A_LoopField%, Gui_Window_Group_Load
+  Menu, Gui_Window_Group_Load, Add,%A_LoopField%, Gui_Window_Group_Load
+
     Menu, Gui_Window_Group_Load, Check, %Group_Active%
     Menu, ContextMenu1, Add, Group - &Load, :Gui_Window_Group_Load
     Menu, ContextMenu1, Add, Group - &Save/Edit, Gui_Window_Group_Save_Edit
@@ -869,7 +882,7 @@ Loop, Parse, Group_List,|
     Menu, ContextMenu1, Add, Group - Global &Exclude, Gui_Window_Group_Global_Exclude
 
     Loop, Parse, Group_List,|
-      If (A_LoopField != "Settings" AND A_LoopField != "ALL")
+      If (A_LoopField != "ALL")
           Menu, Gui_Window_Group_Delete, Add,%A_LoopField%, Gui_Window_Group_Delete
         Menu, Gui_Window_Group_Delete, Check, %Group_Active%
         Menu, Gui_Window_Group_Delete, Color, E10000, Single ; warning colour
@@ -894,6 +907,10 @@ Loop, Parse, Group_List,|
         Menu, Gui_Settings_Help, Add, Help, HELP_and_LATEST_VERSION_CHANGES
         Menu, Gui_Settings_Help, Add, Latest Changes, HELP_and_LATEST_VERSION_CHANGES
         Menu, ContextMenu1, Add, Settings && Help, :Gui_Settings_Help
+
+  ; Exit entry
+  Menu, ContextMenu1, Add ; spacer
+  Menu, ContextMenu1, Add, &Exit, OnExit_Script_Closing
 
         Menu, ContextMenu1, Show, %A_GuiX%, %A_GuiY%
         Return
@@ -947,6 +964,7 @@ Loop, Parse, Group_List,|
       #If
 
 
+
 Gui_Hotkeys:
   Gosub, Alt_Esc
   Gui, 2: Default ; for listview operations
@@ -954,6 +972,9 @@ Gui_Hotkeys:
   Gui, 2: Add, Text, xm y+15, Main hotkeys:
   Gui, 2: Font
   Gui, 2: Add, Text, x+5 yp+2, (Note that "Alt" must be either Alt, Ctrl, Shift, Win or mouse XButton1 / 2 - but using XButton requires "Shift+Tab" is a single key!)
+  
+  Gui, 2: Add, Checkbox, vScroll_In_Taskbar Checked%Scroll_In_Taskbar% xm+188, Scorll in taskbar to active AltTab? 
+  Gui, 2: Add, Checkbox, vNo_Tray_Icon Checked%No_Tray_Icon% xp+300, Hide Tray Icon?
   ; Gui_Add_Hotkey(Gui number, Text, Comment, variable name)
   Gui_Add_Hotkey(2, "Alt","(key in Alt+Tab)", "Alt_Hotkey")
   GuiControl, 2: Disable, Alt_Hotkey_Tab
@@ -965,24 +986,25 @@ Gui_Hotkeys:
   Gui_Add_Hotkey(2, "Tab","(key in Alt+Tab)", "Tab_Hotkey")
   Gui_Add_Hotkey(2, "Shift+Tab","(Key(s) in Alt+Shift+Tab)", "Shift_Tab_Hotkey")
   Gui_Add_Hotkey(2, "Esc","(key in Alt+Esc)", "Esc_Hotkey")
+  
   Gui, 2: Font, s10
   Gui, 2: Add, Text,xm y+15, Single keys:
   Gui, 2: Font
   Gui, 2: Add, Text, x+5 yp+2, (Alternative way to show the Alt+Tab list by 1 key (blank for no hotkey) and another for selection)
   Gui_Add_Hotkey(2, "Alt+Tab list", "", "Single_Key_Show_Alt_Tab")
   Gui_Add_Hotkey(2, "Alt+Tab selection", "", "Single_Key_Hide_Alt_Tab")
+  
   Gui, 2: Font, s10
-  Gui, 2: Add, Text,xm y+30, Group hotkeys:
+  Gui, 2: Add, Text,xm y+30, Group TabKeys:
   Gui, 2: Font
   GuiControl, 2: Focus, Static1
-
-  Gui, 2: Add, ListView, section xm r15 w470 -Multi, Group name|Assigned hotkey
+  Gui, 2: Add, ListView, section xm r15 w470 -Multi, Group name|Assigned TabKey
   Loop, Parse, Group_List, |
-    If (A_LoopField != "Settings")
-        LV_Add("", A_LoopField, %A_LoopField%_Group_Hotkey)
-      Gui, 2: Add, Button, x+10 yp+40 gGui_2_Group_Hotkey_Assign w170, Assign hotkey to selected group:
-      Gui, 2: Add, Edit, vGui_2_Group_Hotkey xp y+5, %Hotkey%
-      Gui, 2: Add, Button, xp y+30 gGui_2_Group_Hotkey_Clear w170, Clear hotkey of selected group
+    LV_Add("", A_LoopField, %A_LoopField%_Group_TabKey)
+  Gui, 2: Add, Button, x+10 yp+40 gGui_2_Group_TabKey_Assign w170, Assign TabKey to selected group:
+  Gui, 2: Add, Hotkey, vGui_2_Group_TabKey xp y+5,
+  Gui, 2: Add, Checkbox, vGui_2_Group_TabKey_WinNeed Checked0 , Win key Need? 
+  Gui, 2: Add, Button, xp y+30 gGui_2_Group_TabKey_Clear w170, Clear TabKey of selected group
       Gui, 2: Add, Text, xp y+30, ( Key: !=Alt, ^=Ctrl, +=Shift, #=Win )
       Gui, 2: Add, Text, xm+250, WARNING! No error checking for hotkeys - be careful what you choose! (Delete the .ini file to reset settings)
       Gui, 2: Add, Button, xm+430 g2GuiClose w100, &Cancel
@@ -991,24 +1013,34 @@ Gui_Hotkeys:
       Return
 
 
-    Gui_2_Group_Hotkey_Assign:
+Gui_2_Group_TabKey_Assign:
       Gui, 2: Submit, NoHide
       Selected_Row := LV_GetNext(0, "F")
-      If (! Selected_Row or ! Gui_2_Group_Hotkey)
+  If (! Selected_Row or ! Gui_2_Group_TabKey)
         Return
+  
+  if Gui_2_Group_TabKey_WinNeed
+  {
+    IfNotInString, #, %Gui_2_Group_TabKey%
+      _Actual_Hotkey = #%Gui_2_Group_TabKey%
+  }
+  else
+    _Actual_Hotkey = %Gui_2_Group_TabKey%
+  
     Loop, Parse, Group_List,|
-      If %A_LoopField%_Group_Hotkey =%Gui_2_Group_Hotkey%
+    ;TODO Check the order of modifier key's symbol
+    If %A_LoopField%_Group_TabKey =%_Actual_Hotkey%
     {
-      Msgbox, Hotkey already exists! Please clear the duplicate hotkey first.
+      Msgbox, TabKey already exists! Please clear the duplicate TabKey first.
       Return
     }
     LV_GetText(Gui_2_Group_Selected, Selected_Row)
-    %Gui_2_Group_Selected%_Group_Hotkey := Gui_2_Group_Hotkey
-    LV_Modify(Selected_Row, "Col2", Gui_2_Group_Hotkey)
+  %Gui_2_Group_Selected%_Group_TabKey := _Actual_Hotkey
+  LV_Modify(Selected_Row, "Col2", _Actual_Hotkey)
     Return
 
 
-  Gui_2_Group_Hotkey_Clear:
+Gui_2_Group_TabKey_Clear:
     Selected_Row := LV_GetNext(0, "F")
     If not Selected_Row
       Return
@@ -1020,8 +1052,8 @@ Gui_2_OK:
   Loop, % LV_GetCount() ; process group hotkeys from listview
   {
     LV_GetText(Group_Name, A_Index, 1)
-    LV_GetText(Group_Hotkey, A_Index, 2)
-    %Group_Name%_Group_Hotkey =%Group_Hotkey%
+    LV_GetText(Group_TabKey, A_Index, 2)
+    %Group_Name%_Group_TabKey =%Group_TabKey%
   }
   Gui, 2: Submit
   Gui, 2: Destroy
@@ -1129,17 +1161,26 @@ Gui_Window_Group_Load__part2:
   Return
 
 Custom_Group__make_array_of_contents:
-  Exclude_Not_In_List =
-  If (Group_Active != "Settings" AND Group_Active != "ALL")
+  Exclude_Not_In_List = 0
+  PID_Filter = 
+  Hide_Other_Group = 0
+  if (Group_Active == "EXE")
   {
-    Group_Active_Contents := %Group_Active%
-    If Group_Active_Contents contains Exclude_Not_In_List
-    {
-      Exclude_Not_In_List =1
-      StringReplace, Group_Active_Contents, Group_Active_Contents, Exclude_Not_In_List|, ; remove text
+      WinGet, PID_Filter, PID, A ; get Cur_Exe_name to show only windows under current exe name
     }
+  else If (Group_Active != "ALL")
+    {
+    Group_Active_Contents := %Group_Active%
+    attr_name = %Group_Active%_Group_Attr
+    Group_Active_Attr := %attr_name%
+    If IsListContains(Group_Active_Attr, Exclude_Other_Tag)
+      Exclude_Not_In_List =1
+  
     StringSplit, Group_Active_, Group_Active_Contents,|
   }
+
+  if not IsListContains(Group_Shown, Group_Active) 
+    Hide_Other_Group = 1
   Return
 
 Gui_Window_Group_Save_Edit:
@@ -1176,8 +1217,11 @@ Gui_Window_Group_Save_Edit:
   Gui, 3: Add, ComboBox, x+5 w200 vCustom_Name, %Group_List%
   GuiControl, ChooseString, Custom_Name, %Group_Active%
   Gui, 3: Add, Checkbox, x+20 vExclude_Not_In_List Checked, Exclude all windows not in list?
-  If %Group_Active% not contains Exclude_Not_In_List
+  If not IsListContains(Group_Active_Attr, Exclude_Other_Tag)
     GuiControl,, Exclude_Not_In_List, 0 ; check box
+  Gui, 3: Add, Checkbox, y+5 vHidden_CB Checked, Hidden? Can only active it through hotkey
+  If not IsListContains(Group_Active_Attr, Hidden_Tag)
+    GuiControl,, Hidden_CB, 0 ; check box
 
   Gui, 3: Add, Button, xm+10 y+20 w80 gGui3_RESET, &Reset List
   Gui, 3: Add, Button, x+20 wp gGui3_SelectALL, Select &All
@@ -1196,7 +1240,7 @@ Gui_Window_Group_Save_Edit:
   Else If Global_Exclude_Edit =1
     Gui_3_Listview_Populate("Global_Exclude")
 
-  Else If (Group_Active = "Settings" OR Group_Active = "ALL") {
+  Else If (Group_Active = "ALL") {
     Loop, %Window_Found_Count% ; populate listview
         LV_Add("Check Icon2", Title%A_Index%, Exe_Name%A_Index%) ; Icon 1 = not included icon, Icon 2 = blank
   }
@@ -1218,13 +1262,12 @@ Gui_Window_Group_Save_Edit:
   Gui, 3: Show,, Group - Save/Edit
   Return 
 
+
 Gui_3_Listview_Populate(list)
 {
   Global
   Loop, Parse, %list%,|
   {
-    If A_LoopField =Exclude_Not_In_List
-      Continue
     If A_LoopField contains .exe
       LV_Add("Check Icon2" ,"", A_LoopField) ; Icon 1 = not included icon, Icon 2 = blank
     Else
@@ -1299,7 +1342,7 @@ Gui3_OK:
     Exclude_Not_In_List =
   }
 
-  If (Custom_Name = "" OR Custom_Name = "Settings" OR Custom_Name = "ALL")
+  If (Custom_Name = "" OR Custom_Name = "ALL")
   {
     MsgBox, 48, ERROR, Enter a valid name for the group!
     Gui, 3: Show
@@ -1307,10 +1350,13 @@ Gui3_OK:
   }
   StringReplace, Custom_Name, Custom_Name,%A_Space%,_,All
 
-  If Exclude_Not_In_List =1 ; checked - add suffix to variable name to filter
-    %Custom_Name% = |Exclude_Not_In_List ; add first entry - will parse and process when filtering alt-tab listview
-  Else
     %Custom_Name% = ; make sure it is empty in case it previously existed (over-writing)
+  Custom_Attr = %Custom_Name%_Group_Attr
+  If Exclude_Not_In_List =1 ; checked 
+    %Custom_Attr% .= "|" . Exclude_Other_Tag
+  If Hidden_CB = 1
+    %Custom_Attr% .= "|" . Hidden_Tag
+  
     RowNumber = 0 ; init
     Loop
     {
@@ -1329,6 +1375,7 @@ Gui3_OK:
       %Custom_Name% .= "|" . Title_temp
     }
     StringTrimLeft, %Custom_Name%, %Custom_Name%, 1 ; trim initial |
+  StringTrimLeft, %Custom_Attr%, %Custom_Attr%, 1 ; trim initial |
     If ! (Global_Include_Edit or Global_Exclude_Edit)
     {
       If Group_List not contains %Custom_Name%
@@ -1336,6 +1383,7 @@ Gui3_OK:
       Group_Active := Custom_Name ; automatically apply the saved group filter
     }
     Gosub, 3GuiClose
+  ; Group_Shown will be updated in IniFile_Data()
     IniFile_Data("Write")
     Global_Include_Edit = ; reset
     Global_Exclude_Edit =
@@ -1434,16 +1482,14 @@ Gui3_OK:
     If Group_Active =%A_ThisMenuItem%
       Group_Active = ALL
 
-    StringReplace, temp_List, Group_List, %A_ThisMenuItem% ; remove item from list
-    Group_List =
-    Loop, Parse, temp_List,|
-      If A_LoopField
-          Group_List .= "|" A_LoopField
-        StringTrimLeft, Group_List, Group_List, 1 ; remove leading |
+  RemoveGroupsItem(Group_List, A_ThisMenuItem)
+  RemoveGroupsItem(Group_Shown, A_ThisMenuItem)
 
         Hotkey, % %A_ThisMenuItem%_Group_Hotkey, Off, UseErrorLevel
-        IniDelete, %A_ScriptDir%\Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%
-        IniDelete, %A_ScriptDir%\Alt_Tab_Settings.ini, Groups, %A_ThisMenuItem%_Group_Hotkey
+
+  INIDeleteGroupItem(A_ThisMenuItem)
+  IniFile_Data("Write")     ; To Update Group List
+  
         Gosub, Alt_Esc_Check_Alt_State ; hides alt-tab gui - shows again if alt still pressed
         Return
 
@@ -1469,6 +1515,8 @@ Gui3_OK:
         }
       }
       Group_Active := Group_Active_Before
+  if not IsListContains(Group_Shown, Group_Active)
+    Group_Active = ALL
       Return
 
     TaskBar_Scroll_Up:
@@ -1822,42 +1870,72 @@ IniFile_Data(Read_or_Write)
   IniFile("Esc_Hotkey",               "Hotkeys", "Esc")
   IniFile("Single_Key_Show_Alt_Tab",  "Hotkeys", "")
   IniFile("Single_Key_Hide_Alt_Tab",  "Hotkeys", "Enter")
+  IniFile("Scroll_In_TaskBar",        "Hotkeys", "0")
+  IniFile("No_Tray_Icon",             "Hotkeys", "0")
 
   ; Sort_Order
   IniFile("Sort_By_Column",           "Sort_Order", "2") ; initial column to sort (2 is a hidden column)
   IniFile("Sort_By_Direction",        "Sort_Order", "Sort") ; initial sort direction
   IniFile("Sort_Direction_Symbol",    "Sort_Order", "[+]") ; initial sort direction
 
-  ; Groups + Group_Hotkey - remember lists of windows
-  IniFile("Group_List",               "Groups", "Settings|ALL|EXE")
-  If ! (Global_Include_Edit or Global_Exclude_Edit)
-    IniFile("Global_Include",           "Groups", "")
-  IniFile("Global_Include",           "Groups", "")
+; Groups + Group_TabKey - remember lists of windows
+  IniFile("Group_List",               "Groups", "ALL|EXE")
+  IniFile("Global_Include",           "Groups", "", false)
+  IniFile("Global_Exclude",           "Groups", "", false)
   IniFile("Group_Active",             "Groups", "ALL")
+  Group_Shown =
   Loop, Parse, Group_List,|
   {
-    IniFile(A_LoopField,                  "Groups", "")
-    IniFile(A_LoopField . "_Group_Hotkey","Groups", "")
-    If %A_LoopField%_Group_Hotkey
+    IniFile(A_LoopField,                  "Groups", "", true)
+    IniFile(A_LoopField . "_Group_TabKey","Groups", "", false)
+    IniFile(A_LoopField . "_Group_Attr"  ,"Groups", "", false)
+    
+    If %A_LoopField%_Group_TabKey
     {
-      Hotkey_temp := A_LoopField . "_Group_Hotkey"
-      Hotkey, % %Hotkey_temp%, Group_Hotkey, On, T5
+      TabKey_temp := A_LoopField . "_Group_TabKey"
+      ; TODO: Check invalid hotkey, add modify
+      Hotkey_Temp = % %TabKey_temp%
+      IfNotInString, Hotkey_Temp, %Alt_Hotkey%
+        Hotkey_Temp := Alt_Hotkey . Hotkey_Temp
+
+      %A_LoopField%_Group_Hotkey = %Hotkey_Temp%
+      Hotkey, %Hotkey_Temp%, Group_Hotkey, On
     }
+    
+    attr_name := A_LoopField . "_Group_Attr"
+    attr_filed := %attr_name%
+    if not IsListContains(attr_filed, Hidden_Tag)
+      Group_Shown .= "|" A_LoopField 
+
   }
+  StringTrimLeft, Group_Shown, Group_Shown, 1 ; remove leading |
+  if not IsListContains(Group_Shown, Group_Active)
+    Group_Active := "ALL"
 }
 Return
 
-IniFile(Var, Section, Default="")
+IniFile(Var, Section, Default="", Write_Empty=true)
 {
   Global
   If IniFile_Read_or_Write =Read
   {
-    IniRead, %Var%, %A_ScriptDir%\Alt_Tab_Settings.ini, %Section%, %Var%, %Default%
+    IniRead, %Var%, %Setting_INI_File%, %Section%, %Var%, %Default%
     If %Var% =ERROR
       %Var% = ; set to blank value instead of "error"
   }
   Else If IniFile_Read_or_Write =Write
-    IniWrite, % %Var%, %A_ScriptDir%\Alt_Tab_Settings.ini, %Section%, %Var%
+  {
+    If not Write_Empty
+      If %Var% =  ;Test if Var is empty
+      {
+        ; Test if the field in INI is existed
+        IniRead, temp_var, %Setting_INI_File%, %Section%, %Var%
+        If temp_var =ERROR
+          return
+}
+
+    IniWrite, % %Var%, %Setting_INI_File%, %Section%, %Var%
+  }
 }
 
 
@@ -2033,6 +2111,33 @@ Decimal_to_Hex(var)
   return var
 }
 
+IsListContains(ByRef group_ary, ByRef group_test)
+{
+  Loop, Parse, group_ary,|
+  {
+    If (A_LoopField = group_test)
+        Return,  true
+  }
+  return, false
+}
+
+INIDeleteGroupItem(ByRef item)
+{
+  global
+  IniDelete, %Setting_INI_File%, Groups, %item%
+  IniDelete, %Setting_INI_File%, Groups, %item%_Group_TabKey
+}
+
+RemoveGroupsItem(ByRef group_list, ByRef item)
+{
+  StringReplace, temp_List, group_list, %item% ; remove item from list
+  group_list =
+  Loop, Parse, temp_List,|
+    If A_LoopField
+      group_list .= "|" A_LoopField
+  StringTrimLeft, group_list, group_list, 1 ; remove leading |
+  return
+}
 
 DecodeInteger( p_type, p_address, p_offset, p_hex=true )
 {
@@ -2101,7 +2206,7 @@ Delete_Ini_File_Settings:
   MsgBox, 1, ALT-TAB REPLACEMENT, Delete Settings (.ini) and load defaults?
   IfMsgbox, Cancel
     Return
-FileDelete, %A_ScriptDir%\Alt_Tab_Settings.ini
+  FileDelete, %Setting_INI_File%
 IniFile_Data("Read") ; load defaults
 Return
 
