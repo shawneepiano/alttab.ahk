@@ -325,7 +325,6 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
 
   LV_Modify(Selected_Row, "Focus Select Vis") ; get selected row and ensure selection is visible
 
-
   ; Bring the focused lines window to the front
   Get__Selected_Row_and_RowText()
   Gui_wid := Window%RowText%
@@ -342,7 +341,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
   ; DllCall("SetForegroundWindow", "uint", Gui_wid)
 
   WinGetClass, cla, ahk_id %Gui_wid%
-  if cla !="ahk_class VirtualConsoleClass"
+  if (cla !="ahk_class VirtualConsoleClass")
   {
     WinSet, AlwaysOnTop, On , ahk_id %Gui_wid%
     WinSet, AlwaysOnTop, Off , ahk_id %Gui_wid%
