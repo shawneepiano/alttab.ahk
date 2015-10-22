@@ -390,23 +390,22 @@ Alt_Tab_Common__Check_auto_switch_icon_sizes: ; limit gui height / auto-switch i
   If (Listview_NowH > Height_Max AND Use_Large_Icons_Current =1) ; switch to small icons
   {
     Use_Large_Icons_Current =0
-    Progress, 100, , Resizing Icons to Fit... 
-    Gosub, Alt_Tab_Common__Switching_Icon_Sizes
   }
   If ((Listview_NowH * Small_to_Large_Ratio) < Height_Max AND Use_Large_Icons_Current =0 AND Use_Large_Icons=1) ; switch to large icons
   {
     Use_Large_Icons_Current =1
-    Progress, 100, , Expanding Icons to Full Size... 
-    Gosub, Alt_Tab_Common__Switching_Icon_Sizes
   }
+  Gosub, Alt_Tab_Common__Switching_Icon_Sizes
   Return
 
 Alt_Tab_Common__Switching_Icon_Sizes:
+  Gosub, GuiControl_Disable_ListView1
   Display_List_Shown =0
   Gui, 1: Destroy
-  Sleep, 500
   Progress, OFF
-  Exit
+  Gosub, Display_List
+  Gosub, GuiControl_Enable_ListView1
+  ; Exit
   Return
 
 Alt_Tab_Common__Highlight_Active_Window:
@@ -491,7 +490,6 @@ Check_Alt_Hotkey2_Up:
 
 
 Display_List:
-  ; TODO use GuiControl, -Redraw, MyListView  to speed up drawing
   LV_ColorChange() ; clear all highlighting
   if Hide_Other_Group 
     Tab_Shown = %Group_Active%
@@ -507,15 +505,21 @@ Display_List:
     Gui, 1: Color, %Tab_Colour% ; i.e. border/background 
     Gui, 1: Margin, 0, 0
     ; Tab stuff
-    Gui, 1: Font, s%Font_Size_Tab% c%Font_Color% bold, %Font_Type%
-    Gui, 1: Add, Tab2, vGui1_Tab HWNDhw_Gui1_Tab w%Gui1_Tab__width% -0x200, %Group_List% ; -0x200 = ! TCS_MULTILINE
     ; Gui, 1: Add, StatusBar, Background%StatusBar_Background_Colour% ; add before changing font
     Gui, 1: Font, s%Font_Size% c%Font_Color% %Font_Style%, %Font_Type%
-    Gui, 1: Add, ListView, x-1 y+-4 w%Listview_Width% AltSubmit -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
+    Gui, 1: Add, ListView, x-1 y+-4 w%Listview_Width% AltSubmit -Redraw -Multi NoSort Background%Listview_Colour% Count10 gListView_Event vListView1 HWNDhw_LV_ColorChange,%Col_Title_List%
+    ; Gui, 1:Default
     LV_ModifyCol(2, "Integer") ; sort hidden column 2 as numbers
     ; SB_SetParts(SB_Width, SB_Width, SB_Width)
     ; Gosub, SB_Update__CPU
     ; SetTimer, SB_Update__CPU, 1000
+    Gui, 1: Font, s%Font_Size_Tab% c%Font_Color% bold, %Font_Type_Tab%
+    Gui, 1: Add, Tab2, Bottom vGui1_Tab HWNDhw_Gui1_Tab w%Gui1_Tab__width% h22 -0x200 -Multi, %Group_List% ; -0x200 = ! TCS_MULTILINE
+    Gui, 1:+LastFound
+    WinSet, Transparent, 240
+    ; Winset, TransColor, %Tab_Colour% 150 ; i.e. border/background 
+    ; WinSet, Transparent,65 , ahk_id %hw_LV_ColorChange%
+    ; Winset, TransColor, %Tab_Colour% 150, ahk_id  %hw_LV_ColorChange%; i.e. border/background 
   }
   GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
   GuiControl, ChooseString, Gui1_Tab2, %Group_Active%
@@ -557,6 +561,8 @@ Display_List__Find_windows_and_icons:
 
   Window_Found_Count =0
   Window_Found_Count_For_Top_Recent=0
+  ; GuiControl, -Redraw, ListView1
+
   Loop, %Window_List%
   {
     ;TODO: filter according to process name
@@ -641,6 +647,9 @@ Display_List__Find_windows_and_icons:
         Window__Store_attributes(Window_Found_Count, wid, "") ; Index, wid, parent (or blank if none)
         LV_Add("Icon" . Window_Found_Count,"", Window_Found_Count, Title%Window_Found_Count%, Exe_Name%Window_Found_Count%, State%Window_Found_Count%, OnTop%Window_Found_Count%, Status%Window_Found_Count%)
   }
+  GuiControl, +Redraw, ListView1
+  GuiControl,, Gui1_Tab, |%Group_List% ; update in case of changes
+  GuiControl, ChooseString, Gui1_Tab2, %Group_Active%
   Return
 
 
@@ -795,7 +804,7 @@ Gui_Resize_and_Position:
   {
     Col_3_w -= Scrollbar_Vertical_Thickness ; allow for vertical scrollbar being visible
     LV_ModifyCol(3, Col_3_w) ; resize title column
-    GuiControl, Move, ListView1, h%Height_Max%
+    GuiControl, MoveDraw, Gui1_Tab
   }
   DetectHiddenWindows, Off
   Return
@@ -874,88 +883,89 @@ If (Group_Active != "ALL")
 Loop, Parse, Group_List,|
   Menu, Gui_Window_Group_Load, Add,%A_LoopField%, Gui_Window_Group_Load
 
-    Menu, Gui_Window_Group_Load, Check, %Group_Active%
-    Menu, ContextMenu1, Add, Group - &Load, :Gui_Window_Group_Load
-    Menu, ContextMenu1, Add, Group - &Save/Edit, Gui_Window_Group_Save_Edit
-    Menu, ContextMenu1, Add, Group - Global &Include, Gui_Window_Group_Global_Include
-    Menu, ContextMenu1, Add, Group - Global &Exclude, Gui_Window_Group_Global_Exclude
+Menu, Gui_Window_Group_Load, Check, %Group_Active%
+Menu, ContextMenu1, Add, Group - &Load, :Gui_Window_Group_Load
+Menu, ContextMenu1, Add, Group - &Save/Edit, Gui_Window_Group_Save_Edit
+Menu, ContextMenu1, Add, Group - Global &Include, Gui_Window_Group_Global_Include
+Menu, ContextMenu1, Add, Group - Global &Exclude, Gui_Window_Group_Global_Exclude
 
-    Loop, Parse, Group_List,|
-      If (A_LoopField != "ALL")
-          Menu, Gui_Window_Group_Delete, Add,%A_LoopField%, Gui_Window_Group_Delete
-        Menu, Gui_Window_Group_Delete, Check, %Group_Active%
-        Menu, Gui_Window_Group_Delete, Color, E10000, Single ; warning colour
-        Menu, ContextMenu1, Add, Group - &Delete, :Gui_Window_Group_Delete
+Loop, Parse, Group_List,|
+  If (A_LoopField != "ALL")
+      Menu, Gui_Window_Group_Delete, Add,%A_LoopField%, Gui_Window_Group_Delete
 
-        ; Hotkeys entry
-        Menu, ContextMenu1, Add ; spacer
-        Menu, ContextMenu1, Add, &Hotkeys, Gui_Hotkeys
+  Menu, Gui_Window_Group_Delete, Check, %Group_Active%
+  Menu, Gui_Window_Group_Delete, Color, E10000, Single ; warning colour
+  Menu, ContextMenu1, Add, Group - &Delete, :Gui_Window_Group_Delete
 
-        ; Processes entry
-        Menu, ContextMenu1, Add ; spacer
-        Menu, Gui_Processes, Add, % "End:      " Gui_wid_Title, End_Process_Single
-        Menu, Gui_Processes, Add ; spacer
-        Menu, Gui_Processes, Add, % "End All:  " Exe_Name%RowText%, End_Process_All_Instances
-        Menu, Gui_Processes, Color, E10000, Single ; warning colour
-        Menu, ContextMenu1, Add, &Processes, :Gui_Processes
+  ; Hotkeys entry
+  Menu, ContextMenu1, Add ; spacer
+  Menu, ContextMenu1, Add, &Hotkeys, Gui_Hotkeys
 
-        ; Help + Latest changes
-        Menu, ContextMenu1, Add ; spacer
-        Menu, Gui_Settings_Help, Add, Delete Settings (.ini) && Reload, Delete_Ini_File_Settings
-        Menu, Gui_Settings_Help, Add, ; spacer
-        Menu, Gui_Settings_Help, Add, Help, HELP_and_LATEST_VERSION_CHANGES
-        Menu, Gui_Settings_Help, Add, Latest Changes, HELP_and_LATEST_VERSION_CHANGES
-        Menu, ContextMenu1, Add, Settings && Help, :Gui_Settings_Help
+  ; Processes entry
+  Menu, ContextMenu1, Add ; spacer
+  Menu, Gui_Processes, Add, % "End:      " Gui_wid_Title, End_Process_Single
+  Menu, Gui_Processes, Add ; spacer
+  Menu, Gui_Processes, Add, % "End All:  " Exe_Name%RowText%, End_Process_All_Instances
+  Menu, Gui_Processes, Color, E10000, Single ; warning colour
+  Menu, ContextMenu1, Add, &Processes, :Gui_Processes
+
+  ; Help + Latest changes
+  Menu, ContextMenu1, Add ; spacer
+  Menu, Gui_Settings_Help, Add, Delete Settings (.ini) && Reload, Delete_Ini_File_Settings
+  Menu, Gui_Settings_Help, Add, ; spacer
+  Menu, Gui_Settings_Help, Add, Help, HELP_and_LATEST_VERSION_CHANGES
+  Menu, Gui_Settings_Help, Add, Latest Changes, HELP_and_LATEST_VERSION_CHANGES
+  Menu, ContextMenu1, Add, Settings && Help, :Gui_Settings_Help
 
   ; Exit entry
   Menu, ContextMenu1, Add ; spacer
   Menu, ContextMenu1, Add, &Exit, OnExit_Script_Closing
 
-        Menu, ContextMenu1, Show, %A_GuiX%, %A_GuiY%
-        Return
+  Menu, ContextMenu1, Show, %A_GuiX%, %A_GuiY%
+  Return
 
 
-      Gui_MinMax_Windows:
-        Gosub, GuiControl_Disable_ListView1
-        List_of_Process_To_MinMax = ; need to store list now as re-drawing the listview over-writes necessary variables
-        Loop, %Window_Found_Count%
-        {
-          If ( Exe_Name%A_Index% = Exe_Name%RowText% and ! Dialog%A_Index% ) ; don't try to act on dialog windows (e.g. save prompts)
-            List_of_Process_To_MinMax .= "|" . Window%A_Index%
-        }
-        StringTrimLeft, List_of_Process_To_MinMax, List_of_Process_To_MinMax, 1 ; remove 1st | character (empty reference otherwise)
-        If A_ThisMenuItem contains Maximize
-          MinMax_Message =0xF030 ; SC_MAXIMIZE
-        Else If A_ThisMenuItem contains Minimize
-          MinMax_Message =0xF020 ; SC_MINIMIZE
-        Else If A_ThisMenuItem contains Normal
-          MinMax_Message =0xF120 ; SC_RESTORE
-        Loop, Parse, List_of_Process_To_MinMax,|
-          PostMessage, 0x112, %MinMax_Message%,,, ahk_id %A_LoopField% ; 0x112 = WM_SYSCOMMAND
-        Sleep, 50 ; wait for min/max state to change otherwise updated listview will be wrong
-        Gosub, Display_List
-        Gosub, GuiControl_Enable_ListView1
-        Return
+Gui_MinMax_Windows:
+  Gosub, GuiControl_Disable_ListView1
+  List_of_Process_To_MinMax = ; need to store list now as re-drawing the listview over-writes necessary variables
+  Loop, %Window_Found_Count%
+  {
+    If ( Exe_Name%A_Index% = Exe_Name%RowText% and ! Dialog%A_Index% ) ; don't try to act on dialog windows (e.g. save prompts)
+      List_of_Process_To_MinMax .= "|" . Window%A_Index%
+  }
+  StringTrimLeft, List_of_Process_To_MinMax, List_of_Process_To_MinMax, 1 ; remove 1st | character (empty reference otherwise)
+  If A_ThisMenuItem contains Maximize
+    MinMax_Message =0xF030 ; SC_MAXIMIZE
+  Else If A_ThisMenuItem contains Minimize
+    MinMax_Message =0xF020 ; SC_MINIMIZE
+  Else If A_ThisMenuItem contains Normal
+    MinMax_Message =0xF120 ; SC_RESTORE
+  Loop, Parse, List_of_Process_To_MinMax,|
+    PostMessage, 0x112, %MinMax_Message%,,, ahk_id %A_LoopField% ; 0x112 = WM_SYSCOMMAND
+  Sleep, 50 ; wait for min/max state to change otherwise updated listview will be wrong
+  Gosub, Display_List
+  Gosub, GuiControl_Enable_ListView1
+  Return
 
-      GuiControl_Disable_ListView1:
-        OnMessage( 0x06, "" ) ; turn off: no alt tab list window lost focus -> hide list
-        ListView1__Disabled = 1
-        GuiControl, Disable, ListView1
-        Return
+GuiControl_Disable_ListView1:
+  OnMessage( 0x06, "" ) ; turn off: no alt tab list window lost focus -> hide list
+  ListView1__Disabled = 1
+  GuiControl, Disable, ListView1
+  Return
 
-      GuiControl_Enable_ListView1:
-        GuiControl, Enable, ListView1
-        GuiControl, Focus, ListView1
-        ListView1__Disabled = 0
-        OnMessage( 0x06, "WM_ACTIVATE" ) ; turn on again - alt tab list window lost focus > hide list
-        Return
+GuiControl_Enable_ListView1:
+  GuiControl, Enable, ListView1
+  GuiControl, Focus, ListView1
+  ListView1__Disabled = 0
+  OnMessage( 0x06, "WM_ACTIVATE" ) ; turn on again - alt tab list window lost focus > hide list
+  Return
 
-      ; HOTKEYS MENU SECTION:
-      ;============================================================================================================================
+; HOTKEYS MENU SECTION:
+;============================================================================================================================
 
-      #If WinActive("Alt-Tab Replacement ahk_class AutoHotkeyGUI")
+#If WinActive("Alt-Tab Replacement ahk_class AutoHotkeyGUI")
 
-      !1:: ColumnClickSort(1, 1) ;
+!1:: ColumnClickSort(1, 1) ;
       !2:: ColumnClickSort(3, 1) ;
       !3:: ColumnClickSort(4, 1) ;
       !4:: ColumnClickSort(5, 1) ; Sort by window
@@ -1579,7 +1589,11 @@ End_Process_Subroutine:
   Return
 
 Toggle_Always_OnTop:
+  Gosub, GuiControl_Disable_ListView1
   Winset, AlwaysOnTop, Toggle, ahk_id %Gui_wid%
+  Sleep, 50 ; wait for min/max state to change otherwise updated listview will be wrong
+  Gosub, Display_List
+  Gosub, GuiControl_Enable_ListView1
   Return
 
 End_Process_All_Instances:
@@ -1959,6 +1973,7 @@ ListView_Resize_Vertically(Gui_ID) ; Automatically resize listview vertically
   Global Window_Found_Count, lv_h_win_2000_adj
   SendMessage, 0x1000+31, 0, 0, SysListView321, ahk_id %Gui_ID% ; LVM_GETHEADER
   WinGetPos,,,, lv_header_h, ahk_id %ErrorLevel%
+  GuiControlGet, Gui1_Tab_Now, Pos, Gui1_Tab ; retrieve listview dimensions/position ; for auto-sizing (elsewhere)
   VarSetCapacity( rect, 16, 0 )
   SendMessage, 0x1000+14, 0, &rect, SysListView321, ahk_id %Gui_ID% ; LVM_GETITEMRECT ; LVIR_BOUNDS
   y1 := 0
@@ -1969,8 +1984,10 @@ ListView_Resize_Vertically(Gui_ID) ; Automatically resize listview vertically
     y2 += *( &rect + 11 + A_Index )
   }
   lv_row_h := y2 - y1
-  lv_h := 4 + lv_header_h + ( lv_row_h * Window_Found_Count ) + lv_h_win_2000_adj
+  lv_h := 4 + lv_header_h + ( lv_row_h * Window_Found_Count ) + lv_h_win_2000_adj 
+  tab_y := lv_h - 6
   GuiControl, Move, SysListView321, h%lv_h%
+  GuiControl, Move, Gui1_Tab, y%tab_y%
 }
 
 
