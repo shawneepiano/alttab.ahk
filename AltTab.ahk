@@ -118,7 +118,7 @@ Gui_x =Center
 Gui_y =Center
 
 ; Max height
-Height_Max_Modifier =0.75 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
+Height_Max_Modifier =0.85 ; multiplier for screen height (e.g. 0.92 = 92% of screen height max )
 
 ; Width
 Listview_Width := A_ScreenWidth * 0.40
