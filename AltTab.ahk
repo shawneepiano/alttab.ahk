@@ -277,13 +277,13 @@ Initiate_Hotkeys:
 
 
 Alt_Tab: ; alt-tab hotkey
-Tooltip % time("Alt_Tab_Common_Function", 1)
-; Alt_Tab_Common_Function(1)
+; Tooltip % time("Alt_Tab_Common_Function", 1)
+Alt_Tab_Common_Function(1)
 Return
 
 Alt_Shift_Tab: ; alt-shift-tab hotkey
-Tooltip % time("Alt_Tab_Common_Function", -1)
-; Alt_Tab_Common_Function(-1)
+; Tooltip % time("Alt_Tab_Common_Function", -1)
+Alt_Tab_Common_Function(-1)
 Return
 
 ; alt_tab
@@ -2148,9 +2148,9 @@ WM_NOTIFY( W, L, M )
           IsSelected := ErrorLevel
           If ( IsSelected = 2 ) {                                                    ; LVIS_SELECTED
             ; custom selected color highlighting
-          NumPut( Listview_Colour_Selected_Text, L + ClrTxP, 0, "UInt")
-          NumPut( Listview_Colour_Selected_Back, L + ClrTxBkP, 0, "UInt") ,
-          NumPut( Listview_Colour_Selected_Back, L + ClrBkP, 0, "UInt")
+            NumPut( Listview_Colour_Selected_Text, L + ClrTxP, 0, "UInt")
+            NumPut( Listview_Colour_Selected_Back, L + ClrTxBkP, 0, "UInt") ,
+            NumPut( Listview_Colour_Selected_Back, L + ClrBkP, 0, "UInt")
             EncodeInteger(0x0, 4, &LvItem, 12)                                       ; LVITEM->state
             EncodeInteger(0x2, 4, &LvItem, 16)                                       ; LVITEM->stateMask         ; LVIS_SELECTED
             SendMessage, 4139, Current_Line-1, &LvItem, , ahk_id %hw_LV_ColorChange% ; Disable Highlighting
@@ -2162,7 +2162,6 @@ WM_NOTIFY( W, L, M )
           If (Line_Color_%Index%_Text != "") {
             NumPut( Line_Color_%Index%_Text, L + ClrTxP, 0, "UInt")
             NumPut( Line_Color_%Index%_Back, L + ClrTxBkP, 0, "UInt")
-            ; NumPut( Line_Color_%Index%_Back, L + ClrBkP, 0, "UInt")
           }
         }
       }
@@ -2180,16 +2179,14 @@ WM_NOTIFY( W, L, M )
 ; MISC
 ;============================================================================================================================
 
-Decimal_to_Hex(var)
-{
+Decimal_to_Hex(var) {
   SetFormat, integer, hex
   var += 0
   SetFormat, integer, d
   return var
 }
 
-IsListContains(ByRef group_ary, ByRef group_test)
-{
+IsListContains(ByRef group_ary, ByRef group_test) {
   Loop, Parse, group_ary,|
   {
     If (A_LoopField = group_test)
@@ -2198,15 +2195,13 @@ IsListContains(ByRef group_ary, ByRef group_test)
   return, false
 }
 
-INIDeleteGroupItem(ByRef item)
-{
+INIDeleteGroupItem(ByRef item) {
   global
   IniDelete, %Setting_INI_File%, Groups, %item%
   IniDelete, %Setting_INI_File%, Groups, %item%_Group_TabKey
 }
 
-RemoveGroupsItem(ByRef group_list, ByRef item)
-{
+RemoveGroupsItem(ByRef group_list, ByRef item) {
   StringReplace, temp_List, group_list, %item% ; remove item from list
   group_list =
   Loop, Parse, temp_List,|
@@ -2216,35 +2211,18 @@ RemoveGroupsItem(ByRef group_list, ByRef item)
   return
 }
 
-DecodeInteger( p_type, p_address, p_offset, p_hex=true )
-{
-  old_FormatInteger := A_FormatInteger
-  ifEqual, p_hex, 1, SetFormat, Integer, hex
-    else, SetFormat, Integer, dec
-        StringRight, size, p_type, 1
-      loop, %size%
-        value += *( ( p_address+p_offset )+( A_Index-1 ) ) << ( 8*( A_Index-1 ) )
-      if ( size <= 4 and InStr( p_type, "u" ) != 1 and *( p_address+p_offset+( size-1 ) ) & 0x80 )
-        value := -( ( ~value+1 ) & ( ( 2**( 8*size ) )-1 ) )
-      SetFormat, Integer, %old_FormatInteger%
-      return, value
-}
-
-EncodeInteger( p_value, p_size, p_address, p_offset )
-{
+EncodeInteger( p_value, p_size, p_address, p_offset ) {
   loop, %p_size%
     DllCall( "RtlFillMemory", "uint", p_address+p_offset+A_Index-1, "uint", 1, "uchar", p_value >> ( 8*( A_Index-1 ) ) )
 }
 
 
-RGBtoBGR(oldValue)
-{
+RGBtoBGR(oldValue) {
   return (oldValue & 0x00ff00) + ((oldValue & 0xff0000) >> 16) + ((oldValue & 0x0000ff) << 16)
 }
 
 
-GetProcessTimes(pid)    ; Individual CPU Load of the process with pid
-{
+GetProcessTimes(pid) {   ; Individual CPU Load of the process with pid 
   Static oldKrnlTime, oldUserTime
   Static newKrnlTime, newUserTime
   Static PreviousPID
@@ -2263,8 +2241,7 @@ GetProcessTimes(pid)    ; Individual CPU Load of the process with pid
   Return (newKrnlTime-oldKrnlTime + newUserTime-oldUserTime)/10000000 * 100   ; 1sec: 10**7
 }
 
-GetSystemTimes()    ; Total CPU Load
-{
+GetSystemTimes() {
   Static oldIdleTime, oldKrnlTime, oldUserTime
   Static newIdleTime, newKrnlTime, newUserTime
 
