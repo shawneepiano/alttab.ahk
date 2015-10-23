@@ -157,7 +157,7 @@ Listview_Colour_Min_Text :=       RGBtoBGR("0x000000") ; highlight minimised win
 Listview_Colour_Min_Back :=       RGBtoBGR("0xffa724")
 Listview_Colour_OnTop_Text :=     RGBtoBGR("0x000000") ; highlight alwaysontop windows
 Listview_Colour_OnTop_Back :=     RGBtoBGR("0xff2c4b")
-Listview_Colour_Dialog_Text :=    RGBtoBGR("0xd9cec3")
+Listview_Colour_Dialog_Text :=    RGBtoBGR("0xFFFFFF")
 Listview_Colour_Dialog_Back :=    RGBtoBGR("0xFB5959")
 Listview_Colour_Selected_Text :=  RGBtoBGR("0xffffff")
 Listview_Colour_Selected_Back :=  RGBtoBGR("0x0a9dff")
@@ -2105,24 +2105,52 @@ LV_ColorChange(Index="", TextColor="", BackColor="") ; change specific line's co
 }
 
 
-WM_NOTIFY( p_w, p_l, p_m )
+WM_NOTIFY( W, L, M )
 {
-  local draw_stage, Current_Line, Index, IsSelected=0
-  Critical
-  if ( DecodeInteger( "uint4", p_l, 0 ) = hw_LV_ColorChange ) {                      ; NMHDR->hwndFrom
-    if ( DecodeInteger( "int4", p_l, 8 ) = -12 ) {                                   ; NMHDR->code               ; NM_CUSTOMDRAW
-      draw_stage := DecodeInteger( "uint4", p_l, 12 )                                ; NMCUSTOMDRAW->dwDrawStage
-      Current_Line := DecodeInteger( "uint4", p_l, 36 )+1                            ; NMCUSTOMDRAW->dwItemSpec
-      if ( draw_stage = 1 )                                                          ; CDDS_PREPAINT
-        return, 0x20                                                                 ; CDRF_NOTIFYITEMDRAW
-      else if ( draw_stage = 0x10000|1 ) {                                           ; CDDS_ITEMPREPAINT
+  local DrawStage, Current_Line, Index, IsSelected=0
+  Static NM_CUSTOMDRAW := -12
+  Static LVN_COLUMNCLICK := -108
+  ; Size off NMHDR structure
+  Static CDDS_PREPAINT          := 0x00000001
+  Static CDDS_ITEMPREPAINT      := 0x00010001
+  Static CDDS_SUBITEMPREPAINT   := 0x00030001
+  Static CDRF_DODEFAULT         := 0x00000000
+  Static CDRF_NEWFONT           := 0x00000002
+  Static CDRF_NOTIFYITEMDRAW    := 0x00000020
+  Static CDRF_NOTIFYSUBITEMDRAW := 0x00000020
+  Static CLRDEFAULT             := 0xFF000000
+  ; Size off NMHDR structure
+  Static NMHDRSize := (2 * A_PtrSize) + 4 + (A_PtrSize - 4)
+  ; Offset of dwItemSpec (NMCUSTOMDRAW)
+  Static ItemSpecP := NMHDRSize + (5 * 4) + A_PtrSize + (A_PtrSize - 4)
+  ; Size of NMCUSTOMDRAW structure
+  Static NCDSize  := NMHDRSize + (6 * 4) + (3 * A_PtrSize) + (2 * (A_PtrSize - 4))
+  ; Offset of clrText (NMLVCUSTOMDRAW)
+  Static ClrTxP   :=  NCDSize
+  ; Offset of clrTextBk (NMLVCUSTOMDRAW)
+  Static ClrTxBkP := ClrTxP + 4
+  ; Offset of iSubItem (NMLVCUSTOMDRAW)
+  Static SubItemP := ClrTxBkP + 4
+  ; Offset of clrFace (NMLVCUSTOMDRAW)
+  Static ClrBkP   := SubItemP + 8
+
+  Critical, 100
+  If (NumGet(L + 0, 0, "UPtr") = hw_LV_ColorChange) {
+    M := NumGet(L + (A_PtrSize * 2), 0, "Int")
+    If (M = NM_CUSTOMDRAW) {
+      DrawStage := NumGet(L + NMHDRSize, 0, "UInt")
+      Current_Line := NumGet(L + ItemSpecP, 0, "UPtr") + 1
+      if ( DrawStage = CDDS_PREPAINT ) 
+        return  CDRF_NOTIFYITEMDRAW
+      else if ( DrawStage = CDDS_ITEMPREPAINT ) {
         If ( DllCall("GetFocus") = hw_LV_ColorChange ) {                             ; Control has Keyboard Focus?
           SendMessage, 4140, Current_Line-1, 2, , ahk_id %hw_LV_ColorChange%         ; LVM_GETITEMSTATE
           IsSelected := ErrorLevel
           If ( IsSelected = 2 ) {                                                    ; LVIS_SELECTED
             ; custom selected color highlighting
-            EncodeInteger( Listview_Colour_Selected_Text, 4, p_l, 48 )               ; NMCUSTOMDRAW->clrText     ; foreground
-            EncodeInteger( Listview_Colour_Selected_Back, 4, p_l, 52 )               ; NMCUSTOMDRAW->clrTextBk   ; background
+          NumPut( Listview_Colour_Selected_Text, L + ClrTxP, 0, "UInt")
+          NumPut( Listview_Colour_Selected_Back, L + ClrTxBkP, 0, "UInt") ,
+          NumPut( Listview_Colour_Selected_Back, L + ClrBkP, 0, "UInt")
             EncodeInteger(0x0, 4, &LvItem, 12)                                       ; LVITEM->state
             EncodeInteger(0x2, 4, &LvItem, 16)                                       ; LVITEM->stateMask         ; LVIS_SELECTED
             SendMessage, 4139, Current_Line-1, &LvItem, , ahk_id %hw_LV_ColorChange% ; Disable Highlighting
@@ -2132,12 +2160,13 @@ WM_NOTIFY( p_w, p_l, p_m )
           ; change the 3rd parameter in the line below if the line number isn't in the 2nd column!
           LV_GetText(Index, Current_Line, 2)
           If (Line_Color_%Index%_Text != "") {
-            EncodeInteger( Line_Color_%Index%_Text, 4, p_l, 48 )                     ; NMLVCUSTOMDRAW->clrText   ; foreground
-            EncodeInteger( Line_Color_%Index%_Back, 4, p_l, 52 )                     ; NMLVCUSTOMDRAW->clrTextBk ; background
+            NumPut( Line_Color_%Index%_Text, L + ClrTxP, 0, "UInt")
+            NumPut( Line_Color_%Index%_Back, L + ClrTxBkP, 0, "UInt")
+            ; NumPut( Line_Color_%Index%_Back, L + ClrBkP, 0, "UInt")
           }
         }
       }
-      else if ( draw_stage = 0x10000|2 )                                             ; CDDS_ITEMPOSTPAINT
+      else if ( DrawStage = 0x10000|2 )                                             ; CDDS_ITEMPOSTPAINT
         If ( IsSelected ) {
           EncodeInteger(0x02, 4, &LvItem, 12)                                        ; LVITEM->state
           EncodeInteger(0x02, 4, &LvItem, 16)                                        ; LVITEM->stateMask         ; LVIS_SELECTED
@@ -2146,7 +2175,6 @@ WM_NOTIFY( p_w, p_l, p_m )
     }
   }
 }
-
 
 ;============================================================================================================================
 ; MISC
