@@ -277,16 +277,14 @@ Initiate_Hotkeys:
 
 
 Alt_Tab: ; alt-tab hotkey
-; Tooltip % time("Alt_Tab_Common_Function", 1)
-Alt_Tab_Common_Function(1)
-Return
+  ; Tooltip % time("Alt_Tab_Common_Function", 1)
+  Alt_Tab_Common_Function(1)
+  Return
 
 Alt_Shift_Tab: ; alt-shift-tab hotkey
-; Tooltip % time("Alt_Tab_Common_Function", -1)
-Alt_Tab_Common_Function(-1)
-Return
-
-; alt_tab
+  ; Tooltip % time("Alt_Tab_Common_Function", -1)
+  Alt_Tab_Common_Function(-1)
+  Return
 
 Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
 {
@@ -296,7 +294,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
   {
     WinGet, Active_ID, ID, A
     Gosub, Custom_Group__make_array_of_contents
-    ; GoSub, Display_Dim_Background
+    GoSub, Display_Dim_Background
     Gosub, Display_List
     Gosub, Alt_Tab_Common__Check_auto_switch_icon_sizes ; limit gui height / auto-switch icon sizes
     Gosub, Alt_Tab_Common__Highlight_Active_Window
@@ -333,11 +331,14 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
 
   PPrevRowText:=(PrevRowText>RowText)?PrevRowText+1:RowText+1
 
+  WinSet, Top, , ahk_id %Gui_wid%
+
   ; Put previous window back in window stack
   DllCall("SetWindowPos", "uint", Window%PrevRowText%, "uint", Window%PPrevRowText%
     , "int", 0, "int", 0, "int", 0, "int", 0
     , "uint", 0x13)  ; NOSIZE|NOMOVE|NOACTIVATE (0x1|0x2|0x10)
 
+  WinSet, Top, , ahk_id %Gui4_ID% 
 
   WinGetClass, cla, ahk_id %Gui_wid%
   if (cla !="ahk_class VirtualConsoleClass")
@@ -575,8 +576,9 @@ Display_Dim_Background:
   Gui, 4: +LastFound -Caption +ToolWindow
   Gui, 4: Color, Black
   Gui, 4: Show, Hide
-  WinSet, Transparent, 65
+  WinSet, Transparent, 120
   Gui, 4: Show, NA x%X0% y%Y0% w%Width% h%Height%
+  Gui4_ID := WinExist() ; for auto-sizing columns later
 
   return
 
