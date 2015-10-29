@@ -1,7 +1,17 @@
-
-
 AltTab.ahk
 ==========
+
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-generate-toc again -->
+**Table of Contents**
+
+- [AltTab.ahk](#alttabahk)
+- [HOTKEYS:](#hotkeys)
+- [EVENTS:](#events)
+- [SETTINGS:](#settings)
+
+<!-- markdown-toc end -->
+
+
 
 [![Join the chat at https://gitter.im/ralesi/alttab.ahk](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/ralesi/alttab.ahk?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 This version of AltTab.ahk features:
@@ -14,10 +24,10 @@ This version of AltTab.ahk features:
 * Tray icon hidden optional, and custom tray icon support (by h46incon)
 
 
-  ALT-TAB REPLACEMENT (WITH ICONS AND WINDOW TITLES IN A LISTVIEW).
+ALT-TAB REPLACEMENT (WITH ICONS AND WINDOW TITLES IN A LISTVIEW).
 
-  Latest version can be found at: http://file.autohotkey.net/evl/AltTab/AltTab.ahk
-  Forum topic for discussion: http://www.autohotkey.com/forum/viewtopic.php?t=6422
+Latest version can be found at: http://file.autohotkey.net/evl/AltTab/AltTab.ahk
+Forum topic for discussion: http://www.autohotkey.com/forum/viewtopic.php?t=6422
 
 HOTKEYS:
 --------
@@ -29,32 +39,36 @@ Mouse wheel over the taskbar scrolls the list - Middle button selects a window i
 Window Groups can be assigned hotkeys to load the group/cycle through the windows.
 
 EVENTS:
-  Double-click a row to select that item and switch to it.
+--------
 
-  Type first letter of program's title to cycle through them while still holding Alt
+Double-click a row to select that item and switch to it.
 
-  Columns can be sorted by clicking on their titles.
+Type first letter of program's title to cycle through them while still holding Alt
 
-  Tabs (window groups) can be re-ordered by drag-and-drop.
+Columns can be sorted by clicking on their titles.
 
-  Right-Click (context menu):
-  Basic hotkey support for switching to specific windows (using window groups and adding window classes)
-  Exclude (and un-exclude) specific windows and specific .EXEs - see "Window Groups" below.
-  Window Groups - define lists of windows to easily switch between only showing certain apps.
-  Manage groups of windows and processes (min/max all, close all, etc).
+Tabs (window groups) can be re-ordered by drag-and-drop.
 
-  Close windows:
-  Alt+= "hotkey"  - toggle windows AlwaysOnTop status
-  Alt+Middle mouse - close window under the mouse pointer in the Alt-Tab listview.
-  Alt+\ "hotkey"  - close selected window (while list is displayed)
-  Alt+/ "hotkey"  - close ALL windows whose EXE matches that of the selected entry (while list is displayed)
-  Process menu entry - end selected process or all instance of the EXE in the list.
+Right-Click (context menu):
+Basic hotkey support for switching to specific windows (using window groups and adding window classes)
+Exclude (and un-exclude) specific windows and specific .EXEs - see "Window Groups" below.
+Window Groups - define lists of windows to easily switch between only showing certain apps.
+Manage groups of windows and processes (min/max all, close all, etc).
+
+Close windows:
+Alt+= "hotkey"  - toggle windows AlwaysOnTop status
+Alt+Middle mouse - close window under the mouse pointer in the Alt-Tab listview.
+Alt+\ "hotkey"  - close selected window (while list is displayed)
+Alt+/ "hotkey"  - close ALL windows whose EXE matches that of the selected entry (while list is displayed)
+Process menu entry - end selected process or all instance of the EXE in the list.
 
 SETTINGS:
-  See "; USER EDITABLE SETTINGS:" section near top of source code.
+--------
 
-  TO EXIT:
-  Choose Exit from the system tray icon's menu.
+See "; USER EDITABLE SETTINGS:" section near top of source code.
+
+TO EXIT:
+Choose Exit from the system tray icon's menu.
 
 NOTE: Stroke-It (and maybe other mouse gesture programs) can cause the context menu to be shown twice/problematic.
 Solution: exclude the program within the gesture recognition program (window title = Alt-Tab Replacement).
