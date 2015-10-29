@@ -44,6 +44,7 @@ EVENTS:
   Manage groups of windows and processes (min/max all, close all, etc).
 
   Close windows:
+  Alt+= "hotkey"  - toggle windows AlwaysOnTop status
   Alt+Middle mouse - close window under the mouse pointer in the Alt-Tab listview.
   Alt+\ "hotkey"  - close selected window (while list is displayed)
   Alt+/ "hotkey"  - close ALL windows whose EXE matches that of the selected entry (while list is displayed)
