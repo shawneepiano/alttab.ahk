@@ -251,8 +251,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
     Gosub, Alt_Tab_Common__Highlight_Active_Window
     PrevRowText:=
 
-    If (Single_Key_Show_Alt_Tab_Used = "1" 
-      or ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2))) ; Alt key still pressed, else gui not shown
+    If (Single_Key_Show_Alt_Tab_Used = "1" or ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2))) ; Alt key still pressed, else gui not shown
     {
       Gui_vx := Gui_CenterX()
       Gui, 1: Show, AutoSize x%Gui_vx% y%Gui_y%, Alt-Tab Replacement
@@ -425,21 +424,7 @@ Hotkeys_Toggle_Temp_Hotkeys(state) ; (state = "On" or "Off")
 
 Check_Alt_Hotkey2_Up:
   If ! ( GetKeyState(Alt_Hotkey2, "P") or GetKeyState(Alt_Hotkey2)) ; Alt key released
-  {
-    ; GoSub, Disable_Timers
-    ; Display_List_Shown =0
-    If WinExist( "ahk_id " Gui_ID) ; i.e. don't trigger when submitting gui
-    {
       Gosub, ListView_Destroy
-    }
-    Else
-    {
-      If dir =1
-        Send, {Alt Down}{TAB}{Alt Up}
-      Else
-        Send, {Alt Down}+{TAB}{Alt Up}
-    }
-  }
   Return
 
 ;========================================================================================================
@@ -781,7 +766,8 @@ Gui_Resize_and_Position:
   {
     Col_3_w -= Scrollbar_Vertical_Thickness ; allow for vertical scrollbar being visible
     LV_ModifyCol(3, Col_3_w) ; resize title column
-    GuiControl, MoveDraw, Gui1_Tab
+    ; GuiControl, MoveDraw, Gui1_Tab
+    GuiControl, Move, ListView1, h%Height_Max%
   }
   DetectHiddenWindows, Off
   Return
@@ -1759,7 +1745,7 @@ ListView_Destroy:
   GoSub, Disable_Timers
   If Single_Key_Show_Alt_Tab_Used =1
   {
-    Send, {%Alt_Hotkey2% up}
+    Hotkey, *%Esc_Hotkey%, Off
     Hotkey, *%Single_Key_Hide_Alt_Tab%, Off
     Single_Key_Show_Alt_Tab_Used = ; reset
   }
@@ -1964,9 +1950,10 @@ ListView_Resize_Vertically(Gui_ID) ; Automatically resize listview vertically
   }
   lv_row_h := y2 - y1
   lv_h := 4 + lv_header_h + ( lv_row_h * Window_Found_Count ) + lv_h_win_2000_adj 
-  tab_y := lv_h - 6
+  ; tab_y := lv_h - 6
+; Tooltip % lv_header_h
   GuiControl, Move, SysListView321, h%lv_h%
-  GuiControl, Move, Gui1_Tab, y%tab_y%
+  ; GuiControl, Move, Gui1_Tab, y%tab_y%
 }
 
 
