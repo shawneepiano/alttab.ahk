@@ -1745,7 +1745,7 @@ ListView_Destroy:
   GoSub, Disable_Timers
   If Single_Key_Show_Alt_Tab_Used =1
   {
-    Hotkey, *%Esc_Hotkey%, Off
+    Send, {%Alt_Hotkey2% up}
     Hotkey, *%Single_Key_Hide_Alt_Tab%, Off
     Single_Key_Show_Alt_Tab_Used = ; reset
   }

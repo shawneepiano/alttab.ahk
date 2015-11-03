@@ -29,6 +29,13 @@ ALT-TAB REPLACEMENT (WITH ICONS AND WINDOW TITLES IN A LISTVIEW).
 Latest version can be found at: http://file.autohotkey.net/evl/AltTab/AltTab.ahk
 Forum topic for discussion: http://www.autohotkey.com/forum/viewtopic.php?t=6422
 
+
+*Gui Interface*
+![Gui Interface](screenshots/AltTab.png)
+
+*Gui Interface*
+![Configuration Dialog](screenshots/Config.png)
+
 HOTKEYS:
 --------
 
