@@ -189,6 +189,7 @@ Return
 ;========================================================================================================
 
 
+
 Initiate_Hotkeys:
   Use_AND_Symbol = ; initiate
   ; If both Alt and Tab are modifier keys, write Tab as a word not a modifier symbol, else Alt-Tab is invalid hotkey
@@ -205,6 +206,8 @@ Initiate_Hotkeys:
     Use_AND_Symbol :=" & "
   Hotkey, %Alt_Hotkey%%Use_AND_Symbol%%Tab_Hotkey%, Alt_Tab, On ; turn on alt-tab hotkey here to be able to turn it off for simple switching of apps in script
   Hotkey, %Alt_Hotkey%%Use_AND_Symbol%%Shift_Tab_Hotkey%, Alt_Shift_Tab, On ; turn on alt-tab hotkey here to be able to turn it off for simple switching of apps in script
+
+  ; Hotkey, %Alt_Hotkey%%Use_AND_Symbol%%Tab_Hotkey%, open_win
 
   If Single_Key_Show_Alt_Tab !=
   {
@@ -228,6 +231,7 @@ Initiate_Hotkeys:
 
 Alt_Tab: ; alt-tab hotkey
   ; Tooltip % time("Alt_Tab_Common_Function", 1)
+  ; sleep 2000
   Alt_Tab_Common_Function(1)
   Return
 
@@ -244,7 +248,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
   {
     WinGet, Active_ID, ID, A
     Gosub, Custom_Group__make_array_of_contents
-    GoSub, Display_Dim_Background
+    ; GoSub, Display_Dim_Background
     Gosub, Display_List
     If Listview_Resize_Icons
       Gosub, Alt_Tab_Common__Check_auto_switch_icon_sizes ; limit gui height / auto-switch icon sizes
@@ -262,7 +266,7 @@ Alt_Tab_Common_Function(dir) ; dir = "Alt_Tab" or "Alt_Shift_Tab"
   }
 
   ;; Check for Alt Up 
-  SetTimer, Check_Alt_Hotkey2_Up, 40
+  SetTimer, Check_Alt_Hotkey2_Up, 1
 
   Selected_Row := LV_GetNext(0, "F")
   Selected_Row += dir
@@ -442,7 +446,7 @@ Display_List:
   Else ; not shown - need to create gui for updating listview
   {
     ; Create the ListView gui
-    Gui, 1: +AlwaysOnTop +ToolWindow -Caption
+    Gui, 1: +E0x20 +AlwaysOnTop +ToolWindow -Caption
     Gui, 1: Color, %Tab_Colour% ; i.e. border/background 
     Gui, 1: Margin, 0, 0
     ; Tab stuff
@@ -457,7 +461,8 @@ Display_List:
     Gui, 1: Font, s%Font_Size_Tab% c%Font_Color% bold, %Font_Type_Tab%
     Gui, 1: Add, Tab2, Bottom vGui1_Tab HWNDhw_Gui1_Tab w%Gui1_Tab__width% h22 -0x200 -Multi, %Group_List% ; -0x200 = ! TCS_MULTILINE
     Gui, 1:+LastFound
-    WinSet, Transparent, 240
+    ; WinSet, Transparent, 240
+    WinSet, Transparent
     ; Winset, TransColor, %Tab_Colour% 150 ; i.e. border/background 
     ; WinSet, Transparent,65 , ahk_id %hw_LV_ColorChange%
     ; Winset, TransColor, %Tab_Colour% 150, ahk_id  %hw_LV_ColorChange%; i.e. border/background 
@@ -487,6 +492,12 @@ Display_List:
     LV_Modify(Selected_Row, "Focus Select Vis") ; select 1st entry since nothing selected
   }
   Display_List_Shown =1 ; Gui 1 is shown back in Alt_Tab_Common_Function() for initial creation
+
+
+  SetTimer, check_key, 2000 
+  KeyWait, Tab
+  ; SetTimer, check_key, Off
+
   Return
 
 Display_Dim_Background:
@@ -2355,3 +2366,21 @@ time(function, parameter=0)
   %function%(parameter)
   Return ElapsedTime := A_TickCount - StartTime . " milliseconds"
 }
+
+
+
+; --------------------------------------------------
+
+check_key:
+  ; %Alt_Hotkey%%Use_AND_Symbol%%Tab_Hotkey%
+  If (GetKeyState("Alt", "P")) && (GetKeyState("Tab", "P")) {
+        ; Gui DW:Show, w400 h432
+        Gui, 1:+LastFound
+        ; WinSet, Transparent, 240
+        WinSet, Transparent, 240
+        GoSub, Display_Dim_Background
+    }
+    SetTimer, check_key, Off
+  Return
+
+
